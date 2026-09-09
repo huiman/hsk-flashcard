@@ -1,6 +1,9 @@
-const CACHE_NAME = 'hsk-flashcards-v4';
+const CACHE_NAME = 'hsk-flashcards-v5';
 const CORE_ASSETS = [
-  './HSK_1-4_Flashcards.html',
+  './index.html',
+  './css/style.css',
+  './js/data.js',
+  './js/app.js',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
@@ -63,7 +66,7 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       }).catch(() => {
         if (event.request.mode === 'navigate') {
-          return caches.match('./HSK_1-4_Flashcards.html');
+          return caches.match('./index.html');
         }
       });
     })
