@@ -574,13 +574,64 @@
     renderCard();
 
     /**
-     * 7. PWA Service Worker & Install Prompt
+     * 7. PWA Service Worker, Auto-Update Notification & Install Prompt
      */
     if ('serviceWorker' in navigator) {
+      let refreshing = false;
+      // เมื่อ Service Worker ตัวใหม่เข้าควบคุม ให้รีโหลดหน้าอัตโนมัติ 1 ครั้ง
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+          refreshing = true;
+          window.location.reload();
+        }
+      });
+
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('[PWA] Service Worker registered:', reg.scope))
-          .catch(err => console.warn('[PWA] Service Worker registration failed:', err));
+        navigator.serviceWorker.register('./sw.js').then((reg) => {
+          console.log('[PWA] Service Worker registered:', reg.scope);
+
+          // ฟังก์ชันแสดงแถบแจ้งเตือนเมื่อพบเวอร์ชันใหม่
+          function promptUserToUpdate(worker) {
+            let updateToast = document.getElementById('pwa-update-toast');
+            if (!updateToast) {
+              updateToast = document.createElement('div');
+              updateToast.id = 'pwa-update-toast';
+              updateToast.className = 'pwa-update-toast';
+              updateToast.innerHTML = `
+                <span>🚀 มีเวอร์ชันใหม่พร้อมใช้งาน!</span>
+                <button class="btn-update-now" id="btn-update-now">อัปเดตเลย</button>
+              `;
+              document.body.appendChild(updateToast);
+
+              document.getElementById('btn-update-now').addEventListener('click', () => {
+                worker.postMessage({ type: 'SKIP_WAITING' });
+                updateToast.classList.remove('show');
+              });
+            }
+            setTimeout(() => {
+              updateToast.classList.add('show');
+            }, 500);
+          }
+
+          // กรณีมี worker ตัวใหม่รออยู่แล้ว (waiting)
+          if (reg.waiting) {
+            promptUserToUpdate(reg.waiting);
+          }
+
+          // ตรวจจับเมื่อมี worker ตัวใหม่กำลังติดตั้ง
+          reg.addEventListener('updatefound', () => {
+            const newWorker = reg.installing;
+            if (newWorker) {
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  promptUserToUpdate(newWorker);
+                }
+              });
+            }
+          });
+        }).catch((err) => {
+          console.warn('[PWA] Service Worker registration failed:', err);
+        });
       });
     }
 

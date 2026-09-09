@@ -72,3 +72,10 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+
+// 4. สลับไปใช้ Service Worker เวอร์ชันใหม่ทันทีเมื่อได้รับคำสั่ง SKIP_WAITING จากหน้าเว็บ
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});

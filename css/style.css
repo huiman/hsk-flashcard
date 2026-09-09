@@ -638,3 +638,48 @@
       transform: translate(-50%, -50%) scale(1);
       opacity: 1;
     }
+/* แถบแจ้งเตือนเมื่อมีเวอร์ชันใหม่ (PWA Auto-Update Banner) */
+    .pwa-update-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+      color: #ffffff;
+      padding: 12px 18px;
+      border-radius: 9999px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(99, 102, 241, 0.4);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      white-space: nowrap;
+    }
+
+    .pwa-update-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .btn-update-now {
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: #ffffff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(79, 70, 229, 0.4);
+      transition: all 0.2s ease;
+    }
+
+    .btn-update-now:hover {
+      transform: scale(1.05);
+      filter: brightness(1.1);
+    }
