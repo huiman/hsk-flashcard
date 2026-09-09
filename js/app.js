@@ -576,6 +576,33 @@
     /**
      * 7. PWA Service Worker, Auto-Update Notification & Install Prompt
      */
+    function updateVersionDisplay() {
+      const versionEl = document.getElementById("app-version");
+      if (!versionEl || !('serviceWorker' in navigator)) return;
+
+      if (navigator.serviceWorker.controller) {
+        const channel = new MessageChannel();
+        channel.port1.onmessage = (event) => {
+          if (event.data && event.data.version) {
+            versionEl.textContent = event.data.version;
+          }
+        };
+        navigator.serviceWorker.controller.postMessage({ type: "GET_VERSION" }, [channel.port2]);
+      } else {
+        navigator.serviceWorker.ready.then((reg) => {
+          if (reg.active) {
+            const channel = new MessageChannel();
+            channel.port1.onmessage = (event) => {
+              if (event.data && event.data.version) {
+                versionEl.textContent = event.data.version;
+              }
+            };
+            reg.active.postMessage({ type: "GET_VERSION" }, [channel.port2]);
+          }
+        });
+      }
+    }
+
     if ('serviceWorker' in navigator) {
       let refreshing = false;
       // เมื่อ Service Worker ตัวใหม่เข้าควบคุม ให้รีโหลดหน้าอัตโนมัติ 1 ครั้ง
@@ -587,6 +614,7 @@
       });
 
       window.addEventListener('load', () => {
+        updateVersionDisplay();
         navigator.serviceWorker.register('./sw.js').then((reg) => {
           console.log('[PWA] Service Worker registered:', reg.scope);
 

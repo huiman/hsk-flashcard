@@ -1,4 +1,5 @@
-const CACHE_NAME = 'hsk-flashcards-v6';
+const APP_VERSION = 'v6.0.0';
+const CACHE_NAME = `hsk-flashcards-${APP_VERSION}`;
 const CORE_ASSETS = [
   './index.html',
   './css/style.css',
@@ -77,5 +78,9 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
+  } else if (event.data && event.data.type === 'GET_VERSION') {
+    if (event.ports && event.ports[0]) {
+      event.ports[0].postMessage({ version: APP_VERSION });
+    }
   }
 });
