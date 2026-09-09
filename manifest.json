@@ -1,0 +1,32 @@
+{
+  "name": "HSK 1-4 Flashcard Challenge",
+  "short_name": "HSK Flashcards",
+  "description": "แบบฝึกท่องจำและทดสอบคำศัพท์ภาษาจีน HSK 1-4 ตามมาตรฐาน HSK 3.0 พร้อมเสียงอ่านและลำดับขีด",
+  "start_url": "./HSK_1-4_Flashcards.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f5f7fa",
+  "theme_color": "#4f46e5",
+  "categories": ["education", "books", "productivity"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
