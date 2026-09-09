@@ -2907,6 +2907,11 @@
       }
     }
 
+    // ตารางคำอ่านพิเศษสำหรับตัวอักษรหลายเสียง (Polyphone) เมื่ออ่านคำเดี่ยวๆ
+    const PRONUNCIATION_OVERRIDES = {
+      "了": "勒" // เอนจิน TTS จีนจะอ่าน "勒" ว่า "le" (เลอ) อย่างถูกต้องตรงตามพินอิน HSK 1
+    };
+
     function playAudio(text, loop = isAudioLoop) {
       if (!('speechSynthesis' in window)) return;
       stopAudio();
@@ -2915,7 +2920,9 @@
         initVoices();
       }
 
-      const utterance = new SpeechSynthesisUtterance(text);
+      // ดึงคำอ่าน override หากเป็นอักษรหลายเสียง หรือใช้ข้อความเดิม
+      const spokenText = PRONUNCIATION_OVERRIDES[text] || text;
+      const utterance = new SpeechSynthesisUtterance(spokenText);
       activeUtterance = utterance;
       utterance.lang = "zh-CN";
       if (chineseVoice) {
