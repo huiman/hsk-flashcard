@@ -2874,12 +2874,35 @@
       }
     }
 
+    let activeUtterance = null;
+    let chineseVoice = null;
+
+    function initVoices() {
+      if (!('speechSynthesis' in window)) return;
+      const voices = window.speechSynthesis.getVoices();
+      if (!voices || voices.length === 0) return;
+      // หาเสียงภาษาจีน zh-CN หรือขึ้นต้นด้วย zh
+      chineseVoice = voices.find(v => v.lang === 'zh-CN' || v.lang === 'zh_CN') 
+        || voices.find(v => v.lang.startsWith('zh'))
+        || null;
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = initVoices;
+      initVoices();
+    }
+
     function stopAudio() {
       if (loopTimeout) {
         clearTimeout(loopTimeout);
         loopTimeout = null;
       }
       if ('speechSynthesis' in window) {
+        if (activeUtterance) {
+          activeUtterance.onend = null;
+          activeUtterance.onerror = null;
+          activeUtterance = null;
+        }
         window.speechSynthesis.cancel();
       }
     }
@@ -2888,19 +2911,42 @@
       if (!('speechSynthesis' in window)) return;
       stopAudio();
 
+      if (!chineseVoice) {
+        initVoices();
+      }
+
       const utterance = new SpeechSynthesisUtterance(text);
+      activeUtterance = utterance;
       utterance.lang = "zh-CN";
+      if (chineseVoice) {
+        utterance.voice = chineseVoice;
+      }
       utterance.rate = 0.85;
       utterance.pitch = 1.0;
 
-      if (loop) {
-        utterance.onend = () => {
-          if (isAudioLoop && currentCard && currentCard.hanzi === text) {
-            loopTimeout = setTimeout(() => {
-              playAudio(text, true);
-            }, 1200);
-          }
-        };
+      utterance.onend = () => {
+        activeUtterance = null;
+        if (loop && isAudioLoop && currentCard && currentCard.hanzi === text) {
+          loopTimeout = setTimeout(() => {
+            playAudio(text, true);
+          }, 1200);
+        }
+      };
+
+      utterance.onerror = (e) => {
+        console.warn("SpeechSynthesis error:", e);
+        activeUtterance = null;
+        // หาก error ไม่ใช่การถูก cancel แล้ว loop ยังเปิดอยู่ ให้ลองใหม่
+        if (loop && isAudioLoop && e.error !== 'canceled' && e.error !== 'interrupted' && currentCard && currentCard.hanzi === text) {
+          loopTimeout = setTimeout(() => {
+            playAudio(text, true);
+          }, 1500);
+        }
+      };
+
+      // ในบางบราวเซอร์ speechSynthesis อาจค้าง state paused
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
       }
 
       window.speechSynthesis.speak(utterance);
@@ -3040,7 +3086,8 @@
         // เริ่มเล่นแอนิเมชันลำดับขีดแบบวนซ้ำ (Stroke Loop)
         playStrokeOrderSequential(0, currentCard.hanzi);
 
-        if ((isAutoplay || isAudioLoop) && currentCard) {
+        // อ่านอัตโนมัติเมื่อเปิดการ์ดใหม่ (ถ้าเปิด Autoplay)
+        if (isAutoplay && currentCard) {
           playAudio(currentCard.hanzi, isAudioLoop);
         }
       }, 200);
@@ -3133,9 +3180,31 @@
       playStrokeOrderSequential(0, currentCard ? currentCard.hanzi : null);
     });
 
+    // ปลดล็อค Web Speech API เมื่อผู้ใช้แตะหรือคลิกหน้าเว็บครั้งแรก (แก้ปัญหา Autoplay Policy ของบราวเซอร์)
+    function unlockAudioOnFirstInteraction() {
+      if ('speechSynthesis' in window) {
+        // ทดลอง resume หรือ speak utterance ว่างๆ เบาๆ เพื่อปลดล็อคข้อห้าม Autoplay
+        if (window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
+        }
+        if (isAutoplay && currentCard && !window.speechSynthesis.speaking && !activeUtterance) {
+          playAudio(currentCard.hanzi, isAudioLoop);
+        }
+      }
+      document.removeEventListener("touchstart", unlockAudioOnFirstInteraction);
+      document.removeEventListener("click", unlockAudioOnFirstInteraction);
+    }
+    document.addEventListener("touchstart", unlockAudioOnFirstInteraction, { once: true });
+    document.addEventListener("click", unlockAudioOnFirstInteraction, { once: true });
+
     toggleAutoplay.addEventListener("change", (e) => {
       isAutoplay = e.target.checked;
       saveState();
+      if (isAutoplay && currentCard) {
+        playAudio(currentCard.hanzi, isAudioLoop);
+      } else if (!isAudioLoop) {
+        stopAudio();
+      }
     });
 
     if (toggleLoop) {
