@@ -698,3 +698,51 @@
         }
       });
     }
+
+    /* =========================================================
+       Global Theme Management (Dark / Light)
+       ========================================================= */
+    const THEME_STORAGE_KEY = 'hsk_theme_preference';
+
+    function getPreferredTheme() {
+      const saved = localStorage.getItem(THEME_STORAGE_KEY);
+      if (saved === 'dark' || saved === 'light') return saved;
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function applyAppTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+
+      const isDark = theme === 'dark';
+      const icon = isDark ? '🌙' : '☀️';
+
+      const btnGlobal = document.getElementById('btn-global-theme');
+      if (btnGlobal) {
+        btnGlobal.textContent = icon;
+        btnGlobal.title = isDark ? 'เปลี่ยนเป็นธีมสว่าง' : 'เปลี่ยนเป็นธีมมืด';
+      }
+
+      const btnReader = document.getElementById('btn-toggle-reader-theme');
+      if (btnReader) {
+        btnReader.textContent = icon;
+        btnReader.title = isDark ? 'เปลี่ยนเป็นธีมสว่าง' : 'เปลี่ยนเป็นธีมมืด';
+      }
+    }
+
+    function toggleAppTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || getPreferredTheme();
+      const next = current === 'dark' ? 'light' : 'dark';
+      applyAppTheme(next);
+    }
+
+    // Initialize Theme immediately
+    applyAppTheme(getPreferredTheme());
+
+    // Listen to theme toggle clicks
+    document.getElementById('btn-global-theme')?.addEventListener('click', toggleAppTheme);
+    document.getElementById('btn-toggle-reader-theme')?.addEventListener('click', toggleAppTheme);
+
+    // Export for external callers if needed
+    window.__toggleAppTheme = toggleAppTheme;
+    window.__applyAppTheme = applyAppTheme;

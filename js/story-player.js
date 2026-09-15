@@ -18,6 +18,12 @@ class StoryAudioPlayer {
       }
     });
 
+    this.audio.addEventListener('loadedmetadata', () => {
+      if (this.onTimeUpdateCallback) {
+        this.onTimeUpdateCallback(this.audio.currentTime, this.audio.duration || 0);
+      }
+    });
+
     this.audio.addEventListener('ended', () => {
       this.isPlaying = false;
       if (this.onStateChangeCallback) this.onStateChangeCallback(false);

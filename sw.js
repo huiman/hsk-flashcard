@@ -1,4 +1,4 @@
-const APP_VERSION = 'v7.1.0';
+const APP_VERSION = 'v7.9.0';
 const CACHE_NAME = `hsk-flashcards-${APP_VERSION}`;
 const CORE_ASSETS = [
   './index.html',
@@ -46,13 +46,14 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// 3. Fetch strategy: Network-First for JS/JSON/HTML so latest updates load immediately, Cache-First for others
+// 3. Fetch strategy: Network-First for JS/JSON/CSS/HTML so latest updates load immediately, Cache-First for others
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
   const url = new URL(event.request.url);
   const isNetworkFirst = url.pathname.endsWith('.js') || 
                          url.pathname.endsWith('.json') || 
+                         url.pathname.endsWith('.css') || 
                          url.pathname.endsWith('.html') || 
                          url.pathname.endsWith('/') ||
                          event.request.mode === 'navigate';

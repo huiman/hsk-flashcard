@@ -693,3 +693,105 @@
       font-weight: 500;
       letter-spacing: 0.05em;
     }
+
+    /* =========================================================
+       Global Dark Theme Overrides
+       ========================================================= */
+    [data-theme="dark"] {
+      color-scheme: dark;
+    }
+
+    [data-theme="dark"] body {
+      background: #09090d;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.18) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.15) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+        linear-gradient(180deg, #09090d 0%, #111116 100%);
+      color: #f3f4f6;
+    }
+
+    [data-theme="dark"] .game-container {
+      background: rgba(22, 22, 27, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    }
+
+    [data-theme="dark"] header h1 {
+      color: #f3f4f6;
+    }
+
+    [data-theme="dark"] .subtitle {
+      color: #9ca3af;
+    }
+
+    [data-theme="dark"] .level-chip {
+      background: #1c1c24;
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #9ca3af;
+    }
+
+    [data-theme="dark"] .level-chip:hover:not(.active) {
+      background: #272733;
+      color: #f3f4f6;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    [data-theme="dark"] .settings-bar {
+      background: #1c1c24;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    [data-theme="dark"] .settings-label {
+      color: #e5e7eb;
+    }
+
+    [data-theme="dark"] .stat-box {
+      background: #1c1c24;
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    [data-theme="dark"] .stat-label {
+      color: #9ca3af;
+    }
+
+    [data-theme="dark"] .stat-value {
+      color: #f3f4f6;
+    }
+
+    [data-theme="dark"] .card-front {
+      background: #191921;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    [data-theme="dark"] .hanzi-text {
+      color: #f3f4f6;
+    }
+
+    [data-theme="dark"] .level-badge {
+      background: rgba(99, 102, 241, 0.2);
+      color: #a5b4fc;
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    [data-theme="dark"] .btn-audio,
+    [data-theme="dark"] .btn-stroke {
+      background: #252532;
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+    }
+
+    [data-theme="dark"] .btn-audio:hover,
+    [data-theme="dark"] .btn-stroke:hover {
+      background: #2f2f40;
+    }
+
+    [data-theme="dark"] .btn-prev {
+      background: #22222d;
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+    }
+
+    [data-theme="dark"] .btn-prev:hover {
+      background: #2b2b3a;
+    }

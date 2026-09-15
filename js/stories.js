@@ -49,7 +49,7 @@
   let activeStory = null;
   let activeChapterIndex = 0;
   let showPinyin = true;
-  let showTranslation = true;
+  let showTranslation = false;
   let currentSpeedIndex = 1;
   const speeds = [0.75, 1.0, 1.25, 1.5];
 
@@ -302,46 +302,133 @@
       return (str || '').replace(/[\s\u2000-\u200f\u3000"'“”‘’：:，,。！？!?、—…]+/g, '');
     }
 
+    // List of parsed sentences and words for current chapter to track word-by-word audio synchronization
+    let currentChapterSentences = []; // [{ el, text, charCount, startTime, endTime, words: [{ el, text, charCount, startTime, endTime }] }]
+    let allWordTokens = []; // Flat list of all word tokens with timing: [{ el, text, startTime, endTime }]
+    let activeHighlightedWordEl = null;
+
+    function setHighlightedWord(wordEl) {
+      if (activeHighlightedWordEl === wordEl) return;
+      if (activeHighlightedWordEl) {
+        activeHighlightedWordEl.classList.remove('reading-word-active');
+      }
+      activeHighlightedWordEl = wordEl;
+      if (activeHighlightedWordEl) {
+        activeHighlightedWordEl.classList.add('reading-word-active');
+        activeHighlightedWordEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function clearAllWordHighlights() {
+      if (activeHighlightedWordEl) {
+        activeHighlightedWordEl.classList.remove('reading-word-active');
+        activeHighlightedWordEl = null;
+      }
+      readerContentBody.querySelectorAll('.reading-word-active').forEach(el => {
+        el.classList.remove('reading-word-active');
+      });
+    }
+
+    function updateAudioSentenceHighlight(currentTime) {
+      if (!allWordTokens || allWordTokens.length === 0) return;
+      
+      let matchedWord = null;
+      for (let i = 0; i < allWordTokens.length; i++) {
+        const w = allWordTokens[i];
+        if (currentTime >= w.startTime && currentTime < w.endTime) {
+          matchedWord = w.el;
+          break;
+        }
+      }
+
+      setHighlightedWord(matchedWord);
+    }
+
+    function clearAudioSentenceHighlights() {
+      clearAllWordHighlights();
+    }
+
     if (pinyinData.length > 0) {
       let html = '';
+      let globalSentenceIdx = 0;
+
       pinyinData.forEach((paraTokens, pIdx) => {
-        let paraHanzi = '';
-        let paraRubyHtml = '';
+        // Group tokens into individual sentences by punctuation
+        const paraSentences = [];
+        let currTokens = [];
 
-        paraTokens.forEach(token => {
-          const w = token.w || '';
-          const p = token.p;
-          paraHanzi += w;
-          if (p) {
-            paraRubyHtml += `<ruby>${w}<rt>${p}</rt></ruby>`;
-          } else {
-            paraRubyHtml += `<span>${w}</span>`;
+        paraTokens.forEach(tok => {
+          currTokens.push(tok);
+          const w = tok.w || '';
+          if (/[。！？!?]/.test(w)) {
+            paraSentences.push(currTokens);
+            currTokens = [];
+          } else if (currTokens.length === 1 && /^[”’"']$/.test(w) && paraSentences.length > 0) {
+            paraSentences[paraSentences.length - 1].push(tok);
+            currTokens = [];
           }
         });
+        if (currTokens.length > 0) {
+          paraSentences.push(currTokens);
+        }
 
-        // Find matched English translations for this paragraph
-        const normPara = normalizeZh(paraHanzi);
-        const matchedTranslations = [];
-        transEntries.forEach(([zhKey, enVal]) => {
-          const normKey = normalizeZh(zhKey);
-          if (normKey && normPara.includes(normKey)) {
-            matchedTranslations.push(enVal);
+        let paraSentencesHtml = '';
+        const paraMatchedTranslations = [];
+
+        paraSentences.forEach(sentTokens => {
+          let sentHanzi = '';
+          let sentRubyHtml = '';
+          let sentWordOffset = 0;
+
+          sentTokens.forEach((token, tIdx) => {
+            const w = token.w || '';
+            const p = token.p;
+            const startChar = sentWordOffset;
+            const endChar = sentWordOffset + w.length;
+            sentWordOffset = endChar;
+            sentHanzi += w;
+
+            if (p) {
+              sentRubyHtml += `<ruby class="story-word-token" data-token-idx="${tIdx}" data-start="${startChar}" data-end="${endChar}">${w}<rt>${p}</rt></ruby>`;
+            } else {
+              sentRubyHtml += `<span class="story-word-token" data-token-idx="${tIdx}" data-start="${startChar}" data-end="${endChar}">${w}</span>`;
+            }
+          });
+
+          // Match translation for this sentence
+          const normSent = normalizeZh(sentHanzi);
+          let matchedEn = '';
+          for (const [zhKey, enVal] of transEntries) {
+            const normKey = normalizeZh(zhKey);
+            if (normKey && (normKey === normSent || normSent.includes(normKey) || normKey.includes(normSent))) {
+              matchedEn = enVal;
+              break;
+            }
           }
+
+          if (matchedEn) {
+            paraMatchedTranslations.push(matchedEn);
+          }
+
+          paraSentencesHtml += `
+            <span class="story-sentence" data-sent-idx="${globalSentenceIdx++}" data-sentence="${encodeURIComponent(sentHanzi)}" title="แตะเพื่อฟังการออกเสียง">
+              ${sentRubyHtml}
+            </span>
+          `;
         });
 
-        const combinedEnTrans = matchedTranslations.length > 0
-          ? matchedTranslations.join(' ')
-          : (translationMap[paraHanzi] || '');
+        const combinedEnTrans = paraMatchedTranslations.length > 0
+          ? paraMatchedTranslations.join(' ')
+          : '';
 
         html += `
           <div class="story-para">
-            <div class="story-sentence" data-sentence="${encodeURIComponent(paraHanzi)}" title="แตะเพื่อฟังการออกเสียง">
-              ${paraRubyHtml}
-            </div>
+            ${paraSentencesHtml}
             ${combinedEnTrans ? `<div class="sentence-trans-block">${combinedEnTrans}</div>` : ''}
           </div>
         `;
       });
+
       readerContentBody.innerHTML = html;
     } else if (chapter.content_html) {
       // Direct HTML fallback
@@ -354,18 +441,521 @@
       `;
     }
 
-    // Sentence click-to-speak
-    readerContentBody.querySelectorAll('.story-sentence').forEach(el => {
-      el.addEventListener('click', () => {
-        const text = decodeURIComponent(el.dataset.sentence || '');
-        if (text && window.storyPlayer) {
-          readerContentBody.querySelectorAll('.story-sentence').forEach(s => s.classList.remove('speaking'));
-          el.classList.add('speaking');
-          window.storyPlayer.speakSentence(text);
-          setTimeout(() => el.classList.remove('speaking'), 3500);
+    // Build sentence and word timings, and interactive speech synthesis listeners
+    currentChapterSentences = [];
+    allWordTokens = [];
+    const sentenceEls = readerContentBody.querySelectorAll('.story-sentence');
+    let totalChars = 0;
+
+    sentenceEls.forEach((el, idx) => {
+      const text = decodeURIComponent(el.dataset.sentence || '').trim();
+      const cleanChars = text.replace(/[\s\u2000-\u200f\u3000"'“”‘’：:，,。！？!?、—…]+/g, '');
+      const count = Math.max(cleanChars.length, 1);
+      totalChars += count;
+
+      // Extract all word tokens within this sentence
+      const tokenEls = el.querySelectorAll('.story-word-token');
+      const words = [];
+      let sentCleanCharCount = 0;
+
+      tokenEls.forEach(tokenEl => {
+        // Extract plain text from token (excluding ruby rt text)
+        let tokenText = '';
+        if (tokenEl.tagName.toLowerCase() === 'ruby') {
+          tokenEl.childNodes.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+              tokenText += node.textContent;
+            } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() !== 'rt') {
+              tokenText += node.textContent;
+            }
+          });
+        } else {
+          tokenText = tokenEl.textContent || '';
+        }
+
+        const cleanTokenChars = tokenText.replace(/[\s\u2000-\u200f\u3000"'“”‘’：:，,。！？!?、—…]+/g, '');
+        const wordCharCount = Math.max(cleanTokenChars.length, tokenText.length > 0 ? 1 : 0);
+        sentCleanCharCount += wordCharCount;
+
+        const wordObj = {
+          el: tokenEl,
+          text: tokenText,
+          charCount: wordCharCount,
+          startTime: 0,
+          endTime: 0
+        };
+        words.push(wordObj);
+      });
+
+      // If no tokens found, create a fallback single token pointing to el
+      if (words.length === 0) {
+        words.push({
+          el: el,
+          text: text,
+          charCount: count,
+          startTime: 0,
+          endTime: 0
+        });
+      }
+
+      currentChapterSentences.push({
+        el,
+        text,
+        charCount: count,
+        startTime: 0,
+        endTime: 0,
+        words
+      });
+    });
+
+    // Helper to calculate estimated audio timings per sentence and per word token once audio duration is available
+    function recalculateAudioTimings(duration) {
+      if (!duration || duration <= 0 || totalChars <= 0) return;
+      let runningTime = 0;
+      allWordTokens = [];
+
+      currentChapterSentences.forEach(sent => {
+        const sentDuration = (sent.charCount / totalChars) * duration;
+        sent.startTime = runningTime;
+        sent.endTime = runningTime + sentDuration;
+
+        // Subdivide sentence duration among its words proportionally
+        const sentWords = sent.words;
+        const sentWordsTotalChars = sentWords.reduce((sum, w) => sum + (w.charCount || 1), 0);
+        let wordRunningTime = sent.startTime;
+
+        sentWords.forEach((word, wIdx) => {
+          const wordWeight = (word.charCount || 1) / (sentWordsTotalChars || 1);
+          const wordDuration = wIdx === sentWords.length - 1 
+            ? (sent.endTime - wordRunningTime) // avoid floating point rounding gap
+            : sentDuration * wordWeight;
+
+          word.startTime = wordRunningTime;
+          word.endTime = wordRunningTime + wordDuration;
+          wordRunningTime += wordDuration;
+
+          allWordTokens.push(word);
+        });
+
+        runningTime += sentDuration;
+      });
+    }
+
+    // Helper to shift audio playback or TTS to read starting from a specific word
+    function playFromWord(wordEl, sentIdx) {
+      closeWordSheet();
+      const audio = window.storyPlayer?.audio;
+      const duration = (audio && audio.duration && !isNaN(audio.duration)) ? audio.duration : 0;
+      if (duration > 0 && recalculateAudioTimings) {
+        recalculateAudioTimings(duration);
+      }
+
+      // Find timing for this word token
+      let targetStartTime = -1;
+      if (allWordTokens && allWordTokens.length > 0) {
+        const found = allWordTokens.find(w => w.el === wordEl);
+        if (found) targetStartTime = found.startTime;
+      }
+
+      const sentData = currentChapterSentences[sentIdx];
+      if (targetStartTime < 0 && sentData) {
+        targetStartTime = sentData.startTime;
+      }
+
+      if (chapter.audio_url && duration > 0 && targetStartTime >= 0) {
+        window.storyPlayer.stopSpeech();
+        window.storyPlayer.seek(targetStartTime);
+        window.storyPlayer.play();
+        updateAudioSentenceHighlight(targetStartTime);
+        return;
+      }
+
+      if (chapter.audio_url && targetStartTime >= 0) {
+        window.storyPlayer.stopSpeech();
+        const audioEl = window.storyPlayer.audio;
+        const onMeta = () => {
+          if (audioEl.duration && recalculateAudioTimings) {
+            recalculateAudioTimings(audioEl.duration);
+            window.storyPlayer.seek(targetStartTime);
+            updateAudioSentenceHighlight(targetStartTime);
+          }
+        };
+        audioEl.addEventListener('loadedmetadata', onMeta, { once: true });
+        window.storyPlayer.play();
+        return;
+      }
+
+      // Fallback to TTS reading from this sentence
+      playSentenceAt(sentIdx);
+    }
+
+    // Attach Click on Sentence: Seek audio player to this sentence time and play
+    function playSentenceAt(sentIdx) {
+      closeWordSheet();
+      const sentEl = sentenceEls[sentIdx];
+      if (!sentEl) return;
+      const text = decodeURIComponent(sentEl.dataset.sentence || '');
+      if (!text || !window.storyPlayer) return;
+
+      const audio = window.storyPlayer.audio;
+      const duration = (audio && audio.duration && !isNaN(audio.duration)) ? audio.duration : 0;
+      if (duration > 0 && recalculateAudioTimings) {
+        recalculateAudioTimings(duration);
+      }
+
+      const sentData = currentChapterSentences[sentIdx];
+
+      // If audio track is available and duration is known
+      if (chapter.audio_url && duration > 0 && sentData) {
+        window.storyPlayer.stopSpeech();
+        window.storyPlayer.seek(sentData.startTime);
+        window.storyPlayer.play();
+        updateAudioSentenceHighlight(sentData.startTime);
+        return;
+      }
+
+      // If audio track is available but metadata/duration is still loading:
+      if (chapter.audio_url && sentData) {
+        window.storyPlayer.stopSpeech();
+        const audioEl = window.storyPlayer.audio;
+        const onMeta = () => {
+          if (audioEl.duration && recalculateAudioTimings) {
+            recalculateAudioTimings(audioEl.duration);
+            const updatedSent = currentChapterSentences[sentIdx];
+            if (updatedSent) {
+              window.storyPlayer.seek(updatedSent.startTime);
+              updateAudioSentenceHighlight(updatedSent.startTime);
+            }
+          }
+        };
+        audioEl.addEventListener('loadedmetadata', onMeta, { once: true });
+        window.storyPlayer.play();
+        return;
+      }
+
+      // Fallback to SpeechSynthesis (TTS) only if chapter has no audio track
+      if (window.storyPlayer.isPlaying) {
+        window.storyPlayer.pause();
+      }
+
+      clearAllWordHighlights();
+      const tokenEls = sentEl.querySelectorAll('.story-word-token');
+      if (tokenEls.length > 0) {
+        setHighlightedWord(tokenEls[0]);
+      }
+
+      window.storyPlayer.speakSentence(
+        text,
+        /* onStart */ () => {
+          if (tokenEls.length > 0) setHighlightedWord(tokenEls[0]);
+        },
+        /* onEnd */ () => {
+          clearAllWordHighlights();
+        },
+        /* onBoundary */ (event) => {
+          if (event.name === 'word' || event.name === 'sentence') {
+            const charIdx = event.charIndex;
+            let matchedToken = null;
+            for (let i = 0; i < tokenEls.length; i++) {
+              const tok = tokenEls[i];
+              const start = parseInt(tok.dataset.start, 10);
+              const end = parseInt(tok.dataset.end, 10);
+              if (!isNaN(start) && !isNaN(end) && charIdx >= start && charIdx < end) {
+                matchedToken = tok;
+                break;
+              }
+            }
+            if (matchedToken) {
+              setHighlightedWord(matchedToken);
+            }
+          }
+        }
+      );
+    }
+
+    // Sentence Container: 1 click translates sentence, double-click shifts audio reading to this sentence
+    sentenceEls.forEach((el, sentIdx) => {
+      let sentClickTimer = null;
+      let sentLastClickTime = 0;
+
+      el.addEventListener('click', (e) => {
+        // If clicked on an individual word token, let the word token handler handle it
+        if (e.target.closest('.story-word-token')) return;
+
+        const now = Date.now();
+        if (now - sentLastClickTime < 280) {
+          // Double click: Shift audio reading to this sentence
+          clearTimeout(sentClickTimer);
+          sentClickTimer = null;
+          sentLastClickTime = 0;
+          playSentenceAt(sentIdx);
+        } else {
+          sentLastClickTime = now;
+          clearTimeout(sentClickTimer);
+          sentClickTimer = setTimeout(() => {
+            // Single click: Show sentence translation in translation sheet
+            const text = decodeURIComponent(el.dataset.sentence || '').trim();
+            const parentPara = el.closest('.story-para');
+            let trans = '';
+            if (parentPara) {
+              const transEl = parentPara.querySelector('.sentence-trans-block');
+              if (transEl) trans = transEl.textContent.trim();
+            }
+            openWordSheet(text, '', trans);
+            sentClickTimer = null;
+          }, 260);
         }
       });
     });
+
+    // Translation block: 1 click toggles/shows translation, double click shifts audio to read that sentence
+    readerContentBody.querySelectorAll('.sentence-trans-block').forEach(transEl => {
+      let transClickTimer = null;
+      let transLastClickTime = 0;
+
+      transEl.addEventListener('click', () => {
+        const now = Date.now();
+        const parentPara = transEl.closest('.story-para');
+        const firstSent = parentPara?.querySelector('.story-sentence');
+        const sIdx = firstSent ? parseInt(firstSent.dataset.sentIdx, 10) : -1;
+
+        if (now - transLastClickTime < 280) {
+          // Double click: Shift audio reading to this sentence
+          clearTimeout(transClickTimer);
+          transClickTimer = null;
+          transLastClickTime = 0;
+          if (sIdx >= 0) playSentenceAt(sIdx);
+        } else {
+          transLastClickTime = now;
+          clearTimeout(transClickTimer);
+          transClickTimer = setTimeout(() => {
+            // Single click: Highlight/focus the sentence without shifting playback
+            if (firstSent) {
+              firstSent.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            transClickTimer = null;
+          }, 260);
+        }
+      });
+    });
+
+    // =========================================================
+    // Word Translation Sheet Controller (HSKStory style)
+    // =========================================================
+    const wordSheet = document.getElementById('story-word-sheet');
+    const sheetHanzi = document.getElementById('sheet-hanzi');
+    const sheetHskBadge = document.getElementById('sheet-hsk-badge');
+    const sheetPinyin = document.getElementById('sheet-pinyin');
+    const sheetDefinitions = document.getElementById('sheet-definitions');
+    const sheetBtnSpeak = document.getElementById('sheet-btn-speak');
+    const sheetBtnClose = document.getElementById('sheet-btn-close');
+    const sheetBtnTransSent = document.getElementById('sheet-btn-trans-sent');
+    const sheetTransChevron = document.getElementById('sheet-trans-chevron');
+    const sheetSentenceContent = document.getElementById('sheet-sentence-content');
+
+    let currentSheetWord = '';
+    let currentSheetSentTrans = '';
+
+    function closeWordSheet() {
+      if (wordSheet) {
+        wordSheet.classList.remove('show');
+      }
+    }
+
+    sheetBtnClose?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeWordSheet();
+    });
+
+    sheetBtnSpeak?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (currentSheetWord && window.storyPlayer) {
+        window.storyPlayer.speakSentence(currentSheetWord);
+      }
+    });
+
+    sheetBtnTransSent?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!sheetSentenceContent) return;
+      const isShowing = sheetSentenceContent.classList.toggle('show');
+      sheetBtnTransSent.classList.toggle('expanded', isShowing);
+    });
+
+    // Lookup word data in HSK_DATA
+    function lookupWordInfo(hanzi, fallbackPinyin = '') {
+      let found = null;
+      if (typeof HSK_DATA !== 'undefined' && Array.isArray(HSK_DATA)) {
+        found = HSK_DATA.find(item => item.hanzi === hanzi);
+        if (!found) {
+          // If 1-character, check if it's part of a known word
+          found = HSK_DATA.find(item => item.hanzi.startsWith(hanzi) || item.hanzi.endsWith(hanzi));
+        }
+      }
+
+      if (found) {
+        return {
+          hanzi: hanzi,
+          pinyin: found.pinyin || fallbackPinyin,
+          level: found.level || 'HSK 1',
+          meaning_en: found.meaning_en || '',
+          meaning_th: found.meaning || ''
+        };
+      }
+
+      return {
+        hanzi: hanzi,
+        pinyin: fallbackPinyin,
+        level: 'HSK',
+        meaning_en: '',
+        meaning_th: ''
+      };
+    }
+
+    function openWordSheet(wordText, pinyin, sentenceTrans) {
+      if (!wordSheet) return;
+      currentSheetWord = wordText;
+      currentSheetSentTrans = sentenceTrans;
+
+      const info = lookupWordInfo(wordText, pinyin);
+
+      if (sheetHanzi) sheetHanzi.textContent = info.hanzi;
+      if (sheetHskBadge) sheetHskBadge.textContent = info.level;
+      if (sheetPinyin) sheetPinyin.textContent = info.pinyin;
+
+      // Build definitions list
+      let defsHtml = '';
+      const defItems = [];
+      if (info.meaning_en) {
+        // Split meanings by semicolon
+        info.meaning_en.split(';').forEach(s => {
+          const t = s.trim();
+          if (t) defItems.push(t);
+        });
+      }
+      if (info.meaning_th) {
+        info.meaning_th.split('/').forEach(s => {
+          const t = s.trim();
+          if (t && !defItems.includes(t)) defItems.push(t);
+        });
+      }
+
+      if (defItems.length === 0) {
+        defsHtml = '<div class="sheet-def-item"><span>แตะเพื่อแปลคำศัพท์</span></div>';
+      } else {
+        defItems.forEach((d, i) => {
+          defsHtml += `
+            <div class="sheet-def-item">
+              <span class="sheet-def-num">${i + 1}.</span>
+              <span>${d}</span>
+            </div>
+          `;
+        });
+      }
+      if (sheetDefinitions) sheetDefinitions.innerHTML = defsHtml;
+
+      // Sentence translation block
+      if (sheetSentenceContent) {
+        sheetSentenceContent.textContent = sentenceTrans || 'ไม่มีคำแปลประโยค';
+        sheetSentenceContent.classList.remove('show');
+      }
+      if (sheetBtnTransSent) {
+        sheetBtnTransSent.classList.remove('expanded');
+      }
+
+      wordSheet.classList.add('show');
+    }
+
+    // Attach click listeners on all word tokens inside readerContentBody:
+    // 1 click = translate word in bottom sheet
+    // 2 clicks (double click/tap) = shift audio/TTS to read from this word
+    readerContentBody.querySelectorAll('.story-word-token').forEach(tokenEl => {
+      let wordClickTimer = null;
+      let wordLastClickTime = 0;
+
+      const handleWordAction = (isDouble) => {
+        const parentSent = tokenEl.closest('.story-sentence');
+        const sIdx = parentSent ? parseInt(parentSent.dataset.sentIdx, 10) : 0;
+
+        if (isDouble) {
+          // Double click: Shift audio playback or TTS to read from this word
+          playFromWord(tokenEl, !isNaN(sIdx) ? sIdx : 0);
+          return;
+        }
+
+        // Single click: Translate word in bottom sheet
+        // Get plain text of token (excluding <rt>)
+        let wText = '';
+        if (tokenEl.tagName.toLowerCase() === 'ruby') {
+          tokenEl.childNodes.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+              wText += node.textContent;
+            } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName.toLowerCase() !== 'rt') {
+              wText += node.textContent;
+            }
+          });
+        } else {
+          wText = tokenEl.textContent || '';
+        }
+
+        wText = wText.trim();
+        if (!wText || /^[\s\u2000-\u200f\u3000"'“”‘’：:，,。！？!?、—…]+$/.test(wText)) return;
+
+        // Get Pinyin from <rt> if available
+        const rtEl = tokenEl.querySelector('rt');
+        const pinyin = rtEl ? rtEl.textContent.trim() : '';
+
+        // Find parent sentence translation
+        let sentenceTrans = '';
+        if (parentSent) {
+          const parentPara = parentSent.closest('.story-para');
+          if (parentPara) {
+            const transBlock = parentPara.querySelector('.sentence-trans-block');
+            if (transBlock) sentenceTrans = transBlock.textContent.trim();
+          }
+        }
+
+        openWordSheet(wText, pinyin, sentenceTrans);
+      };
+
+      tokenEl.addEventListener('click', (e) => {
+        e.stopPropagation(); // prevent sentence container event
+
+        const now = Date.now();
+        if (now - wordLastClickTime < 280) {
+          // Double click detected!
+          clearTimeout(wordClickTimer);
+          wordClickTimer = null;
+          wordLastClickTime = 0;
+          handleWordAction(/* isDouble */ true);
+        } else {
+          wordLastClickTime = now;
+          clearTimeout(wordClickTimer);
+          wordClickTimer = setTimeout(() => {
+            handleWordAction(/* isDouble */ false);
+            wordClickTimer = null;
+          }, 260);
+        }
+      });
+
+      // Also listen to dblclick event directly as desktop native fallback
+      tokenEl.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        clearTimeout(wordClickTimer);
+        wordClickTimer = null;
+        wordLastClickTime = 0;
+        handleWordAction(/* isDouble */ true);
+      });
+    });
+
+    // Dismiss bottom sheet on tapping reader content outside
+    readerContentBody.addEventListener('click', () => {
+      closeWordSheet();
+    });
+
+    // Expose update functions for audio player timeupdate
+    window.__updateStorySentenceHighlight = updateAudioSentenceHighlight;
+    window.__recalcStoryAudioTimings = recalculateAudioTimings;
+    window.__clearStoryAudioHighlight = clearAudioSentenceHighlights;
   }
 
   // 4. Audio Controls & Events
@@ -386,6 +976,9 @@
     audioScrubber?.addEventListener('input', (e) => {
       const val = parseFloat(e.target.value);
       window.storyPlayer.seek(val);
+      if (window.__updateStorySentenceHighlight) {
+        window.__updateStorySentenceHighlight(val);
+      }
     });
 
     window.storyPlayer.onTimeUpdateCallback = (current, duration) => {
@@ -395,11 +988,25 @@
       }
       if (audioTimeCurrent) audioTimeCurrent.textContent = formatTime(current);
       if (audioTimeDuration && duration > 0) audioTimeDuration.textContent = formatTime(duration);
+
+      // Recalculate audio sentence timings and highlight currently read sentence
+      if (duration > 0 && window.__recalcStoryAudioTimings) {
+        window.__recalcStoryAudioTimings(duration);
+      }
+      if (window.__updateStorySentenceHighlight) {
+        window.__updateStorySentenceHighlight(current);
+      }
     };
 
     window.storyPlayer.onStateChangeCallback = (playing) => {
       if (audioBtnPlay) {
         audioBtnPlay.textContent = playing ? '⏸️' : '▶️';
+      }
+      if (!playing && window.__clearStoryAudioHighlight) {
+        // If stopped or paused at end
+        if (window.storyPlayer.audio && window.storyPlayer.audio.ended) {
+          window.__clearStoryAudioHighlight();
+        }
       }
     };
   }

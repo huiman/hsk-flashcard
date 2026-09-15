@@ -27,8 +27,8 @@
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
 
   <!-- โหลดสไตล์แยกโมดูล -->
-  <link rel="stylesheet" href="css/style.css?v=7.1.0">
-  <link rel="stylesheet" href="css/stories.css?v=7.1.0">
+  <link rel="stylesheet" href="css/style.css?v=7.9.0">
+  <link rel="stylesheet" href="css/stories.css?v=7.9.0">
 </head>
 <body>
 
@@ -46,14 +46,17 @@
     </div>
 
     <!-- แถบสลับแท็บหลัก -->
-    <nav class="main-tabs" id="main-tabs">
-      <button class="main-tab-btn active" id="tab-flashcard" data-view="flashcard">
-        <span class="tab-icon">🀄</span> บัตรคำ (Cards)
-      </button>
-      <button class="main-tab-btn" id="tab-stories" data-view="stories">
-        <span class="tab-icon">📖</span> นิทาน (HSK 1-9 Stories)
-      </button>
-    </nav>
+    <div style="display:flex;width:100%;align-items:center;gap:8px;">
+      <nav class="main-tabs" id="main-tabs" style="flex:1;">
+        <button class="main-tab-btn active" id="tab-flashcard" data-view="flashcard">
+          <span class="tab-icon">🀄</span> บัตรคำ (Cards)
+        </button>
+        <button class="main-tab-btn" id="tab-stories" data-view="stories">
+          <span class="tab-icon">📖</span> นิทาน (HSK 1-9 Stories)
+        </button>
+      </nav>
+      <button class="theme-toggle-btn" id="btn-global-theme" title="สลับธีม สว่าง / มืด">🌓</button>
+    </div>
 
     <!-- หน้า Flashcards View -->
     <div id="view-flashcard" class="app-view active">
@@ -198,10 +201,12 @@
         <div class="reader-title-box">
           <span class="reader-hsk-badge" id="reader-hsk-badge">HSK 1</span>
           <span class="reader-chapter-title" id="reader-chapter-title">Title</span>
+          <span class="reader-hint-caption" title="คลิก 1 ครั้งเพื่อแปล | ดับเบิ้ลคลิกเพื่อเริ่มอ่าน">💡 1 คลิก: แปล | 2 คลิก: อ่าน</span>
         </div>
         <div class="reader-settings-toggles">
+          <button class="reader-toggle-btn" id="btn-toggle-reader-theme" title="สลับธีม สว่าง / มืด">🌓</button>
           <button class="reader-toggle-btn active" id="btn-toggle-pinyin" title="เปิด/ปิด พินอิน">拼</button>
-          <button class="reader-toggle-btn active" id="btn-toggle-trans" title="เปิด/ปิด คำแปลอังกฤษ">EN</button>
+          <button class="reader-toggle-btn" id="btn-toggle-trans" title="เปิด/ปิด คำแปลอังกฤษ">EN</button>
         </div>
       </div>
 
@@ -231,15 +236,39 @@
         <button class="btn btn-secondary" id="btn-reader-prev-chap">⬅️ ตอนก่อนหน้า</button>
         <button class="btn btn-primary" id="btn-reader-next-chap">ตอนต่อไป ➡️</button>
       </div>
+
+      <!-- HSKStory Word Translation Bottom Sheet -->
+      <div class="story-word-sheet" id="story-word-sheet">
+        <div class="sheet-drag-handle"></div>
+        <div class="sheet-header">
+          <div class="sheet-hanzi-wrap">
+            <span class="sheet-hanzi" id="sheet-hanzi">今天</span>
+            <span class="sheet-hsk-badge" id="sheet-hsk-badge">HSK 1</span>
+          </div>
+          <div class="sheet-actions">
+            <button class="sheet-btn-speak" id="sheet-btn-speak" title="ออกเสียง">🔊</button>
+            <button class="sheet-btn-close" id="sheet-btn-close" title="ปิด">✕</button>
+          </div>
+        </div>
+        <div class="sheet-pinyin" id="sheet-pinyin">jīn tiān</div>
+        <div class="sheet-definitions" id="sheet-definitions"></div>
+        <div class="sheet-sentence-wrap">
+          <button class="sheet-btn-trans-sent" id="sheet-btn-trans-sent">
+            <span class="sheet-trans-label">文A Translate sentence</span>
+            <span class="sheet-trans-chevron" id="sheet-trans-chevron">›</span>
+          </button>
+          <div class="sheet-sentence-content" id="sheet-sentence-content"></div>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- โหลดฐานข้อมูลคำศัพท์และ Logic ของแอปพลิเคชันแบบโมดูลาร์ -->
-  <script src="js/data.js?v=7.1.0"></script>
-  <script src="js/stories-data.js?v=7.1.0"></script>
-  <script src="js/story-player.js?v=7.1.0"></script>
-  <script src="js/stories.js?v=7.1.0"></script>
-  <script src="js/app.js?v=7.1.0"></script>
+  <script src="js/data.js?v=7.9.0"></script>
+  <script src="js/stories-data.js?v=7.9.0"></script>
+  <script src="js/story-player.js?v=7.9.0"></script>
+  <script src="js/stories.js?v=7.9.0"></script>
+  <script src="js/app.js?v=7.9.0"></script>
 </body>
 
 </html>

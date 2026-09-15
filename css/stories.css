@@ -388,6 +388,19 @@
   max-width: 100%;
 }
 
+.reader-hint-caption {
+  font-size: 0.65rem;
+  color: #64748b;
+  font-weight: 500;
+  white-space: nowrap;
+  user-select: none;
+  opacity: 0.85;
+}
+
+[data-theme="dark"] .reader-hint-caption {
+  color: #9ca3af;
+}
+
 .reader-settings-toggles {
   display: flex;
   gap: 6px;
@@ -538,8 +551,8 @@
   flex: 1;
   overflow-y: auto;
   padding: 24px 22px;
-  font-size: 1.15rem;
-  line-height: 2.2;
+  font-size: 1.18rem;
+  line-height: 2.65; /* Generous vertical spacing for ruby annotations */
   color: #1e293b;
   -webkit-overflow-scrolling: touch;
 }
@@ -551,43 +564,77 @@
 /* Sentence Block */
 .story-sentence {
   display: inline;
-  padding: 3px 6px;
-  margin: 0 1px;
-  border-radius: 6px;
+  padding: 1px 2px;
+  margin: 0;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
   position: relative;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
+  transition: background-color 0.15s ease;
 }
 
 .story-sentence:hover {
   background: rgba(99, 102, 241, 0.08);
 }
 
-/* Active Highlight when audio player or TTS is currently reading */
-.story-sentence.reading-active,
-.story-sentence.speaking {
-  background: rgba(254, 240, 138, 0.55); /* Warm luminous yellow-amber highlight */
-  box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.6), 0 2px 8px rgba(234, 179, 8, 0.2);
-  border-radius: 6px;
+/* Theme Toggle Button */
+.theme-toggle-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  color: #475569;
+  font-size: 1.15rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
-/* Word level highlight during SpeechSynthesis boundary */
-.story-sentence .reading-word-active {
-  background: rgba(249, 115, 22, 0.28);
-  border-radius: 4px;
-  box-shadow: 0 0 0 1.5px rgba(249, 115, 22, 0.7);
-  transition: background-color 0.1s ease;
+.theme-toggle-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  transform: scale(1.05);
 }
 
-/* Dark mode / vibrant reader support */
-@media (prefers-color-scheme: dark) {
-  .story-sentence.reading-active,
-  .story-sentence.speaking {
-    background: rgba(234, 179, 8, 0.25);
-    box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.7), 0 2px 10px rgba(250, 204, 21, 0.2);
-  }
+/* Individual Word Token styling & Active Word-by-Word Highlight */
+.story-word-token {
+  display: inline-ruby;
+  padding: 1px 3px 2px 3px;
+  margin: 0 1.5px;
+  border-radius: 5px;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  cursor: pointer;
+  border-bottom: 1.5px solid rgba(148, 163, 184, 0.35); /* Subtle word underline like HSKStory */
+  position: relative;
+}
+
+.story-word-token:hover {
+  background: rgba(99, 102, 241, 0.12);
+}
+
+/* Active Highlight: ONLY the active word token lights up, pinyin sits cleanly above without collision */
+.story-word-token.reading-word-active {
+  background: #b45309; /* Warm amber pill like HSKStory */
+  color: #fef08a !important;
+  box-shadow: 0 0 0 1.5px rgba(245, 158, 11, 0.95), 0 2px 8px rgba(0, 0, 0, 0.35);
+  font-weight: 700;
+  z-index: 5;
+  border-bottom-color: transparent;
+}
+
+.story-word-token.reading-word-active rt {
+  color: #fef08a !important;
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  z-index: 15;
 }
 
 /* Chinese Ruby Pinyin Annotation */
@@ -595,17 +642,25 @@ ruby {
   ruby-position: over;
   display: inline-ruby;
   text-align: center;
-  margin: 0 1px;
+  margin: 0 1.5px;
+  vertical-align: baseline;
 }
 
 rt {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 0.65em;
-  line-height: 1;
+  font-size: 0.62em;
+  line-height: 1.2;
   color: #6366f1;
   user-select: none;
   opacity: 1;
-  transition: opacity 0.2s ease;
+  position: relative;
+  z-index: 10;
+  transform: translateY(-6px); /* Elevate pinyin safely above the highlight pill box */
+  transition: opacity 0.2s ease, color 0.15s ease;
+}
+
+[data-theme="dark"] rt {
+  color: #a5b4fc;
 }
 
 /* Hide Pinyin Mode */
@@ -624,7 +679,14 @@ rt {
   padding: 6px 12px;
   border-radius: 0 8px 8px 0;
   margin: 8px 0 14px 0;
+  cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.sentence-trans-block:hover {
+  background: #f1f5f9;
+  color: #334155;
+  border-left-color: #4f46e5;
 }
 
 .hide-trans .sentence-trans-block {
@@ -645,6 +707,446 @@ rt {
   flex: 1;
   padding: 10px 14px;
   font-size: 0.85rem;
+}
+
+/* =========================================================
+   HSKStory Word Translation Bottom Sheet
+   ========================================================= */
+.story-word-sheet {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  border-radius: 24px 24px 0 0;
+  padding: 12px 20px 20px 20px;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.18);
+  transform: translateY(105%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.story-word-sheet.show {
+  transform: translateY(0);
+}
+
+.sheet-drag-handle {
+  width: 36px;
+  height: 4px;
+  background: #cbd5e1;
+  border-radius: 2px;
+  margin: 0 auto 6px auto;
+  cursor: pointer;
+}
+
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sheet-hanzi-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sheet-hanzi {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #dc2626; /* Authentic HSKStory coral-red accent */
+  line-height: 1.1;
+  font-family: 'Ma Shan Zheng', 'Kanit', sans-serif;
+}
+
+.sheet-hsk-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  background: rgba(220, 38, 38, 0.12);
+  color: #dc2626;
+  border-radius: 9999px;
+  letter-spacing: 0.04em;
+}
+
+.sheet-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sheet-btn-speak {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sheet-btn-speak:hover {
+  background: #e2e8f0;
+  transform: scale(1.08);
+}
+
+.sheet-btn-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sheet-btn-close:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.sheet-pinyin {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #d97706; /* Warm tone pinyin */
+  margin-top: -2px;
+}
+
+.sheet-definitions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 140px;
+  overflow-y: auto;
+  padding: 4px 0;
+  font-size: 0.95rem;
+  color: #334155;
+  line-height: 1.45;
+}
+
+.sheet-def-item {
+  display: flex;
+  gap: 6px;
+}
+
+.sheet-def-num {
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.82rem;
+  min-width: 14px;
+}
+
+.sheet-sentence-wrap {
+  border-top: 1px solid #f1f5f9;
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+.sheet-btn-trans-sent {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sheet-btn-trans-sent:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+.sheet-trans-chevron {
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.sheet-btn-trans-sent.expanded .sheet-trans-chevron {
+  transform: rotate(90deg);
+}
+
+.sheet-sentence-content {
+  display: none;
+  padding: 8px 12px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #334155;
+  line-height: 1.45;
+  margin-top: 6px;
+}
+
+.sheet-sentence-content.show {
+  display: block;
+}
+
+/* =========================================================
+   HSKStory Dark Theme Overrides for Stories & Reader
+   ========================================================= */
+[data-theme="dark"] .main-tabs {
+  background: rgba(30, 30, 38, 0.95);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .main-tab-btn {
+  color: #9ca3af;
+}
+
+[data-theme="dark"] .main-tab-btn:hover {
+  color: #f3f4f6;
+}
+
+[data-theme="dark"] .main-tab-btn.active {
+  background: #272733;
+  color: #818cf8;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .theme-toggle-btn {
+  background: #22222c;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .theme-toggle-btn:hover {
+  background: #2b2b38;
+}
+
+[data-theme="dark"] .story-card {
+  background: #18181f;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .story-card-title-zh {
+  color: #f3f4f6;
+}
+
+[data-theme="dark"] .story-card-title-en {
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .story-card-synopsis {
+  color: #9ca3af;
+}
+
+[data-theme="dark"] .story-card-footer {
+  border-top-color: rgba(255, 255, 255, 0.08);
+  color: #9ca3af;
+}
+
+[data-theme="dark"] .story-level-chip {
+  background: #1e1e28;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #9ca3af;
+}
+
+[data-theme="dark"] .story-level-chip:hover {
+  background: #272733;
+  color: #f3f4f6;
+}
+
+[data-theme="dark"] .story-level-chip.active {
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+/* Reader Modal Dark Mode (Matches HSKStory Screenshot) */
+[data-theme="dark"] .story-reader-modal {
+  background: rgba(0, 0, 0, 0.82);
+}
+
+[data-theme="dark"] .reader-container {
+  background: #121216; /* Authentic HSKStory dark background */
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .reader-top-bar {
+  background: #18181f;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .btn-reader-back {
+  background: #242430;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .btn-reader-back:hover {
+  background: #2f2f3d;
+}
+
+[data-theme="dark"] .reader-chapter-title {
+  color: #f3f4f6;
+}
+
+[data-theme="dark"] .reader-toggle-btn {
+  background: #22222d;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #9ca3af;
+}
+
+[data-theme="dark"] .reader-toggle-btn:hover {
+  color: #f3f4f6;
+}
+
+[data-theme="dark"] .reader-toggle-btn.active {
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .reader-audio-bar {
+  background: #18181f;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .audio-scrubber {
+  background: #2b2b38;
+}
+
+[data-theme="dark"] .audio-speed-btn {
+  background: #242430;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .chapter-nav-row {
+  background: #15151b;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .chap-nav-chip {
+  background: #1e1e28;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #9ca3af;
+}
+
+[data-theme="dark"] .chap-nav-chip:hover:not(.active) {
+  background: #292936;
+  color: #f3f4f6;
+}
+
+[data-theme="dark"] .reader-content-body {
+  color: #f3f4f6;
+  background: #121216;
+}
+
+[data-theme="dark"] .story-word-token {
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.35); /* Visible underline under characters in dark mode */
+}
+
+[data-theme="dark"] .story-word-token:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .sentence-trans-block {
+  background: #1c1c24;
+  color: #9ca3af;
+  border-left-color: #6366f1;
+}
+
+[data-theme="dark"] .sentence-trans-block:hover {
+  background: #23232e;
+  color: #f3f4f6;
+}
+
+[data-theme="dark"] .reader-footer-nav {
+  background: #18181f;
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .reader-footer-nav .btn-secondary {
+  background: #22222d;
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Word Sheet Dark Mode */
+[data-theme="dark"] .story-word-sheet {
+  background: #1c1c24; /* Matches HSKStory translation card */
+  border-top-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 -12px 35px rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="dark"] .sheet-drag-handle {
+  background: #4b5563;
+}
+
+[data-theme="dark"] .sheet-hanzi {
+  color: #f87171; /* Bright coral-red in dark mode */
+}
+
+[data-theme="dark"] .sheet-hsk-badge {
+  background: rgba(248, 113, 113, 0.18);
+  color: #f87171;
+}
+
+[data-theme="dark"] .sheet-btn-speak {
+  background: #282834;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .sheet-btn-speak:hover {
+  background: #333342;
+}
+
+[data-theme="dark"] .sheet-btn-close {
+  color: #6b7280;
+}
+
+[data-theme="dark"] .sheet-btn-close:hover {
+  background: #282834;
+  color: #f3f4f6;
+}
+
+[data-theme="dark"] .sheet-pinyin {
+  color: #fbbf24;
+}
+
+[data-theme="dark"] .sheet-definitions {
+  color: #e5e7eb;
+}
+
+[data-theme="dark"] .sheet-sentence-wrap {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .sheet-btn-trans-sent {
+  background: #242430;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #9ca3af;
+}
+
+[data-theme="dark"] .sheet-btn-trans-sent:hover {
+  background: #2b2b3a;
+  color: #f3f4f6;
+}
+
+[data-theme="dark"] .sheet-sentence-content {
+  background: #14141a;
+  color: #d1d5db;
 }
 
 /* Mobile responsive adjustments */
