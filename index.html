@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>HSK 1-4 Flashcard Challenge</title>
+  <title>HSK Flashcards & Graded Stories (HSK 1-9)</title>
 
   <!-- PWA Manifest & Meta Tags -->
   <link rel="manifest" href="manifest.json">
@@ -27,7 +27,8 @@
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
 
   <!-- โหลดสไตล์แยกโมดูล -->
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=7.1.0">
+  <link rel="stylesheet" href="css/stories.css?v=7.1.0">
 </head>
 <body>
 
@@ -44,8 +45,20 @@
       </div>
     </div>
 
-    <header>
-      <h1>🀄 HSK 1-4 Flashcards</h1>
+    <!-- แถบสลับแท็บหลัก -->
+    <nav class="main-tabs" id="main-tabs">
+      <button class="main-tab-btn active" id="tab-flashcard" data-view="flashcard">
+        <span class="tab-icon">🀄</span> บัตรคำ (Cards)
+      </button>
+      <button class="main-tab-btn" id="tab-stories" data-view="stories">
+        <span class="tab-icon">📖</span> นิทาน (HSK 1-9 Stories)
+      </button>
+    </nav>
+
+    <!-- หน้า Flashcards View -->
+    <div id="view-flashcard" class="app-view active">
+      <header>
+        <h1>🀄 HSK 1-4 Flashcards</h1>
       <p class="subtitle">แตะการ์ดเพื่อดูคำแปลและพินอิน</p>
     </header>
 
@@ -143,11 +156,90 @@
       </p>
       <div id="app-version" class="app-version"></div>
     </footer>
+    </div>
+    <!-- จบ view-flashcard -->
+
+    <!-- 2. หน้า HSK Stories Library View -->
+    <div id="view-stories" class="app-view">
+      <header class="stories-header">
+        <h1>📖 HSKStory Library</h1>
+        <p class="subtitle">นิทานภาษาจีนแบ่งตามระดับ HSK 1-9 พร้อมเสียงบรรยายและการแปล</p>
+      </header>
+
+      <!-- แถบเลือกระดับ HSK 1-9 -->
+      <section class="stories-level-bar" id="stories-level-bar">
+        <button class="story-level-chip active" data-level="all">ทั้งหมด</button>
+        <button class="story-level-chip" data-level="1"><span class="lvl-dot lvl-1"></span>HSK 1</button>
+        <button class="story-level-chip" data-level="2"><span class="lvl-dot lvl-2"></span>HSK 2</button>
+        <button class="story-level-chip" data-level="3"><span class="lvl-dot lvl-3"></span>HSK 3</button>
+        <button class="story-level-chip" data-level="4"><span class="lvl-dot lvl-4"></span>HSK 4</button>
+        <button class="story-level-chip" data-level="5"><span class="lvl-dot lvl-5"></span>HSK 5</button>
+        <button class="story-level-chip" data-level="6"><span class="lvl-dot lvl-6"></span>HSK 6</button>
+        <button class="story-level-chip" data-level="7"><span class="lvl-dot lvl-7"></span>HSK 7</button>
+        <button class="story-level-chip" data-level="8"><span class="lvl-dot lvl-8"></span>HSK 8</button>
+        <button class="story-level-chip" data-level="9"><span class="lvl-dot lvl-9"></span>HSK 9</button>
+      </section>
+
+      <!-- รายการการ์ดนิทาน -->
+      <section class="stories-grid" id="stories-grid">
+        <!-- Story cards dynamically generated -->
+      </section>
+    </div>
+  </div>
+
+  <!-- 3. Story Reader Overlay / Modal (Placed at top body level for full-screen fixed overlay) -->
+  <div id="story-reader-modal" class="story-reader-modal">
+    <div class="reader-container">
+      <!-- Top reader navigation bar -->
+      <div class="reader-top-bar">
+        <button class="btn-reader-back" id="btn-reader-back" title="กลับไปคลังนิทาน">
+          ⬅️ กลับ
+        </button>
+        <div class="reader-title-box">
+          <span class="reader-hsk-badge" id="reader-hsk-badge">HSK 1</span>
+          <span class="reader-chapter-title" id="reader-chapter-title">Title</span>
+        </div>
+        <div class="reader-settings-toggles">
+          <button class="reader-toggle-btn active" id="btn-toggle-pinyin" title="เปิด/ปิด พินอิน">拼</button>
+          <button class="reader-toggle-btn active" id="btn-toggle-trans" title="เปิด/ปิด คำแปลอังกฤษ">EN</button>
+        </div>
+      </div>
+
+      <!-- Sticky Audio Player Bar -->
+      <div class="reader-audio-bar" id="reader-audio-bar">
+        <button class="audio-btn-play" id="audio-btn-play" title="เล่น/หยุด">▶️</button>
+        <div class="audio-timeline-wrap">
+          <div class="audio-time-label" id="audio-time-current">0:00</div>
+          <input type="range" class="audio-scrubber" id="audio-scrubber" min="0" max="100" value="0" step="0.5">
+          <div class="audio-time-label" id="audio-time-duration">0:00</div>
+        </div>
+        <button class="audio-speed-btn" id="audio-speed-btn" title="ความเร็วเสียง">1.0x</button>
+      </div>
+
+      <!-- Chapter Selector Pills -->
+      <div class="chapter-nav-row" id="chapter-nav-row">
+        <!-- Chapter pills dynamically rendered -->
+      </div>
+
+      <!-- Reader Story Content -->
+      <main class="reader-content-body" id="reader-content-body">
+        <!-- Sentences and paragraphs rendered here -->
+      </main>
+
+      <!-- Bottom Chapter Pagination Controls -->
+      <div class="reader-footer-nav">
+        <button class="btn btn-secondary" id="btn-reader-prev-chap">⬅️ ตอนก่อนหน้า</button>
+        <button class="btn btn-primary" id="btn-reader-next-chap">ตอนต่อไป ➡️</button>
+      </div>
+    </div>
   </div>
 
   <!-- โหลดฐานข้อมูลคำศัพท์และ Logic ของแอปพลิเคชันแบบโมดูลาร์ -->
-  <script src="js/data.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/data.js?v=7.1.0"></script>
+  <script src="js/stories-data.js?v=7.1.0"></script>
+  <script src="js/story-player.js?v=7.1.0"></script>
+  <script src="js/stories.js?v=7.1.0"></script>
+  <script src="js/app.js?v=7.1.0"></script>
 </body>
 
 </html>

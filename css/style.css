@@ -41,7 +41,7 @@
 
     .game-container {
       width: 100%;
-      max-width: 490px;
+      max-width: 580px;
       background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
@@ -53,6 +53,7 @@
       align-items: center;
       gap: 16px;
       position: relative;
+      transition: max-width 0.3s ease;
     }
 
     /* PWA Install Banner */

@@ -1,0 +1,665 @@
+/* =========================================================
+   HSK Story Library & Interactive Graded Reader Styles
+   ========================================================= */
+
+/* Main Navigation Tabs */
+.main-tabs {
+  display: flex;
+  width: 100%;
+  background: rgba(241, 245, 249, 0.95);
+  padding: 5px;
+  border-radius: 16px;
+  gap: 6px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.main-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.main-tab-btn .tab-icon {
+  font-size: 1.15rem;
+}
+
+.main-tab-btn:hover {
+  color: #1e293b;
+}
+
+.main-tab-btn.active {
+  background: #ffffff;
+  color: #4f46e5;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15), 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+/* App View Switcher */
+.app-view {
+  width: 100%;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.app-view.active {
+  display: flex;
+}
+
+/* Stories View */
+.stories-header {
+  text-align: center;
+  width: 100%;
+}
+
+.stories-header h1 {
+  font-size: 1.6rem;
+  background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+
+.stories-level-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 4px 0 8px 0;
+}
+
+.story-level-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #475569;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.story-level-chip:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.story-level-chip.active {
+  background: #1e293b;
+  color: #ffffff;
+  border-color: #1e293b;
+  box-shadow: 0 4px 10px rgba(30, 41, 59, 0.2);
+}
+
+/* Level Indicator Dots */
+.lvl-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.lvl-1 { background: #16a34a; }
+.lvl-2 { background: #0d9488; }
+.lvl-3 { background: #0284c7; }
+.lvl-4 { background: #ca8a04; }
+.lvl-5 { background: #ea580c; }
+.lvl-6 { background: #dc2626; }
+.lvl-7 { background: #db2777; }
+.lvl-8 { background: #c026d3; }
+.lvl-9 { background: #7c3aed; }
+
+/* Stories Grid */
+.stories-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  width: 100%;
+}
+
+.story-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 18px 18px 16px 18px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  border-left-width: 5px;
+}
+
+.story-card:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+  border-color: rgba(99, 102, 241, 0.3);
+}
+
+.story-card:active {
+  transform: scale(0.98);
+}
+
+.story-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.story-badge-level {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.story-badge-level.hsk-1 { background: #dcfce7; color: #15803d; }
+.story-badge-level.hsk-2 { background: #ccfbf1; color: #0f766e; }
+.story-badge-level.hsk-3 { background: #e0f2fe; color: #0369a1; }
+.story-badge-level.hsk-4 { background: #fef9c3; color: #a16207; }
+.story-badge-level.hsk-5 { background: #ffedd5; color: #c2410c; }
+.story-badge-level.hsk-6 { background: #fee2e2; color: #b91c1c; }
+.story-badge-level.hsk-7 { background: #fce7f3; color: #be185d; }
+.story-badge-level.hsk-8 { background: #fae8ff; color: #a21caf; }
+.story-badge-level.hsk-9 { background: #ede9fe; color: #6d28d9; }
+
+.story-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.story-card-title-zh {
+  font-family: 'Ma Shan Zheng', 'Kanit', sans-serif;
+  font-size: 1.45rem;
+  color: #1e293b;
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+
+.story-card-title-en {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+.story-card-synopsis {
+  font-size: 0.84rem;
+  color: #64748b;
+  line-height: 1.45;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.story-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.story-card-chapters-count {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.story-card-action {
+  color: #4f46e5;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Read / Completed Badges */
+.story-badge-read {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.story-badge-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.chap-nav-chip.read {
+  border-color: #86efac;
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.chap-nav-chip.read.active {
+  background: #16a34a;
+  border-color: #16a34a;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
+}
+
+/* =========================================================
+   Interactive Story Reader Overlay
+   ========================================================= */
+.story-reader-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 99999;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  box-sizing: border-box;
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.story-reader-modal.open {
+  display: flex !important;
+}
+
+.reader-container {
+  width: 100%;
+  max-width: 720px;
+  height: 90vh;
+  max-height: 92vh;
+  max-height: 92dvh;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  z-index: 100000;
+}
+
+/* Reader Top Bar */
+.reader-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #ffffff;
+  z-index: 10;
+}
+
+.btn-reader-back {
+  background: #f1f5f9;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-reader-back:hover {
+  background: #e2e8f0;
+}
+
+.reader-title-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  max-width: 60%;
+  text-align: center;
+}
+
+.reader-hsk-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  background: #ede9fe;
+  color: #6366f1;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.reader-chapter-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.reader-settings-toggles {
+  display: flex;
+  gap: 6px;
+}
+
+.reader-toggle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.reader-toggle-btn.active {
+  background: #4f46e5;
+  color: #ffffff;
+  border-color: #4f46e5;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);
+}
+
+/* Sticky Audio Player Bar */
+.reader-audio-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.audio-btn-play {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #4f46e5;
+  color: #ffffff;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+  transition: transform 0.15s ease;
+}
+
+.audio-btn-play:active {
+  transform: scale(0.92);
+}
+
+.audio-timeline-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.audio-time-label {
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+  color: #64748b;
+  font-weight: 600;
+  min-width: 32px;
+}
+
+.audio-scrubber {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: #e2e8f0;
+  outline: none;
+  cursor: pointer;
+}
+
+.audio-scrubber::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #4f46e5;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.audio-speed-btn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #334155;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Chapter Selector Navigation Row */
+.chapter-nav-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 18px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #ffffff;
+}
+
+.chap-nav-chip {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  color: #475569;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1.3;
+}
+
+.chap-nav-chip:hover:not(.active) {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #1e293b;
+}
+
+.chap-nav-chip.active {
+  background: #4f46e5;
+  color: #ffffff;
+  border-color: #4f46e5;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+}
+
+/* Story Content Body */
+.reader-content-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 22px;
+  font-size: 1.15rem;
+  line-height: 2.2;
+  color: #1e293b;
+  -webkit-overflow-scrolling: touch;
+}
+
+.story-para {
+  margin-bottom: 22px;
+}
+
+/* Sentence Block */
+.story-sentence {
+  display: inline;
+  padding: 3px 6px;
+  margin: 0 1px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.15s ease;
+  position: relative;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.story-sentence:hover {
+  background: rgba(99, 102, 241, 0.08);
+}
+
+/* Active Highlight when audio player or TTS is currently reading */
+.story-sentence.reading-active,
+.story-sentence.speaking {
+  background: rgba(254, 240, 138, 0.55); /* Warm luminous yellow-amber highlight */
+  box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.6), 0 2px 8px rgba(234, 179, 8, 0.2);
+  border-radius: 6px;
+}
+
+/* Word level highlight during SpeechSynthesis boundary */
+.story-sentence .reading-word-active {
+  background: rgba(249, 115, 22, 0.28);
+  border-radius: 4px;
+  box-shadow: 0 0 0 1.5px rgba(249, 115, 22, 0.7);
+  transition: background-color 0.1s ease;
+}
+
+/* Dark mode / vibrant reader support */
+@media (prefers-color-scheme: dark) {
+  .story-sentence.reading-active,
+  .story-sentence.speaking {
+    background: rgba(234, 179, 8, 0.25);
+    box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.7), 0 2px 10px rgba(250, 204, 21, 0.2);
+  }
+}
+
+/* Chinese Ruby Pinyin Annotation */
+ruby {
+  ruby-position: over;
+  display: inline-ruby;
+  text-align: center;
+  margin: 0 1px;
+}
+
+rt {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.65em;
+  line-height: 1;
+  color: #6366f1;
+  user-select: none;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+/* Hide Pinyin Mode */
+.hide-pinyin rt {
+  display: none;
+}
+
+/* English Sentence Translation Dropdown/Block */
+.sentence-trans-block {
+  display: block;
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.5;
+  background: #f8fafc;
+  border-left: 3px solid #6366f1;
+  padding: 6px 12px;
+  border-radius: 0 8px 8px 0;
+  margin: 8px 0 14px 0;
+  transition: all 0.2s ease;
+}
+
+.hide-trans .sentence-trans-block {
+  display: none;
+}
+
+/* Reader Footer Navigation */
+.reader-footer-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-top: 1px solid #f1f5f9;
+  background: #ffffff;
+}
+
+.reader-footer-nav .btn {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 640px) {
+  .reader-container {
+    max-height: 98vh;
+    max-height: 98dvh;
+    border-radius: 20px;
+  }
+  .reader-content-body {
+    padding: 18px 14px;
+    font-size: 1.05rem;
+    line-height: 2.1;
+  }
+  .story-card-title-zh {
+    font-size: 1.3rem;
+  }
+}
