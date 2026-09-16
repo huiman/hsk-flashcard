@@ -27,7 +27,7 @@
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
 
   <!-- โหลดสไตล์แยกโมดูล -->
-  <link rel="stylesheet" href="css/style.css?v=7.9.0">
+  <link rel="stylesheet" href="css/style.css?v=8.0.1">
   <link rel="stylesheet" href="css/stories.css?v=7.9.0">
 </head>
 <body>
@@ -61,16 +61,18 @@
     <!-- หน้า Flashcards View -->
     <div id="view-flashcard" class="app-view active">
       <header>
-        <h1>🀄 HSK 1-4 Flashcards</h1>
+        <h1>🀄 HSK 1-5 Flashcards</h1>
       <p class="subtitle">แตะการ์ดเพื่อดูคำแปลและพินอิน</p>
     </header>
 
-    <!-- ตัวเลือกระดับ HSK -->
+    <!-- ตัวเลือกระดับ HSK (รูปแบบเดียวกับแถบเลือกระดับนิทาน Story) -->
     <section class="level-selector" id="level-selector">
-      <button class="level-chip active" data-level="HSK 1">HSK 1</button>
-      <button class="level-chip active" data-level="HSK 2">HSK 2</button>
-      <button class="level-chip" data-level="HSK 3">HSK 3</button>
-      <button class="level-chip" data-level="HSK 4">HSK 4</button>
+      <button class="level-chip" data-level="all">ทั้งหมด</button>
+      <button class="level-chip active" data-level="HSK 1"><span class="lvl-dot lvl-1"></span>HSK 1</button>
+      <button class="level-chip" data-level="HSK 2"><span class="lvl-dot lvl-2"></span>HSK 2</button>
+      <button class="level-chip" data-level="HSK 3"><span class="lvl-dot lvl-3"></span>HSK 3</button>
+      <button class="level-chip" data-level="HSK 4"><span class="lvl-dot lvl-4"></span>HSK 4</button>
+      <button class="level-chip" data-level="HSK 5"><span class="lvl-dot lvl-5"></span>HSK 5</button>
     </section>
 
     <!-- แถบตั้งค่า: อ่านอัตโนมัติ + อ่านวนซ้ำ Loop -->
@@ -264,11 +266,11 @@
   </div>
 
   <!-- โหลดฐานข้อมูลคำศัพท์และ Logic ของแอปพลิเคชันแบบโมดูลาร์ -->
-  <script src="js/data.js?v=7.9.0"></script>
-  <script src="js/stories-data.js?v=7.9.0"></script>
-  <script src="js/story-player.js?v=7.9.0"></script>
-  <script src="js/stories.js?v=7.9.0"></script>
-  <script src="js/app.js?v=7.9.0"></script>
+  <script src="js/data.js?v=8.0.1"></script>
+  <script src="js/stories-data.js?v=8.0.1"></script>
+  <script src="js/story-player.js?v=8.0.1"></script>
+  <script src="js/stories.js?v=8.0.1"></script>
+  <script src="js/app.js?v=8.0.1"></script>
 </body>
 
 </html>

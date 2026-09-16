@@ -142,39 +142,55 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
       width: 100%;
+      padding: 4px 0 8px 0;
     }
 
     .level-chip {
-      flex: 1;
-      min-width: 68px;
-      padding: 9px 8px;
-      border: 1.5px solid #e2e8f0;
-      background: #f8fafc;
-      color: #64748b;
-      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      color: #475569;
+      border-radius: 9999px;
       font-family: inherit;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
       text-align: center;
     }
 
-    .level-chip.active {
-      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
-      border-color: #4f46e5;
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
-      transform: translateY(-1px);
+    .level-chip:hover {
+      border-color: #cbd5e1;
+      background: #f8fafc;
     }
 
-    .level-chip:hover:not(.active) {
-      background: #edf2f7;
-      border-color: #cbd5e1;
-      color: #334155;
+    .level-chip.active {
+      background: #1e293b;
+      color: #ffffff;
+      border-color: #1e293b;
+      box-shadow: 0 4px 10px rgba(30, 41, 59, 0.2);
     }
+
+    /* Level Indicator Dots */
+    .lvl-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .lvl-1 { background: #16a34a; }
+    .lvl-2 { background: #0d9488; }
+    .lvl-3 { background: #0284c7; }
+    .lvl-4 { background: #ca8a04; }
+    .lvl-5 { background: #ea580c; }
 
     /* Settings Toggle Switch */
     .settings-container {
@@ -726,15 +742,23 @@
     }
 
     [data-theme="dark"] .level-chip {
-      background: #1c1c24;
-      border-color: rgba(255, 255, 255, 0.12);
-      color: #9ca3af;
+      background: #1e293b;
+      border-color: #334155;
+      color: #94a3b8;
+      box-shadow: none;
     }
 
     [data-theme="dark"] .level-chip:hover:not(.active) {
-      background: #272733;
-      color: #f3f4f6;
-      border-color: rgba(255, 255, 255, 0.2);
+      background: #334155;
+      color: #f8fafc;
+      border-color: #475569;
+    }
+
+    [data-theme="dark"] .level-chip.active {
+      background: #6366f1;
+      border-color: #6366f1;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
     }
 
     [data-theme="dark"] .settings-bar {

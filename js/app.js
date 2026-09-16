@@ -9,7 +9,7 @@
       LEVELS: "hsk_selected_levels"
     };
 
-    const ALL_LEVELS = ["HSK 1", "HSK 2", "HSK 3", "HSK 4"];
+    const ALL_LEVELS = ["HSK 1", "HSK 2", "HSK 3", "HSK 4", "HSK 5"];
 
     let knownIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.KNOWN_IDS)) || [];
     let score = parseInt(localStorage.getItem(STORAGE_KEYS.SCORE), 10) || 0;
@@ -17,7 +17,10 @@
     let isAudioLoop = localStorage.getItem(STORAGE_KEYS.LOOP) !== null 
       ? localStorage.getItem(STORAGE_KEYS.LOOP) === "true" 
       : true;
-    let selectedLevels = JSON.parse(localStorage.getItem(STORAGE_KEYS.LEVELS)) || ["HSK 1", "HSK 2"];
+    let storedLevels = JSON.parse(localStorage.getItem(STORAGE_KEYS.LEVELS));
+    let selectedLevels = Array.isArray(storedLevels) && storedLevels.length > 0 
+      ? storedLevels 
+      : ["HSK 1"];
     
     let currentCard = null;
     let historyCards = [];
@@ -65,9 +68,19 @@
     toggleAutoplay.checked = isAutoplay;
     if (toggleLoop) toggleLoop.checked = isAudioLoop;
 
-    levelChips.forEach(chip => {
-      chip.classList.toggle("active", selectedLevels.includes(chip.dataset.level));
-    });
+    function updateLevelChipsUI() {
+      const isAll = selectedLevels.includes("all") || selectedLevels.length === ALL_LEVELS.length;
+      levelChips.forEach(chip => {
+        const lvl = chip.dataset.level;
+        if (lvl === "all") {
+          chip.classList.toggle("active", isAll);
+        } else {
+          chip.classList.toggle("active", !isAll && selectedLevels.includes(lvl));
+        }
+      });
+    }
+
+    updateLevelChipsUI();
 
     /**
      * 3. Logic ฟังก์ชัน
@@ -81,6 +94,9 @@
     }
 
     function getFilteredData() {
+      if (selectedLevels.includes("all") || selectedLevels.length === ALL_LEVELS.length) {
+        return HSK_DATA;
+      }
       return HSK_DATA.filter(item => selectedLevels.includes(item.level));
     }
 
@@ -431,57 +447,6 @@
       saveState();
       if (isAutoplay && currentCard) {
         playAudio(currentCard.hanzi, isAudioLoop);
-      } else if (!isAudioLoop) {
-        stopAudio();
-      }
-    });
-
-    if (toggleLoop) {
-      toggleLoop.addEventListener("change", (e) => {
-        isAudioLoop = e.target.checked;
-        saveState();
-        if (isAudioLoop && currentCard) {
-          playAudio(currentCard.hanzi, true);
-        } else {
-          stopAudio();
-        }
-      });
-    }
-
-    levelChips.forEach(chip => {
-      chip.addEventListener("click", () => {
-        const level = chip.dataset.level;
-        const isActive = chip.classList.contains("active");
-
-        if (isActive && selectedLevels.length === 1) return;
-
-        if (isActive) {
-          selectedLevels = selectedLevels.filter(l => l !== level);
-          chip.classList.remove("active");
-        } else {
-          selectedLevels.push(level);
-          chip.classList.add("active");
-        }
-
-        historyCards = [];
-        historyIndex = -1;
-        saveState();
-        renderCard();
-      });
-    });
-
-    /**
-     * 5. Mobile Touch Gesture Controls
-     *    - ปัดจากขวาไปซ้าย (Swipe Right to Left) ➔ สุ่มคำต่อไป
-     *    - ปัดจากซ้ายไปขวา (Swipe Left to Right) ➔ คำก่อนหน้า
-     *    - แตะ 1 ครั้ง ➔ พลิกการ์ด (Single Tap)
-     *    - แตะ 2 ครั้ง ➔ จำได้แล้ว (Double Tap = markAsKnown)
-     */
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let touchStartTime = 0;
-
-    const cardSceneEl = document.querySelector(".card-scene") || cardEl;
 
     cardSceneEl.addEventListener("touchstart", (e) => {
       const touch = e.touches[0];
