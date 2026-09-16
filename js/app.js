@@ -9,7 +9,7 @@
       LEVELS: "hsk_selected_levels"
     };
 
-    const ALL_LEVELS = ["HSK 1", "HSK 2", "HSK 3", "HSK 4", "HSK 5", "HSK 6"];
+    const ALL_LEVELS = ["HSK 1", "HSK 2", "HSK 3", "HSK 4", "HSK 5", "HSK 6", "HSK 7"];
 
     let knownIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.KNOWN_IDS)) || [];
     let score = parseInt(localStorage.getItem(STORAGE_KEYS.SCORE), 10) || 0;
