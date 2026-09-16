@@ -69,13 +69,13 @@
     if (toggleLoop) toggleLoop.checked = isAudioLoop;
 
     function updateLevelChipsUI() {
-      const isAll = selectedLevels.includes("all") || selectedLevels.length === ALL_LEVELS.length;
+      const isAll = ALL_LEVELS.every(lvl => selectedLevels.includes(lvl)) || selectedLevels.includes("all");
       levelChips.forEach(chip => {
         const lvl = chip.dataset.level;
         if (lvl === "all") {
           chip.classList.toggle("active", isAll);
         } else {
-          chip.classList.toggle("active", !isAll && selectedLevels.includes(lvl));
+          chip.classList.toggle("active", selectedLevels.includes(lvl) || isAll);
         }
       });
     }
@@ -447,6 +447,85 @@
       saveState();
       if (isAutoplay && currentCard) {
         playAudio(currentCard.hanzi, isAudioLoop);
+        stopAudio();
+      }
+    });
+
+    if (toggleLoop) {
+      toggleLoop.addEventListener("change", (e) => {
+        isAudioLoop = e.target.checked;
+        saveState();
+        if (isAudioLoop && currentCard) {
+          playAudio(currentCard.hanzi, true);
+        } else {
+          stopAudio();
+        }
+      });
+    }
+
+    levelChips.forEach(chip => {
+      chip.addEventListener("click", () => {
+        const level = chip.dataset.level;
+
+        if (level === "all") {
+          // If already all selected, toggle back to only HSK 1
+          if (ALL_LEVELS.every(l => selectedLevels.includes(l))) {
+            selectedLevels = ["HSK 1"];
+          } else {
+            selectedLevels = [...ALL_LEVELS];
+          }
+        } else {
+          if (selectedLevels.includes("all")) {
+            selectedLevels = [...ALL_LEVELS];
+          }
+
+          if (selectedLevels.includes(level)) {
+            // Uncheck if more than 1 level is active
+            if (selectedLevels.length > 1) {
+              selectedLevels = selectedLevels.filter(l => l !== level);
+            }
+          } else {
+            // Add level for multi-select (e.g. HSK 2 + 3, 4 + 5 + 1)
+            selectedLevels.push(level);
+          }
+        }
+
+        updateLevelChipsUI();
+        historyCards = [];
+        historyIndex = -1;
+        saveState();
+        renderCard();
+      });
+
+      // Double-click / Double-tap to quickly isolate and select ONLY this single level
+      chip.addEventListener("dblclick", (e) => {
+        e.preventDefault();
+        const level = chip.dataset.level;
+        if (level === "all") {
+          selectedLevels = [...ALL_LEVELS];
+        } else {
+          selectedLevels = [level];
+        }
+        updateLevelChipsUI();
+        historyCards = [];
+        historyIndex = -1;
+        saveState();
+        renderCard();
+      });
+    });
+
+    /**
+     * 5. Mobile Touch Gesture Controls
+     *    - ปัดจากขวาไปซ้าย (Swipe Right to Left) ➔ สุ่มคำต่อไป
+     *    - ปัดจากซ้ายไปขวา (Swipe Left to Right) ➔ คำก่อนหน้า
+     *    - แตะ 1 ครั้ง ➔ พลิกการ์ด (Single Tap)
+     *    - แตะ 2 ครั้ง ➔ จำได้แล้ว (Double Tap = markAsKnown)
+     */
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+
+    const cardSceneEl = document.querySelector(".card-scene") || cardEl;
 
     cardSceneEl.addEventListener("touchstart", (e) => {
       const touch = e.touches[0];
