@@ -5341,7 +5341,7 @@ const HSK_DATA = [
       { id: 5334, hanzi: "默默", pinyin: "mò mò", meaning: "เงียบๆ ไม่เอื้อนเอ่ย / นิ่งเงียบ", meaning_en: "in silence; not speaking", level: "HSK 6" },
       { id: 5335, hanzi: "鼓舞", pinyin: "gǔ wǔ", meaning: "ปลุกขวัญกำลังใจ / ส่งเสริมผลักดัน", meaning_en: "to inspire; to encourage; to hearten; to boost (morale)", level: "HSK 6" },
       { id: 5336, hanzi: "齐全", pinyin: "qí quán", meaning: "ครบถ้วนสมบูรณ์ / ครบครันทุกอย่าง", meaning_en: "complete; comprehensive", level: "HSK 6" },
-      // HSK 7 (5562 words - Official HSK 3.0 PDF Exact Order)
+      // HSK 7 & HSK 8 (5562 words - Official HSK 3.0 PDF Exact Order - Shared HSK 7-9 Band)
       { id: 5337, hanzi: "一丝不苟", pinyin: "yī sī bù gǒu", meaning: "พิถีพิถันรอบคอบ / ละเอียดถี่ถ้วนไม่บกพร่อง", meaning_en: "not one thread loose (idiom); strictly according to the rules; meticulous; not one hair out of place", level: "HSK 7" },
       { id: 5338, hanzi: "一举", pinyin: "yī jǔ", meaning: "การกระทำเพียงครั้งเดียว / ก้าวเดียว", meaning_en: "a move; an action; in one move", level: "HSK 7" },
       { id: 5339, hanzi: "一举一动", pinyin: "yī jǔ yī dòng", meaning: "ทุกการเคลื่อนไหว / ทุกกิริยาท่าทาง", meaning_en: "(idiom) every movement; each and every move", level: "HSK 7" },

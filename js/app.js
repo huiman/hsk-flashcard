@@ -9,7 +9,7 @@
       LEVELS: "hsk_selected_levels"
     };
 
-    const ALL_LEVELS = ["HSK 1", "HSK 2", "HSK 3", "HSK 4", "HSK 5", "HSK 6", "HSK 7"];
+    const ALL_LEVELS = ["HSK 1", "HSK 2", "HSK 3", "HSK 4", "HSK 5", "HSK 6", "HSK 7", "HSK 8"];
 
     let knownIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.KNOWN_IDS)) || [];
     let score = parseInt(localStorage.getItem(STORAGE_KEYS.SCORE), 10) || 0;
@@ -97,7 +97,17 @@
       if (selectedLevels.includes("all") || selectedLevels.length === ALL_LEVELS.length) {
         return HSK_DATA;
       }
-      return HSK_DATA.filter(item => selectedLevels.includes(item.level));
+      const hasHsk7 = selectedLevels.includes("HSK 7");
+      const hasHsk8 = selectedLevels.includes("HSK 8");
+      const standardLevels = selectedLevels.filter(lvl => lvl !== "HSK 7" && lvl !== "HSK 8");
+
+      return HSK_DATA.filter(item => {
+        if (standardLevels.includes(item.level)) return true;
+        if ((hasHsk7 || hasHsk8) && (item.level === "HSK 7" || item.level === "HSK 8" || item.level === "HSK 7-8" || item.level === "HSK 7-9")) {
+          return true;
+        }
+        return false;
+      });
     }
 
     function updateStats() {
@@ -326,7 +336,17 @@
           meaningEnEl.textContent = currentCard.meaning_en || "";
           meaningEnEl.style.display = currentCard.meaning_en ? "inline-flex" : "none";
         }
-        levelEl.textContent = currentCard.level;
+        if (currentCard.level === "HSK 7" || currentCard.level === "HSK 8" || currentCard.level === "HSK 7-8" || currentCard.level === "HSK 7-9") {
+          if (selectedLevels.includes("HSK 8") && !selectedLevels.includes("HSK 7")) {
+            levelEl.textContent = "HSK 8";
+          } else if (selectedLevels.includes("HSK 7") && !selectedLevels.includes("HSK 8")) {
+            levelEl.textContent = "HSK 7";
+          } else {
+            levelEl.textContent = "HSK 7-8";
+          }
+        } else {
+          levelEl.textContent = currentCard.level;
+        }
 
         // เริ่มเล่นแอนิเมชันลำดับขีดแบบวนซ้ำ (Stroke Loop)
         playStrokeOrderSequential(0, currentCard.hanzi);
