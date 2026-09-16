@@ -9,7 +9,7 @@
       LEVELS: "hsk_selected_levels"
     };
 
-    const ALL_LEVELS = ["HSK 1", "HSK 2", "HSK 3", "HSK 4", "HSK 5", "HSK 6", "HSK 7", "HSK 8"];
+    const ALL_LEVELS = ["HSK 1", "HSK 2", "HSK 3", "HSK 4", "HSK 5", "HSK 6", "HSK 7", "HSK 8", "HSK 9"];
 
     let knownIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.KNOWN_IDS)) || [];
     let score = parseInt(localStorage.getItem(STORAGE_KEYS.SCORE), 10) || 0;
@@ -99,11 +99,12 @@
       }
       const hasHsk7 = selectedLevels.includes("HSK 7");
       const hasHsk8 = selectedLevels.includes("HSK 8");
-      const standardLevels = selectedLevels.filter(lvl => lvl !== "HSK 7" && lvl !== "HSK 8");
+      const hasHsk9 = selectedLevels.includes("HSK 9");
+      const standardLevels = selectedLevels.filter(lvl => lvl !== "HSK 7" && lvl !== "HSK 8" && lvl !== "HSK 9");
 
       return HSK_DATA.filter(item => {
         if (standardLevels.includes(item.level)) return true;
-        if ((hasHsk7 || hasHsk8) && (item.level === "HSK 7" || item.level === "HSK 8" || item.level === "HSK 7-8" || item.level === "HSK 7-9")) {
+        if ((hasHsk7 || hasHsk8 || hasHsk9) && (item.level === "HSK 7" || item.level === "HSK 8" || item.level === "HSK 9" || item.level === "HSK 7-8" || item.level === "HSK 7-9")) {
           return true;
         }
         return false;
@@ -336,13 +337,20 @@
           meaningEnEl.textContent = currentCard.meaning_en || "";
           meaningEnEl.style.display = currentCard.meaning_en ? "inline-flex" : "none";
         }
-        if (currentCard.level === "HSK 7" || currentCard.level === "HSK 8" || currentCard.level === "HSK 7-8" || currentCard.level === "HSK 7-9") {
-          if (selectedLevels.includes("HSK 8") && !selectedLevels.includes("HSK 7")) {
-            levelEl.textContent = "HSK 8";
-          } else if (selectedLevels.includes("HSK 7") && !selectedLevels.includes("HSK 8")) {
-            levelEl.textContent = "HSK 7";
+        if (currentCard.level === "HSK 7" || currentCard.level === "HSK 8" || currentCard.level === "HSK 9" || currentCard.level === "HSK 7-8" || currentCard.level === "HSK 7-9") {
+          const advSelected = ["HSK 7", "HSK 8", "HSK 9"].filter(lvl => selectedLevels.includes(lvl));
+          if (advSelected.length === 1) {
+            levelEl.textContent = advSelected[0];
+          } else if (advSelected.length === 2) {
+            if (advSelected.includes("HSK 7") && advSelected.includes("HSK 8")) {
+              levelEl.textContent = "HSK 7-8";
+            } else if (advSelected.includes("HSK 8") && advSelected.includes("HSK 9")) {
+              levelEl.textContent = "HSK 8-9";
+            } else {
+              levelEl.textContent = "HSK 7, 9";
+            }
           } else {
-            levelEl.textContent = "HSK 7-8";
+            levelEl.textContent = "HSK 7-9";
           }
         } else {
           levelEl.textContent = currentCard.level;

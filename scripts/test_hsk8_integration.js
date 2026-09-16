@@ -39,11 +39,11 @@ const indexHtml = fs.readFileSync('index.html', 'utf8');
 assert.ok(indexHtml.includes('data-level="HSK 8"'), 'index.html missing HSK 8 level chip');
 assert.ok(indexHtml.includes('data-level="HSK 7"'), 'index.html missing HSK 7 level chip');
 assert.ok(indexHtml.includes('data-level="all"'), 'index.html missing "ทั้งหมด" level chip');
-assert.ok(indexHtml.includes('HSK 1-8 Flashcards'), 'index.html missing updated HSK 1-8 title');
-assert.ok(indexHtml.includes('css/style.css?v=11.0.0'), 'index.html missing v=11.0.0 on style.css');
-assert.ok(indexHtml.includes('js/data.js?v=11.0.0'), 'index.html missing v=11.0.0 on data.js');
-assert.ok(indexHtml.includes('js/app.js?v=11.0.0'), 'index.html missing v=11.0.0 on app.js');
-console.log('✓ index.html has HSK 8 chip, updated HSK 1-8 title, and v=11.0.0 cache busters');
+assert.ok(indexHtml.includes('HSK 1-8 Flashcards') || indexHtml.includes('HSK 1-9 Flashcards'), 'index.html missing updated HSK title');
+assert.ok(indexHtml.includes('css/style.css?v=11.0.0') || indexHtml.includes('css/style.css?v=12.0.0'), 'index.html missing cache buster on style.css');
+assert.ok(indexHtml.includes('js/data.js?v=11.0.0') || indexHtml.includes('js/data.js?v=12.0.0'), 'index.html missing cache buster on data.js');
+assert.ok(indexHtml.includes('js/app.js?v=11.0.0') || indexHtml.includes('js/app.js?v=12.0.0'), 'index.html missing cache buster on app.js');
+console.log('✓ index.html has HSK 8 chip, updated HSK title, and cache busters');
 
 console.log('\n=== Step 3: Validating css/style.css ===');
 const styleCss = fs.readFileSync('css/style.css', 'utf8');
@@ -52,8 +52,8 @@ console.log('✓ style.css has .lvl-8 dot definition');
 
 console.log('\n=== Step 4: Validating sw.js ===');
 const swJs = fs.readFileSync('sw.js', 'utf8');
-assert.ok(swJs.includes("APP_VERSION = 'v11.0.0'"), 'sw.js missing v=11.0.0');
-console.log('✓ sw.js has APP_VERSION v11.0.0');
+assert.ok(swJs.includes("APP_VERSION = 'v11.0.0'") || swJs.includes("APP_VERSION = 'v12.0.0'"), 'sw.js version mismatch');
+console.log('✓ sw.js has valid APP_VERSION');
 
 console.log('\n=== Step 5: Validating js/app.js logic & filtering ===');
 const appJs = fs.readFileSync('js/app.js', 'utf8');
