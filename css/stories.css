@@ -127,12 +127,15 @@
 }
 
 .stories-header h1 {
-  font-size: 1.6rem;
-  background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  letter-spacing: -0.5px;
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1.25;
 }
 
 .stories-level-bar {
@@ -141,30 +144,37 @@
   justify-content: center;
   gap: 6px;
   width: 100%;
-  padding: 4px 0 8px 0;
+  padding: 2px 0 6px 0;
 }
 
 .story-level-chip {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 6px 13px;
   border-radius: 9999px;
   border: 1px solid #e2e8f0;
   background: #ffffff;
   color: #475569;
   font-family: inherit;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .story-level-chip:hover {
   border-color: #cbd5e1;
   background: #f8fafc;
+  transform: translateY(-1px);
+}
+
+.story-level-chip:active {
+  transform: translateY(0);
 }
 
 .story-level-chip.active {
@@ -1023,20 +1033,27 @@ rt {
   color: #9ca3af;
 }
 
-[data-theme="dark"] .story-level-chip {
-  background: #1e1e28;
-  border-color: rgba(255, 255, 255, 0.1);
-  color: #9ca3af;
-}
-
-[data-theme="dark"] .story-level-chip:hover {
-  background: #272733;
+[data-theme="dark"] .stories-header h1 {
   color: #f3f4f6;
 }
 
+[data-theme="dark"] .story-level-chip {
+  background: #1e1e28;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .story-level-chip:hover:not(.active) {
+  background: #272733;
+  color: #f8fafc;
+  border-color: #475569;
+}
+
 [data-theme="dark"] .story-level-chip.active {
-  background: #4f46e5;
+  background: #6366f1;
+  border-color: #6366f1;
   color: #ffffff;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
 }
 
 /* Reader Modal Dark Mode (Matches HSKStory Screenshot) */

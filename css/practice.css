@@ -22,13 +22,15 @@
 }
 
 .practice-header h1 {
-  font-size: 1.75rem;
+  font-size: 1.65rem;
   font-weight: 700;
   color: #0f172a;
+  letter-spacing: -0.02em;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  line-height: 1.25;
 }
 
 /* Practice Stats Dashboard (Counts & Progress) */
@@ -161,22 +163,31 @@
 .practice-level-chip {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 5px 12px;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 13px;
   border: 1px solid #e2e8f0;
   background: #ffffff;
   color: #475569;
   border-radius: 9999px;
   font-family: inherit;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .practice-level-chip:hover {
   background: #f8fafc;
   border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.practice-level-chip:active {
+  transform: translateY(0);
 }
 
 .practice-level-chip.active {
@@ -829,17 +840,20 @@
 [data-theme="dark"] .practice-level-chip {
   background: #1e293b;
   border-color: #334155;
-  color: #cbd5e1;
+  color: #94a3b8;
 }
 
-[data-theme="dark"] .practice-level-chip:hover {
+[data-theme="dark"] .practice-level-chip:hover:not(.active) {
   background: #334155;
+  color: #f8fafc;
+  border-color: #475569;
 }
 
 [data-theme="dark"] .practice-level-chip.active {
-  background: #4f46e5;
-  border-color: #4f46e5;
+  background: #6366f1;
+  border-color: #6366f1;
   color: #ffffff;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
 }
 
 [data-theme="dark"] .practice-card-wrap {

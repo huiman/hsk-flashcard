@@ -117,10 +117,11 @@
 
     header {
       text-align: center;
+      width: 100%;
     }
 
     header h1 {
-      font-size: 1.85rem;
+      font-size: 1.65rem;
       font-weight: 700;
       color: #0f172a;
       letter-spacing: -0.02em;
@@ -128,13 +129,15 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
+      line-height: 1.25;
     }
 
     .subtitle {
-      font-size: 0.88rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
-      margin-top: 2px;
+      margin-top: 4px;
       font-weight: 400;
+      line-height: 1.4;
     }
 
     /* ตัวเลือกระดับ HSK */
@@ -144,7 +147,7 @@
       justify-content: center;
       gap: 6px;
       width: 100%;
-      padding: 4px 0 8px 0;
+      padding: 2px 0 6px 0;
     }
 
     .level-chip {
@@ -152,7 +155,7 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      padding: 6px 14px;
+      padding: 6px 13px;
       border: 1px solid #e2e8f0;
       background: #ffffff;
       color: #475569;
@@ -162,14 +165,20 @@
       font-weight: 600;
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
       text-align: center;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .level-chip:hover {
       border-color: #cbd5e1;
       background: #f8fafc;
+      transform: translateY(-1px);
+    }
+
+    .level-chip:active {
+      transform: translateY(0);
     }
 
     .level-chip.active {
@@ -613,13 +622,21 @@
       transform: scale(0.98);
     }
 
-    /* ซ่อนแผงปุ่มควบคุมด้านล่างเมื่อเปิดบนมือถือ (หน้าจอกว้างไม่เกิน 640px) */
+    /* ปรับแต่งแผงปุ่มควบคุมด้านล่างสำหรับมือถือ (หน้าจอกว้างไม่เกิน 640px) */
     @media (max-width: 640px) {
       .controls {
-        display: none !important;
+        gap: 8px;
+        margin-top: 4px;
+      }
+      .controls .btn {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+      }
+      .controls-row {
+        gap: 8px;
       }
       .game-container {
-        padding-bottom: 22px;
+        padding-bottom: 24px;
         gap: 14px;
       }
       .card-scene {
