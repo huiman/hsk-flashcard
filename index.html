@@ -27,9 +27,9 @@
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
 
   <!-- โหลดสไตล์แยกโมดูล -->
-  <link rel="stylesheet" href="css/style.css?v=13.3.0">
-  <link rel="stylesheet" href="css/stories.css?v=13.3.0">
-  <link rel="stylesheet" href="css/practice.css?v=13.3.0">
+  <link rel="stylesheet" href="css/style.css?v=13.4.0">
+  <link rel="stylesheet" href="css/stories.css?v=13.4.0">
+  <link rel="stylesheet" href="css/practice.css?v=13.4.0">
 </head>
 <body>
 
@@ -46,21 +46,14 @@
       </div>
     </div>
 
-    <!-- แถบสลับแท็บหลัก -->
-    <div style="display:flex;width:100%;align-items:center;gap:8px;">
-      <nav class="main-tabs" id="main-tabs" style="flex:1;">
-        <button class="main-tab-btn active" id="tab-flashcard" data-view="flashcard">
-          <span class="tab-icon">🀄</span> บัตรคำ (Cards)
-        </button>
-        <button class="main-tab-btn" id="tab-stories" data-view="stories">
-          <span class="tab-icon">📖</span> นิทาน (Stories)
-        </button>
-        <button class="main-tab-btn" id="tab-practice" data-view="practice">
-          <span class="tab-icon">✍️</span> ฝึกคัด (Write)
-        </button>
-      </nav>
+    <!-- แถบด้านบน: โลโก้/ชื่อแอป และ ปุ่มสลับธีม -->
+    <header class="app-top-bar">
+      <div class="app-brand">
+        <span class="brand-badge">HSK 1-9</span>
+        <span class="brand-title">Flashcards & Stories</span>
+      </div>
       <button class="theme-toggle-btn" id="btn-global-theme" title="สลับธีม สว่าง / มืด">🌓</button>
-    </div>
+    </header>
 
     <!-- หน้า Flashcards View -->
     <div id="view-flashcard" class="app-view active">
@@ -379,6 +372,22 @@
         </div>
       </div>
     </div>
+
+    <!-- แถบเมนูด้านล่าง (Bottom Navigation Bar) -->
+    <nav class="main-tabs" id="main-tabs" aria-label="เมนูหลัก">
+      <button class="main-tab-btn active" id="tab-flashcard" data-view="flashcard" title="บัตรคำ Flashcards">
+        <span class="tab-icon">🀄</span>
+        <span class="tab-label">บัตรคำ (Cards)</span>
+      </button>
+      <button class="main-tab-btn" id="tab-stories" data-view="stories" title="นิทาน Stories">
+        <span class="tab-icon">📖</span>
+        <span class="tab-label">นิทาน (Stories)</span>
+      </button>
+      <button class="main-tab-btn" id="tab-practice" data-view="practice" title="ฝึกคัดอักษร Write">
+        <span class="tab-icon">✍️</span>
+        <span class="tab-label">ฝึกคัด (Write)</span>
+      </button>
+    </nav>
   </div>
 
   <!-- 3. Story Reader Overlay / Modal (Placed at top body level for full-screen fixed overlay) -->
@@ -547,12 +556,12 @@
   </div>
 
   <!-- โหลดฐานข้อมูลคำศัพท์และ Logic ของแอปพลิเคชันแบบโมดูลาร์ -->
-  <script src="js/data.js?v=13.3.0"></script>
-  <script src="js/stories-data.js?v=13.3.0"></script>
-  <script src="js/story-player.js?v=13.3.0"></script>
-  <script src="js/stories.js?v=13.3.0"></script>
-  <script src="js/practice.js?v=13.3.0"></script>
-  <script src="js/app.js?v=13.3.0"></script>
+  <script src="js/data.js?v=13.4.0"></script>
+  <script src="js/stories-data.js?v=13.4.0"></script>
+  <script src="js/story-player.js?v=13.4.0"></script>
+  <script src="js/stories.js?v=13.4.0"></script>
+  <script src="js/practice.js?v=13.4.0"></script>
+  <script src="js/app.js?v=13.4.0"></script>
 </body>
 
 </html>

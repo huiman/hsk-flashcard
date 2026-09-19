@@ -2,47 +2,108 @@
    HSK Story Library & Interactive Graded Reader Styles
    ========================================================= */
 
-/* Main Navigation Tabs */
-.main-tabs {
+/* =========================================================
+   App Top Bar (Brand Header & Theme Switcher)
+   ========================================================= */
+.app-top-bar {
   display: flex;
   width: 100%;
-  background: rgba(241, 245, 249, 0.95);
-  padding: 5px;
-  border-radius: 16px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 4px 6px 4px;
+}
+
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-badge {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  letter-spacing: 0.05em;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);
+}
+
+.brand-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #334155;
+  letter-spacing: -0.01em;
+}
+
+/* =========================================================
+   Main Navigation Tabs (Bottom Dock)
+   ========================================================= */
+.main-tabs {
+  position: sticky;
+  bottom: 0;
+  z-index: 80;
+  display: flex;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 6px;
+  border-radius: 20px;
   gap: 6px;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  margin-top: auto;
 }
 
 .main-tab-btn {
   flex: 1;
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 10px 14px;
+  padding: 10px 12px;
   border: none;
   background: transparent;
   color: #64748b;
   font-family: inherit;
   font-size: 0.88rem;
   font-weight: 600;
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .main-tab-btn .tab-icon {
-  font-size: 1.15rem;
+  font-size: 1.18rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.main-tab-btn .tab-label {
+  line-height: 1.2;
 }
 
 .main-tab-btn:hover {
   color: #1e293b;
+  background: rgba(241, 245, 249, 0.7);
+}
+
+.main-tab-btn:active {
+  transform: scale(0.96);
 }
 
 .main-tab-btn.active {
-  background: #ffffff;
-  color: #4f46e5;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15), 0 2px 4px rgba(0, 0, 0, 0.04);
+  background: #4f46e5;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+}
+
+.main-tab-btn.active .tab-icon {
+  transform: scale(1.1);
 }
 
 /* App View Switcher */
@@ -904,23 +965,29 @@ rt {
 /* =========================================================
    HSKStory Dark Theme Overrides for Stories & Reader
    ========================================================= */
+[data-theme="dark"] .brand-title {
+  color: #f1f5f9;
+}
+
 [data-theme="dark"] .main-tabs {
-  background: rgba(30, 30, 38, 0.95);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  background: rgba(22, 22, 29, 0.94);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 [data-theme="dark"] .main-tab-btn {
-  color: #9ca3af;
+  color: #94a3b8;
 }
 
 [data-theme="dark"] .main-tab-btn:hover {
-  color: #f3f4f6;
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.06);
 }
 
 [data-theme="dark"] .main-tab-btn.active {
-  background: #272733;
-  color: #818cf8;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background: #6366f1;
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
 }
 
 [data-theme="dark"] .theme-toggle-btn {
@@ -1151,6 +1218,20 @@ rt {
 
 /* Mobile responsive adjustments */
 @media (max-width: 640px) {
+  .main-tabs {
+    padding: 6px;
+    border-radius: 18px;
+    gap: 4px;
+  }
+  .main-tab-btn {
+    flex-direction: column;
+    gap: 3px;
+    padding: 8px 6px 7px 6px;
+    font-size: 0.74rem;
+  }
+  .main-tab-btn .tab-icon {
+    font-size: 1.25rem;
+  }
   .reader-container {
     max-height: 98vh;
     max-height: 98dvh;
