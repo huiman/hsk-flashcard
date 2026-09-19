@@ -453,6 +453,16 @@
       playStrokeOrderSequential(0, currentCard ? currentCard.hanzi : null);
     });
 
+    const btnCardPracticeNow = document.getElementById("btn-card-practice-now");
+    if (btnCardPracticeNow) {
+      btnCardPracticeNow.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (currentCard && window.PracticeManager) {
+          window.PracticeManager.jumpToPractice(currentCard);
+        }
+      });
+    }
+
     // ปลดล็อค Web Speech API เมื่อผู้ใช้แตะหรือคลิกหน้าเว็บครั้งแรก (แก้ปัญหา Autoplay Policy ของบราวเซอร์)
     function unlockAudioOnFirstInteraction() {
       if ('speechSynthesis' in window) {

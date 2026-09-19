@@ -27,8 +27,9 @@
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
 
   <!-- โหลดสไตล์แยกโมดูล -->
-  <link rel="stylesheet" href="css/style.css?v=12.0.0">
-  <link rel="stylesheet" href="css/stories.css?v=7.9.0">
+  <link rel="stylesheet" href="css/style.css?v=13.3.0">
+  <link rel="stylesheet" href="css/stories.css?v=13.3.0">
+  <link rel="stylesheet" href="css/practice.css?v=13.3.0">
 </head>
 <body>
 
@@ -52,7 +53,10 @@
           <span class="tab-icon">🀄</span> บัตรคำ (Cards)
         </button>
         <button class="main-tab-btn" id="tab-stories" data-view="stories">
-          <span class="tab-icon">📖</span> นิทาน (HSK 1-9 Stories)
+          <span class="tab-icon">📖</span> นิทาน (Stories)
+        </button>
+        <button class="main-tab-btn" id="tab-practice" data-view="practice">
+          <span class="tab-icon">✍️</span> ฝึกคัด (Write)
         </button>
       </nav>
       <button class="theme-toggle-btn" id="btn-global-theme" title="สลับธีม สว่าง / มืด">🌓</button>
@@ -124,6 +128,7 @@
           <button class="btn-stroke" id="btn-stroke-replay" title="ดูลำดับขีดอีกครั้ง">🖊️</button>
 
           <div class="hanzi-writer-container" id="hanzi-writer-container"></div>
+          <button class="btn-card-practice-link" id="btn-card-practice-now" title="ฝึกเขียนอักษรตัวนี้">✍️ ฝึกคัดตัวนี้</button>
           <span class="hint-text">💡 แตะ 1 ครั้ง: พลิกการ์ด · แตะ 2 ครั้ง: จำได้แล้ว (+10)</span>
         </div>
 
@@ -194,6 +199,186 @@
         <!-- Story cards dynamically generated -->
       </section>
     </div>
+
+    <!-- 3. หน้า Practice Stroke-Order Writing View -->
+    <div id="view-practice" class="app-view">
+      <header class="practice-header">
+        <h1>✍️ ฝึกคัดอักษรจีน (HSK 1-9)</h1>
+        <p class="subtitle">ฝึกเขียนอักษรจีนทีละขีดตามลำดับขีดที่ถูกต้อง (Stroke by Stroke)</p>
+      </header>
+
+      <!-- Practice Statistics Dashboard (Counts & Mastery) -->
+      <section class="practice-stats-board interactive" id="practice-stats-board" title="แตะเพื่อดูสถิติละเอียด">
+        <div class="practice-stat-box">
+          <span class="practice-stat-label">ฝึกซ้อมทั้งหมด</span>
+          <span class="practice-stat-val highlight-purple" id="practice-stat-total-sessions">0</span>
+        </div>
+        <div class="practice-stat-box">
+          <span class="practice-stat-label">ตัวอักษรที่ผ่าน</span>
+          <span class="practice-stat-val highlight-green" id="practice-stat-completed-chars">0</span>
+        </div>
+        <div class="practice-stat-box">
+          <span class="practice-stat-label">ความแม่นยำเฉลี่ย</span>
+          <span class="practice-stat-val" id="practice-stat-avg-accuracy">0%</span>
+        </div>
+      </section>
+
+      <!-- แถบปุ่มทางลัดสถิติ & ค้นหาคำ -->
+      <div class="practice-top-actions">
+        <button class="btn-stat-action" id="btn-open-stats-modal">
+          <span>📊 ดูสถิติละเอียด (Statistics)</span>
+        </button>
+        <button class="btn-stat-action highlight" id="btn-open-word-picker">
+          <span>🔍 เลือกคำศัพท์ (Select Word)</span>
+        </button>
+      </div>
+
+      <!-- แถบเลือกระดับ HSK 1-9 สำหรับฝึกคัด -->
+      <section class="practice-level-bar" id="practice-level-bar">
+        <button class="practice-level-chip" data-level="all">ทั้งหมด</button>
+        <button class="practice-level-chip active" data-level="HSK 1"><span class="lvl-dot lvl-1"></span>HSK 1</button>
+        <button class="practice-level-chip" data-level="HSK 2"><span class="lvl-dot lvl-2"></span>HSK 2</button>
+        <button class="practice-level-chip" data-level="HSK 3"><span class="lvl-dot lvl-3"></span>HSK 3</button>
+        <button class="practice-level-chip" data-level="HSK 4"><span class="lvl-dot lvl-4"></span>HSK 4</button>
+        <button class="practice-level-chip" data-level="HSK 5"><span class="lvl-dot lvl-5"></span>HSK 5</button>
+        <button class="practice-level-chip" data-level="HSK 6"><span class="lvl-dot lvl-6"></span>HSK 6</button>
+        <button class="practice-level-chip" data-level="HSK 7"><span class="lvl-dot lvl-7"></span>HSK 7</button>
+        <button class="practice-level-chip" data-level="HSK 8"><span class="lvl-dot lvl-8"></span>HSK 8</button>
+        <button class="practice-level-chip" data-level="HSK 9"><span class="lvl-dot lvl-9"></span>HSK 9</button>
+      </section>
+
+      <!-- Practice Interactive Card Box -->
+      <div class="practice-card-wrap">
+        <!-- Word Header Info -->
+        <div class="practice-word-header">
+          <div class="practice-badge-row">
+            <span class="practice-hsk-badge" id="practice-hsk-badge">HSK 1</span>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <button class="btn-picker-shortcut" id="btn-header-pick-word" title="ค้นหาและเลือกคำอื่น">🔍 เลือกคำ</button>
+              <span class="practice-char-count-badge" id="practice-char-count-badge">✍️ คัดแล้ว 0 ครั้ง</span>
+            </div>
+          </div>
+
+          <div class="practice-pinyin-meaning">
+            <div class="practice-full-word">
+              <span id="practice-full-word-text">一</span>
+              <button class="practice-btn-audio" id="practice-btn-audio" title="ฟังเสียงอ่าน">🔊</button>
+            </div>
+            <div class="practice-pinyin" id="practice-pinyin">yī</div>
+            <div class="practice-meaning" id="practice-meaning">หนึ่ง</div>
+            <div class="practice-meaning-en" id="practice-meaning-en">one; single</div>
+          </div>
+
+          <!-- Multi-character Pills for words like 你好, 学校 -->
+          <div class="practice-char-selector" id="practice-char-selector">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Traditional Chinese Tianzige / Mizige Canvas Box -->
+        <div class="canvas-outer-wrapper">
+          <div class="writing-grid-box" id="writing-grid-box">
+            <!-- Traditional SVG Mizige (米字格) Grid Background -->
+            <svg class="writing-grid-bg" viewBox="0 0 300 300" preserveAspectRatio="none">
+              <!-- Outer Square -->
+              <rect x="0" y="0" width="300" height="300" fill="none" stroke="rgba(225,29,72,0.25)" stroke-width="2"/>
+              <!-- Diagonal guide lines -->
+              <line x1="0" y1="0" x2="300" y2="300" class="grid-line-diag"/>
+              <line x1="0" y1="300" x2="300" y2="0" class="grid-line-diag"/>
+              <!-- Crosshair center lines -->
+              <line x1="150" y1="0" x2="150" y2="300" class="grid-line-main"/>
+              <line x1="0" y1="150" x2="300" y2="150" class="grid-line-main"/>
+              <!-- Inner center guide square -->
+              <rect x="50" y="50" width="200" height="200" fill="none" class="grid-inner-square"/>
+            </svg>
+
+            <!-- HanziWriter Quiz Mount Target -->
+            <div class="practice-writer-target" id="practice-writer-target"></div>
+          </div>
+
+          <!-- Real-time Stroke Status Alert & Inline Toast -->
+          <div class="stroke-feedback-bar status-neutral" id="stroke-feedback-bar">
+            <span class="feedback-msg" id="feedback-msg">ลากเส้นขีดแรกตามลำดับ</span>
+            <span class="feedback-stroke-counter" id="feedback-stroke-counter">ขีดที่ 1 / ...</span>
+          </div>
+
+          <!-- Non-intrusive Floating Inline Completion Badge -->
+          <div class="practice-inline-toast" id="practice-inline-toast">
+            <span class="toast-emoji">🎉</span>
+            <span class="toast-main" id="toast-complete-msg">ยอดเยี่ยม! ถูกต้อง 100%</span>
+            <span class="toast-sub" id="toast-complete-sub">✍️ คัดสะสม 1 ครั้ง</span>
+          </div>
+        </div>
+
+        <!-- Practice Options & Stroke Action Buttons -->
+        <div class="practice-actions-row">
+          <label class="guide-toggle-pill" title="เปิด/ปิด เส้นร่างไกด์">
+            <input type="checkbox" id="toggle-practice-guide" checked>
+            <span>แสดงเส้นร่าง (Guide)</span>
+          </label>
+          <label class="guide-toggle-pill" title="เมื่อคัดเสร็จให้ฝึกตัวเดิมซ้ำ">
+            <input type="checkbox" id="toggle-practice-repeat">
+            <span>🔁 คัดซ้ำตัวเดิม (Repeat)</span>
+          </label>
+          <label class="guide-toggle-pill" title="เปิด/ปิด กล่องสรุปผลเมื่อคัดเสร็จ">
+            <input type="checkbox" id="toggle-practice-dialog">
+            <span>📊 แสดงกล่องสรุป (Dialog)</span>
+          </label>
+          <button class="btn-practice-action" id="btn-practice-hint" title="ดูตัวอย่างขีดนี้">
+            💡 ดูตัวอย่างขีดนี้
+          </button>
+          <button class="btn-practice-action" id="btn-practice-restart" title="เริ่มเขียนตัวนี้ใหม่">
+            🔄 เริ่มเขียนใหม่
+          </button>
+        </div>
+
+        <!-- Navigation Controls -->
+        <div class="practice-nav-row">
+          <button class="btn-practice-nav" id="btn-practice-prev" title="คำก่อนหน้า">
+            ⬅️ คำก่อนหน้า
+          </button>
+          <button class="btn-practice-nav" id="btn-practice-random" title="สุ่มคำ">
+            🎲 สุ่มคำ
+          </button>
+          <button class="btn-practice-nav btn-practice-primary" id="btn-practice-next" title="คำต่อไป">
+            คำต่อไป ➡️
+          </button>
+        </div>
+
+        <!-- Character Completion Celebration Overlay -->
+        <div class="practice-complete-overlay" id="practice-complete-overlay">
+          <div class="practice-complete-box">
+            <div class="complete-character-large" id="complete-char-large">大</div>
+            <div class="complete-title">🎉 คัดอักษรสำเร็จ!</div>
+            <div class="complete-pinyin-meaning" id="complete-pinyin-meaning">dà • big</div>
+
+            <div class="complete-metrics-grid">
+              <div class="metric-pill">
+                <span class="metric-pill-label">จำนวนขีด</span>
+                <span class="metric-pill-val" id="metric-strokes">3 ขีด</span>
+              </div>
+              <div class="metric-pill">
+                <span class="metric-pill-label">จำนวนครั้งที่ลาก</span>
+                <span class="metric-pill-val" id="metric-attempts">3 ครั้ง</span>
+              </div>
+              <div class="metric-pill">
+                <span class="metric-pill-label">ความแม่นยำ</span>
+                <span class="metric-pill-val green" id="metric-accuracy">100%</span>
+              </div>
+            </div>
+
+            <div class="complete-lifetime-badge" id="complete-lifetime-badge">
+              ✍️ คัดตัวนี้สะสมแล้ว 1 ครั้ง
+            </div>
+
+            <div class="complete-actions">
+              <button class="btn-practice-action" id="btn-complete-again">🔄 ฝึกซ้ำอีกรอบ</button>
+              <button class="btn-practice-action btn-practice-primary" id="btn-complete-next">อักษรต่อไป ➡️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- 3. Story Reader Overlay / Modal (Placed at top body level for full-screen fixed overlay) -->
@@ -252,6 +437,7 @@
             <span class="sheet-hsk-badge" id="sheet-hsk-badge">HSK 1</span>
           </div>
           <div class="sheet-actions">
+            <button class="sheet-btn-speak" id="sheet-btn-practice" title="ฝึกคัดอักษร">✍️</button>
             <button class="sheet-btn-speak" id="sheet-btn-speak" title="ออกเสียง">🔊</button>
             <button class="sheet-btn-close" id="sheet-btn-close" title="ปิด">✕</button>
           </div>
@@ -269,12 +455,104 @@
     </div>
   </div>
 
+  <!-- 4. Practice Statistics Modal (Full History & Mastery Dashboard) -->
+  <div class="app-custom-modal" id="practice-stats-modal">
+    <div class="custom-modal-backdrop" id="modal-stats-backdrop"></div>
+    <div class="custom-modal-sheet modal-stats-sheet">
+      <div class="custom-modal-header">
+        <div class="modal-header-title">
+          <span class="modal-title-icon">📊</span>
+          <h3>สถิติการฝึกคัดอักษรจีน (Statistics)</h3>
+        </div>
+        <button class="btn-modal-close" id="btn-close-stats-modal" title="ปิด">✕</button>
+      </div>
+
+      <div class="custom-modal-body">
+        <!-- Overview summary grid -->
+        <div class="stats-overview-cards">
+          <div class="stat-card">
+            <span class="stat-card-val highlight-purple" id="modal-stat-sessions">0</span>
+            <span class="stat-card-lbl">จำนวนครั้งที่ฝึกทั้งหมด</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-card-val highlight-green" id="modal-stat-chars">0</span>
+            <span class="stat-card-lbl">ตัวอักษรที่ผ่านแล้ว</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-card-val" id="modal-stat-accuracy">0%</span>
+            <span class="stat-card-lbl">ความแม่นยำเฉลี่ย</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-card-val highlight-pink" id="modal-stat-top-char">-</span>
+            <span class="stat-card-lbl">อักษรที่ฝึกบ่อยสุด</span>
+          </div>
+        </div>
+
+        <!-- Filter bar for practiced characters -->
+        <div class="stats-history-header">
+          <h4>ประวัติอักษรที่เคยฝึก (Practiced Characters)</h4>
+          <span class="history-count-tag" id="history-total-tag">0 ตัว</span>
+        </div>
+
+        <!-- Practiced Characters Gallery / List -->
+        <div class="stats-chars-grid" id="stats-chars-grid">
+          <!-- Rendered dynamically by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Word Picker & Vocabulary Browser Modal -->
+  <div class="app-custom-modal" id="practice-word-picker-modal">
+    <div class="custom-modal-backdrop" id="modal-picker-backdrop"></div>
+    <div class="custom-modal-sheet modal-picker-sheet">
+      <div class="custom-modal-header">
+        <div class="modal-header-title">
+          <span class="modal-title-icon">🔍</span>
+          <h3>เลือกคำศัพท์สำหรับฝึกคัด (Select Word)</h3>
+        </div>
+        <button class="btn-modal-close" id="btn-close-picker-modal" title="ปิด">✕</button>
+      </div>
+
+      <div class="picker-search-bar">
+        <span class="picker-search-icon">🔍</span>
+        <input type="text" id="picker-search-input" placeholder="ค้นหาคำศัพท์, พินอิน หรือคำแปล เช่น 你好, ni, สวัสดี..." autocomplete="off">
+        <button class="picker-search-clear" id="picker-search-clear" title="ล้างข้อความ">✕</button>
+      </div>
+
+      <!-- Level Filter inside Picker -->
+      <div class="picker-level-filter" id="picker-level-filter">
+        <button class="picker-level-chip active" data-level="all">ทั้งหมด</button>
+        <button class="picker-level-chip" data-level="HSK 1">HSK 1</button>
+        <button class="picker-level-chip" data-level="HSK 2">HSK 2</button>
+        <button class="picker-level-chip" data-level="HSK 3">HSK 3</button>
+        <button class="picker-level-chip" data-level="HSK 4">HSK 4</button>
+        <button class="picker-level-chip" data-level="HSK 5">HSK 5</button>
+        <button class="picker-level-chip" data-level="HSK 6">HSK 6</button>
+        <button class="picker-level-chip" data-level="HSK 7">HSK 7</button>
+        <button class="picker-level-chip" data-level="HSK 8">HSK 8</button>
+        <button class="picker-level-chip" data-level="HSK 9">HSK 9</button>
+      </div>
+
+      <div class="picker-results-meta">
+        <span id="picker-results-count">พบ 0 คำ</span>
+        <span class="picker-hint-badge">💡 แตะที่คำเพื่อเลือกฝึกคัดทันที</span>
+      </div>
+
+      <!-- Scrollable Word Grid -->
+      <div class="custom-modal-body picker-words-body" id="picker-words-grid">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </div>
+  </div>
+
   <!-- โหลดฐานข้อมูลคำศัพท์และ Logic ของแอปพลิเคชันแบบโมดูลาร์ -->
-  <script src="js/data.js?v=12.0.0"></script>
-  <script src="js/stories-data.js?v=12.0.0"></script>
-  <script src="js/story-player.js?v=12.0.0"></script>
-  <script src="js/stories.js?v=12.0.0"></script>
-  <script src="js/app.js?v=12.0.0"></script>
+  <script src="js/data.js?v=13.3.0"></script>
+  <script src="js/stories-data.js?v=13.3.0"></script>
+  <script src="js/story-player.js?v=13.3.0"></script>
+  <script src="js/stories.js?v=13.3.0"></script>
+  <script src="js/practice.js?v=13.3.0"></script>
+  <script src="js/app.js?v=13.3.0"></script>
 </body>
 
 </html>

@@ -1,12 +1,14 @@
-const APP_VERSION = 'v12.0.0';
+const APP_VERSION = 'v13.3.0';
 const CACHE_NAME = `hsk-flashcards-${APP_VERSION}`;
 const CORE_ASSETS = [
   './index.html',
   './css/style.css',
   './css/stories.css',
+  './css/practice.css',
   './js/data.js',
   './js/story-player.js',
   './js/stories.js',
+  './js/practice.js',
   './js/app.js',
   './manifest.json',
   './icon-192.png',

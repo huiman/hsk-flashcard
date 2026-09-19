@@ -56,8 +56,10 @@
   // DOM Elements
   const tabFlashcard = document.getElementById('tab-flashcard');
   const tabStories = document.getElementById('tab-stories');
+  const tabPractice = document.getElementById('tab-practice');
   const viewFlashcard = document.getElementById('view-flashcard');
   const viewStories = document.getElementById('view-stories');
+  const viewPractice = document.getElementById('view-practice');
 
   const storiesLevelBar = document.getElementById('stories-level-bar');
   const storiesGrid = document.getElementById('stories-grid');
@@ -85,22 +87,24 @@
   function initTabs() {
     tabFlashcard?.addEventListener('click', () => switchView('flashcard'));
     tabStories?.addEventListener('click', () => switchView('stories'));
+    tabPractice?.addEventListener('click', () => switchView('practice'));
   }
 
   function switchView(viewName) {
-    if (viewName === 'flashcard') {
-      tabFlashcard.classList.add('active');
-      tabStories.classList.remove('active');
-      viewFlashcard.classList.add('active');
-      viewStories.classList.remove('active');
-    } else {
-      tabStories.classList.add('active');
-      tabFlashcard.classList.remove('active');
-      viewStories.classList.add('active');
-      viewFlashcard.classList.remove('active');
+    if (tabFlashcard) tabFlashcard.classList.toggle('active', viewName === 'flashcard');
+    if (tabStories) tabStories.classList.toggle('active', viewName === 'stories');
+    if (tabPractice) tabPractice.classList.toggle('active', viewName === 'practice');
+
+    if (viewFlashcard) viewFlashcard.classList.toggle('active', viewName === 'flashcard');
+    if (viewStories) viewStories.classList.toggle('active', viewName === 'stories');
+    if (viewPractice) viewPractice.classList.toggle('active', viewName === 'practice');
+
+    if (viewName === 'stories') {
       renderStoriesList();
     }
   }
+
+  window.switchAppView = switchView;
 
   // 2. Stories List & Filtering
   function initFilters() {
@@ -748,6 +752,7 @@
     const sheetPinyin = document.getElementById('sheet-pinyin');
     const sheetDefinitions = document.getElementById('sheet-definitions');
     const sheetBtnSpeak = document.getElementById('sheet-btn-speak');
+    const sheetBtnPractice = document.getElementById('sheet-btn-practice');
     const sheetBtnClose = document.getElementById('sheet-btn-close');
     const sheetBtnTransSent = document.getElementById('sheet-btn-trans-sent');
     const sheetTransChevron = document.getElementById('sheet-trans-chevron');
@@ -771,6 +776,15 @@
       e.stopPropagation();
       if (currentSheetWord && window.storyPlayer) {
         window.storyPlayer.speakSentence(currentSheetWord);
+      }
+    });
+
+    sheetBtnPractice?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeWordSheet();
+      closeStoryReader();
+      if (window.PracticeManager && currentSheetWord) {
+        window.PracticeManager.jumpToPractice(currentSheetWord);
       }
     });
 
