@@ -864,6 +864,38 @@
     window.__toggleAppTheme = toggleAppTheme;
     window.__applyAppTheme = applyAppTheme;
 
+    // Jump to specific word/card in Flashcards view
+    window.jumpToFlashcard = function(hanziOrWordObj) {
+      if (!hanziOrWordObj) return;
+      let targetCard = null;
+      if (typeof hanziOrWordObj === 'object' && hanziOrWordObj.hanzi) {
+        targetCard = hanziOrWordObj;
+      } else if (typeof hanziOrWordObj === 'string' && typeof HSK_DATA !== 'undefined') {
+        targetCard = HSK_DATA.find(item => item.hanzi === hanziOrWordObj);
+      }
+
+      if (!targetCard) return;
+
+      // Ensure targetCard's level is active so user can navigate
+      if (targetCard.level && !selectedLevels.includes('all') && !selectedLevels.includes(targetCard.level)) {
+        selectedLevels = [...new Set([...selectedLevels, targetCard.level])];
+        updateLevelChipsUI();
+        saveState();
+      }
+
+      // Record in historyCards
+      historyCards.push(targetCard);
+      historyIndex = historyCards.length - 1;
+
+      // Switch view to flashcard if switchAppView is defined
+      if (typeof window.switchAppView === 'function') {
+        window.switchAppView('flashcard');
+      }
+
+      // Render the specific card
+      renderCard(targetCard);
+    };
+
     // =========================================================
     // 9. Global HSK Levels Bar Visibility Toggle (Show / Hide)
     // =========================================================

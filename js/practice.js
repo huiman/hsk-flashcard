@@ -573,6 +573,8 @@
       // New Word Picker Elements
       btnOpenWordPicker: document.getElementById('btn-open-word-picker'),
       btnHeaderPickWord: document.getElementById('btn-header-pick-word'),
+      btnPracticeToCards: document.getElementById('btn-practice-to-cards'),
+      btnCompleteToCards: document.getElementById('btn-complete-to-cards'),
       wordPickerModal: document.getElementById('practice-word-picker-modal'),
       modalPickerBackdrop: document.getElementById('modal-picker-backdrop'),
       btnClosePickerModal: document.getElementById('btn-close-picker-modal'),
@@ -683,6 +685,33 @@
       dom.btnCompleteNext.addEventListener('click', () => {
         dom.completeOverlay.classList.remove('show');
         nextCharacterOrWord();
+      });
+    }
+
+    // Action: Open current word in Flashcard Cards view
+    const openCurrentWordInCards = () => {
+      if (!currentWord) return;
+      if (dom.completeOverlay) {
+        dom.completeOverlay.classList.remove('show');
+      }
+      if (typeof window.jumpToFlashcard === 'function') {
+        window.jumpToFlashcard(currentWord);
+      } else if (typeof window.switchAppView === 'function') {
+        window.switchAppView('flashcard');
+      }
+    };
+
+    if (dom.btnPracticeToCards) {
+      dom.btnPracticeToCards.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openCurrentWordInCards();
+      });
+    }
+
+    if (dom.btnCompleteToCards) {
+      dom.btnCompleteToCards.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openCurrentWordInCards();
       });
     }
 
@@ -964,6 +993,8 @@
     init: initPractice,
     jumpToPractice: jumpToPractice,
     loadWord: loadWord,
+    getCurrentWord: () => currentWord,
+    jumpToCards: () => openCurrentWordInCards(),
     getPracticeTotals: getPracticeTotals,
     getPracticeHistory: getPracticeHistory
   };
