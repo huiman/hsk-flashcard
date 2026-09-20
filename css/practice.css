@@ -199,10 +199,10 @@
 }
 
 .practice-level-chip.active {
-  background: #1e293b;
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
   color: #ffffff;
-  border-color: #1e293b;
-  box-shadow: 0 4px 10px rgba(30, 41, 59, 0.2);
+  border-color: #4f46e5;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
 /* Practice Card Container */
@@ -210,13 +210,13 @@
   width: 100%;
   background: #ffffff;
   border-radius: 22px;
-  border: 1px solid rgba(226, 232, 240, 0.85);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.06), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
-  padding: 18px 16px;
+  border: 1px solid rgba(99, 102, 241, 0.1);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.08), 0 4px 8px -4px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,1);
+  padding: 16px 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   position: relative;
 }
 
@@ -389,10 +389,10 @@
   position: relative;
   width: 280px;
   height: 280px;
-  border: 3px solid #e11d48; /* Traditional Chinese Red/Cinnabar border */
-  border-radius: 8px;
+  border: 2.5px solid #e11d48; /* Traditional Chinese Red/Cinnabar border */
+  border-radius: 12px;
   background-color: #fffdfa; /* Warm rice paper background */
-  box-shadow: inset 0 0 10px rgba(225, 29, 72, 0.05), 0 8px 24px -4px rgba(0, 0, 0, 0.12);
+  box-shadow: inset 0 0 12px rgba(225, 29, 72, 0.06), 0 10px 28px -4px rgba(0, 0, 0, 0.14), 0 4px 8px -2px rgba(0, 0, 0, 0.06);
   touch-action: none; /* Prevents scroll while drawing */
   user-select: none;
   -webkit-user-select: none;
@@ -579,30 +579,31 @@
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 7px;
   width: 100%;
 }
 
 .btn-practice-action {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: 5px;
+  padding: 7px 13px;
   border-radius: 12px;
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
   color: #334155;
   font-family: inherit;
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .btn-practice-action:hover {
-  background: #f8fafc;
-  border-color: #94a3b8;
+  background: #f1f5f9;
+  border-color: #cbd5e1;
   transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
 }
 
 .btn-practice-action:active {
@@ -610,31 +611,38 @@
 }
 
 .btn-practice-primary {
-  background: #4f46e5;
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
   color: #ffffff;
   border-color: #4f46e5;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
 }
 
 .btn-practice-primary:hover {
-  background: #4338ca;
+  background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
   border-color: #4338ca;
+  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4);
 }
 
 /* Guide Toggle Checkbox Pill */
 .guide-toggle-pill {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  background: #f1f5f9;
-  padding: 6px 12px;
+  gap: 6px;
+  background: #f8fafc;
+  padding: 5px 11px;
   border-radius: 9999px;
   border: 1px solid #e2e8f0;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 500;
   color: #475569;
   cursor: pointer;
   user-select: none;
+  transition: border-color 0.2s ease;
+}
+
+.guide-toggle-pill:hover {
+  border-color: #c7d2fe;
+  color: #4338ca;
 }
 
 .guide-toggle-pill input {
@@ -646,32 +654,34 @@
 .practice-nav-row {
   display: flex;
   width: 100%;
-  gap: 8px;
-  margin-top: 4px;
+  gap: 7px;
+  margin-top: 2px;
 }
 
 .btn-practice-nav {
   flex: 1;
-  padding: 10px 14px;
+  padding: 10px 12px;
   border: 1px solid #e2e8f0;
   border-radius: 14px;
-  background: #ffffff;
+  background: #f8fafc;
   color: #334155;
   font-family: inherit;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  gap: 5px;
+  box-shadow: none;
   transition: all 0.2s ease;
 }
 
 .btn-practice-nav:hover {
-  background: #f8fafc;
+  background: #f1f5f9;
   border-color: #cbd5e1;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
 }
 
 /* =========================================================
@@ -833,8 +843,9 @@
 }
 
 [data-theme="dark"] .practice-stat-box {
-  background: rgba(30, 41, 59, 0.7);
-  border-color: #334155;
+  background: linear-gradient(145deg, #1e1e2a, #191921);
+  border-color: rgba(99, 102, 241, 0.18);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
 [data-theme="dark"] .practice-stat-label {
@@ -858,15 +869,16 @@
 }
 
 [data-theme="dark"] .practice-level-chip.active {
-  background: #6366f1;
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
   border-color: #6366f1;
   color: #ffffff;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
 }
 
 [data-theme="dark"] .practice-card-wrap {
-  background: #1e293b;
-  border-color: #334155;
+  background: #191921;
+  border-color: rgba(99, 102, 241, 0.15);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
 [data-theme="dark"] .practice-full-word {
@@ -953,9 +965,10 @@
 }
 
 [data-theme="dark"] .btn-practice-primary {
-  background: #4f46e5;
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
   border-color: #4f46e5;
   color: #ffffff;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
 }
 
 [data-theme="dark"] .guide-toggle-pill {
