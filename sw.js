@@ -1,4 +1,4 @@
-const APP_VERSION = 'v13.9.0';
+const APP_VERSION = 'v13.11.0';
 const CACHE_NAME = `hsk-flashcards-${APP_VERSION}`;
 const CORE_ASSETS = [
   './index.html',

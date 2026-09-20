@@ -33,27 +33,30 @@
       min-height: 100dvh;
       display: flex;
       justify-content: center;
-      align-items: center;
-      padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+      align-items: stretch;
+      padding: 0;
       color: var(--text-main);
       overscroll-behavior-y: contain;
     }
 
     .game-container {
       width: 100%;
-      max-width: 580px;
+      max-width: 680px;
+      min-height: 100vh;
+      min-height: 100dvh;
       background: rgba(255, 255, 255, 0.94);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-radius: 28px;
-      padding: 26px 20px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.8);
+      border-radius: 0;
+      border: none;
+      box-shadow: none;
+      padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 16px;
       position: relative;
-      transition: max-width 0.3s ease;
+      margin: 0 auto;
     }
 
     /* PWA Install Banner */
@@ -357,12 +360,12 @@
       height: 100%;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
-      border-radius: 24px;
+      border-radius: 22px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 24px 18px;
+      padding: 18px 16px;
       box-shadow: var(--shadow-lg);
       user-select: none;
       border: 1px solid var(--glass-border);
@@ -379,7 +382,7 @@
     .level-badge {
       position: absolute;
       top: 16px;
-      left: 18px;
+      left: 16px;
       background: #eef2ff;
       color: #4338ca;
       font-size: 0.75rem;
@@ -393,7 +396,7 @@
     .btn-audio {
       position: absolute;
       top: 14px;
-      right: 18px;
+      right: 16px;
       background: #f1f5f9;
       border: 1px solid #e2e8f0;
       width: 42px;
@@ -455,7 +458,7 @@
     .btn-stroke {
       position: absolute;
       top: 14px;
-      right: 68px;
+      right: 64px;
       background: #f1f5f9;
       border: 1px solid #e2e8f0;
       width: 42px;
@@ -759,8 +762,8 @@
 
     [data-theme="dark"] .game-container {
       background: rgba(22, 22, 27, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      border: none;
+      box-shadow: none;
     }
 
     [data-theme="dark"] header h1 {
