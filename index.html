@@ -27,9 +27,9 @@
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
 
   <!-- โหลดสไตล์แยกโมดูล -->
-  <link rel="stylesheet" href="css/style.css?v=13.11.0">
-  <link rel="stylesheet" href="css/stories.css?v=13.11.0">
-  <link rel="stylesheet" href="css/practice.css?v=13.11.0">
+  <link rel="stylesheet" href="css/style.css?v=13.12.0">
+  <link rel="stylesheet" href="css/stories.css?v=13.12.0">
+  <link rel="stylesheet" href="css/practice.css?v=13.12.0">
 </head>
 <body>
 
@@ -50,7 +50,7 @@
     <header class="app-top-bar">
       <div class="app-brand">
         <span class="brand-badge">HSK 1-9</span>
-        <span class="brand-title">Flashcards & Stories</span>
+        <h1 class="brand-title" id="app-brand-title">🀄 Flashcards</h1>
       </div>
       <div class="top-bar-actions">
         <button class="top-action-btn active" id="btn-toggle-levels" title="แสดง/ซ่อน แถบเลือกระดับ HSK" aria-label="แสดงหรือซ่อนแถบเลือกระดับ HSK">
@@ -102,10 +102,6 @@
 
     <!-- หน้า Flashcards View -->
     <div id="view-flashcard" class="app-view active">
-      <header>
-        <h1>🀄 Flashcards</h1>
-      <p class="subtitle">แตะการ์ดเพื่อดูคำแปลและพินอิน</p>
-    </header>
 
     <!-- ตัวเลือกระดับ HSK (รูปแบบเดียวกับแถบเลือกระดับนิทาน Story) -->
     <section class="level-selector" id="level-selector">
@@ -213,10 +209,6 @@
 
     <!-- 2. หน้า HSK Stories Library View -->
     <div id="view-stories" class="app-view">
-      <header class="stories-header">
-        <h1>📖 HSKStory Library</h1>
-        <p class="subtitle">นิทานภาษาจีน พร้อมเสียงบรรยายและการแปล</p>
-      </header>
 
       <!-- แถบเลือกระดับ HSK 1-9 -->
       <section class="stories-level-bar" id="stories-level-bar">
@@ -240,10 +232,6 @@
 
     <!-- 3. หน้า Practice Stroke-Order Writing View -->
     <div id="view-practice" class="app-view">
-      <header class="practice-header">
-        <h1>✍️ ฝึกคัดอักษรจีน</h1>
-        <p class="subtitle">ฝึกเขียนอักษรจีนทีละขีดตามลำดับขีดที่ถูกต้อง (Stroke by Stroke)</p>
-      </header>
 
       <!-- Practice Statistics Dashboard (Counts & Mastery) -->
       <section class="practice-stats-board interactive" id="practice-stats-board" title="แตะเพื่อดูสถิติละเอียด">
@@ -601,12 +589,12 @@
   </div>
 
   <!-- โหลดฐานข้อมูลคำศัพท์และ Logic ของแอปพลิเคชันแบบโมดูลาร์ -->
-  <script src="js/data.js?v=13.11.0"></script>
-  <script src="js/stories-data.js?v=13.11.0"></script>
-  <script src="js/story-player.js?v=13.11.0"></script>
-  <script src="js/stories.js?v=13.11.0"></script>
-  <script src="js/practice.js?v=13.11.0"></script>
-  <script src="js/app.js?v=13.11.0"></script>
+  <script src="js/data.js?v=13.12.0"></script>
+  <script src="js/stories-data.js?v=13.12.0"></script>
+  <script src="js/story-player.js?v=13.12.0"></script>
+  <script src="js/stories.js?v=13.12.0"></script>
+  <script src="js/practice.js?v=13.12.0"></script>
+  <script src="js/app.js?v=13.12.0"></script>
 </body>
 
 </html>

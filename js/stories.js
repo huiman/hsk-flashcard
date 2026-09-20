@@ -90,6 +90,12 @@
     tabPractice?.addEventListener('click', () => switchView('practice'));
   }
 
+  const VIEW_TITLES = {
+    flashcard: '🀄 Flashcards',
+    stories: '📖 HSK Stories',
+    practice: '✍️ ฝึกคัดอักษรจีน'
+  };
+
   function switchView(viewName) {
     if (tabFlashcard) tabFlashcard.classList.toggle('active', viewName === 'flashcard');
     if (tabStories) tabStories.classList.toggle('active', viewName === 'stories');
@@ -98,6 +104,12 @@
     if (viewFlashcard) viewFlashcard.classList.toggle('active', viewName === 'flashcard');
     if (viewStories) viewStories.classList.toggle('active', viewName === 'stories');
     if (viewPractice) viewPractice.classList.toggle('active', viewName === 'practice');
+
+    // Update top header title dynamically
+    const brandTitleEl = document.getElementById('app-brand-title');
+    if (brandTitleEl && VIEW_TITLES[viewName]) {
+      brandTitleEl.textContent = VIEW_TITLES[viewName];
+    }
 
     if (viewName === 'stories') {
       renderStoriesList();
