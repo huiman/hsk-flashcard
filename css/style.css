@@ -242,6 +242,12 @@
       font-weight: 500;
       color: #334155;
       user-select: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .settings-label .label-short {
+      display: none;
     }
 
     .toggle-switch {
@@ -635,6 +641,17 @@
 
     /* ปรับแต่งแผงปุ่มควบคุมด้านล่างสำหรับมือถือ (หน้าจอกว้างไม่เกิน 640px) */
     @media (max-width: 640px) {
+      .settings-bar {
+        padding: 5px 10px;
+        gap: 6px;
+      }
+      .settings-label .label-full {
+        display: none;
+      }
+      .settings-label .label-short {
+        display: inline;
+        font-size: 0.95rem;
+      }
       .controls {
         gap: 8px;
         margin-top: 4px;
