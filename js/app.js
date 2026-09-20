@@ -126,14 +126,49 @@
     let activeUtterance = null;
     let chineseVoice = null;
 
+    function findMandarinVoice(voices) {
+      if (!voices || voices.length === 0) return null;
+
+      // 1. zh-CN / cmn-CN / cmn-Hans-CN (จีนกลางแผ่นดินใหญ่)
+      const cnVoice = voices.find(v => {
+        const lang = (v.lang || '').toLowerCase().replace(/_/g, '-');
+        return lang === 'zh-cn' || lang === 'cmn-cn' || lang === 'cmn-hans-cn' || lang === 'zh-sg';
+      });
+      if (cnVoice) return cnVoice;
+
+      // 2. zh-TW (จีนกลางไต้หวัน - ยังคงออกเสียง guó ถูกต้อง ไม่ใช่กวางตุ้ง)
+      const twVoice = voices.find(v => {
+        const lang = (v.lang || '').toLowerCase().replace(/_/g, '-');
+        return lang === 'zh-tw' || lang === 'cmn-tw' || lang === 'cmn-hant-tw';
+      });
+      if (twVoice) return twVoice;
+
+      // 3. เสียงที่ระบุชื่อหรือภาษาว่าเป็น Mandarin / Putonghua
+      const mandarinNamedVoice = voices.find(v => {
+        const name = (v.name || '').toLowerCase();
+        const lang = (v.lang || '').toLowerCase();
+        return (name.includes('mandarin') || name.includes('putonghua') || name.includes('mainland'))
+          && !name.includes('cantonese') && !lang.includes('hk') && !lang.includes('yue');
+      });
+      if (mandarinNamedVoice) return mandarinNamedVoice;
+
+      // 4. เสียงภาษาจีนทั่วไปที่ไม่ใช่กวางตุ้ง (exclude Cantonese / HK / Yue)
+      const nonCantoneseZh = voices.find(v => {
+        const lang = (v.lang || '').toLowerCase().replace(/_/g, '-');
+        const name = (v.name || '').toLowerCase();
+        const isCantonese = lang.includes('hk') || lang.includes('yue') || name.includes('cantonese') || name.includes('hong kong');
+        return (lang.startsWith('zh') || lang.startsWith('cmn')) && !isCantonese;
+      });
+      if (nonCantoneseZh) return nonCantoneseZh;
+
+      return null;
+    }
+
     function initVoices() {
       if (!('speechSynthesis' in window)) return;
       const voices = window.speechSynthesis.getVoices();
       if (!voices || voices.length === 0) return;
-      // หาเสียงภาษาจีน zh-CN หรือขึ้นต้นด้วย zh
-      chineseVoice = voices.find(v => v.lang === 'zh-CN' || v.lang === 'zh_CN') 
-        || voices.find(v => v.lang.startsWith('zh'))
-        || null;
+      chineseVoice = findMandarinVoice(voices);
     }
 
     if ('speechSynthesis' in window) {

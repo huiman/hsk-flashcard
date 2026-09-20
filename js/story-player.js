@@ -100,11 +100,21 @@ class StoryAudioPlayer {
     utterance.lang = 'zh-CN';
     utterance.rate = this.playbackRate;
 
-    // Pick Chinese voice if available in system
+    // Pick Mandarin Chinese voice if available in system (exclude Cantonese)
     const voices = window.speechSynthesis.getVoices();
     if (voices && voices.length > 0) {
-      const zhVoice = voices.find(v => v.lang === 'zh-CN' || v.lang === 'zh_CN') 
-        || voices.find(v => v.lang.startsWith('zh'));
+      const zhVoice = voices.find(v => {
+        const lang = (v.lang || '').toLowerCase().replace(/_/g, '-');
+        return lang === 'zh-cn' || lang === 'cmn-cn' || lang === 'cmn-hans-cn' || lang === 'zh-sg';
+      }) || voices.find(v => {
+        const lang = (v.lang || '').toLowerCase().replace(/_/g, '-');
+        return lang === 'zh-tw' || lang === 'cmn-tw';
+      }) || voices.find(v => {
+        const lang = (v.lang || '').toLowerCase().replace(/_/g, '-');
+        const name = (v.name || '').toLowerCase();
+        const isCantonese = lang.includes('hk') || lang.includes('yue') || name.includes('cantonese');
+        return (lang.startsWith('zh') || lang.startsWith('cmn')) && !isCantonese;
+      });
       if (zhVoice) utterance.voice = zhVoice;
     }
 
