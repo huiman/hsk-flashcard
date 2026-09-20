@@ -27,9 +27,9 @@
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
 
   <!-- โหลดสไตล์แยกโมดูล -->
-  <link rel="stylesheet" href="css/style.css?v=13.5.0">
-  <link rel="stylesheet" href="css/stories.css?v=13.5.0">
-  <link rel="stylesheet" href="css/practice.css?v=13.5.0">
+  <link rel="stylesheet" href="css/style.css?v=13.9.0">
+  <link rel="stylesheet" href="css/stories.css?v=13.9.0">
+  <link rel="stylesheet" href="css/practice.css?v=13.9.0">
 </head>
 <body>
 
@@ -46,14 +46,59 @@
       </div>
     </div>
 
-    <!-- แถบด้านบน: โลโก้/ชื่อแอป และ ปุ่มสลับธีม -->
+    <!-- แถบด้านบน: โลโก้/ชื่อแอป, ปุ่มแสดง/ซ่อนระดับ HSK และ ปุ่มสลับธีม -->
     <header class="app-top-bar">
       <div class="app-brand">
         <span class="brand-badge">HSK 1-9</span>
         <span class="brand-title">Flashcards & Stories</span>
       </div>
-      <button class="theme-toggle-btn" id="btn-global-theme" title="สลับธีม สว่าง / มืด">🌓</button>
+      <div class="top-bar-actions">
+        <button class="top-action-btn active" id="btn-toggle-levels" title="แสดง/ซ่อน แถบเลือกระดับ HSK" aria-label="แสดงหรือซ่อนแถบเลือกระดับ HSK">
+          <span class="top-action-icon">🎯</span>
+          <span class="top-action-label">ระดับ HSK</span>
+        </button>
+        <button class="theme-toggle-btn" id="btn-global-theme" title="สลับธีม สว่าง / มืด">🌓</button>
+      </div>
     </header>
+    <script>
+      (function() {
+        var KEY = 'hsk_levels_visible';
+        function setVisibility(show) {
+          document.body.classList.toggle('hsk-levels-hidden', !show);
+          var btn = document.getElementById('btn-toggle-levels');
+          if (btn) {
+            btn.classList.toggle('active', show);
+            btn.title = show ? 'ซ่อนแถบเลือกระดับ HSK' : 'แสดงแถบเลือกระดับ HSK';
+          }
+          ['level-selector', 'stories-level-bar', 'practice-level-bar'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.classList.toggle('is-hidden', !show);
+          });
+          try { localStorage.setItem(KEY, show ? 'true' : 'false'); } catch(e){}
+        }
+
+        window.__toggleLevelsBar = function(e) {
+          if (e && e.preventDefault) e.preventDefault();
+          var isCurrentlyHidden = document.body.classList.contains('hsk-levels-hidden') ||
+            (document.getElementById('level-selector') && document.getElementById('level-selector').classList.contains('is-hidden'));
+          setVisibility(isCurrentlyHidden);
+        };
+
+        window.__applyLevelsBarVisibility = setVisibility;
+
+        // Restore saved preference
+        var saved = null;
+        try { saved = localStorage.getItem(KEY); } catch(e){}
+        var initialShow = saved !== null ? saved === 'true' : true;
+        setVisibility(initialShow);
+
+        // Bind click event immediately
+        var btn = document.getElementById('btn-toggle-levels');
+        if (btn) {
+          btn.addEventListener('click', window.__toggleLevelsBar);
+        }
+      })();
+    </script>
 
     <!-- หน้า Flashcards View -->
     <div id="view-flashcard" class="app-view active">
@@ -556,12 +601,12 @@
   </div>
 
   <!-- โหลดฐานข้อมูลคำศัพท์และ Logic ของแอปพลิเคชันแบบโมดูลาร์ -->
-  <script src="js/data.js?v=13.5.0"></script>
-  <script src="js/stories-data.js?v=13.5.0"></script>
-  <script src="js/story-player.js?v=13.5.0"></script>
-  <script src="js/stories.js?v=13.5.0"></script>
-  <script src="js/practice.js?v=13.5.0"></script>
-  <script src="js/app.js?v=13.5.0"></script>
+  <script src="js/data.js?v=13.9.0"></script>
+  <script src="js/stories-data.js?v=13.9.0"></script>
+  <script src="js/story-player.js?v=13.9.0"></script>
+  <script src="js/stories.js?v=13.9.0"></script>
+  <script src="js/practice.js?v=13.9.0"></script>
+  <script src="js/app.js?v=13.9.0"></script>
 </body>
 
 </html>

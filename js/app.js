@@ -828,3 +828,12 @@
     // Export for external callers if needed
     window.__toggleAppTheme = toggleAppTheme;
     window.__applyAppTheme = applyAppTheme;
+
+    // =========================================================
+    // 9. Global HSK Levels Bar Visibility Toggle (Show / Hide)
+    // =========================================================
+    // If window.__applyLevelsBarVisibility is defined by inline script, sync with it
+    if (typeof window.__applyLevelsBarVisibility === 'function') {
+      const saved = localStorage.getItem('hsk_levels_visible');
+      window.__applyLevelsBarVisibility(saved !== null ? saved === 'true' : true);
+    }

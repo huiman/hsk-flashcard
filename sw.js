@@ -1,4 +1,4 @@
-const APP_VERSION = 'v13.5.0';
+const APP_VERSION = 'v13.9.0';
 const CACHE_NAME = `hsk-flashcards-${APP_VERSION}`;
 const CORE_ASSETS = [
   './index.html',
@@ -53,10 +53,7 @@ self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
   const url = new URL(event.request.url);
-  const isNetworkFirst = url.pathname.endsWith('.js') || 
-                         url.pathname.endsWith('.json') || 
-                         url.pathname.endsWith('.css') || 
-                         url.pathname.endsWith('.html') || 
+  const isNetworkFirst = /\.(js|json|css|html)(\?.*)?$/i.test(url.pathname + url.search) || 
                          url.pathname.endsWith('/') ||
                          event.request.mode === 'navigate';
 

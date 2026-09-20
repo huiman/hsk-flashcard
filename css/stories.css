@@ -37,6 +37,50 @@
   letter-spacing: -0.01em;
 }
 
+.top-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.top-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  color: #475569;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.top-action-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.top-action-btn.active {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #4338ca;
+}
+
+.top-action-btn .top-action-icon {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
 /* =========================================================
    Main Navigation Tabs (Bottom Dock)
    ========================================================= */
@@ -145,6 +189,14 @@
   gap: 6px;
   width: 100%;
   padding: 2px 0 6px 0;
+  transition: max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s ease, padding 0.25s ease, margin 0.25s ease;
+  max-height: 250px;
+  opacity: 1;
+  overflow: hidden;
+}
+
+.stories-level-bar.is-hidden {
+  display: none !important;
 }
 
 .story-level-chip {
@@ -1008,6 +1060,23 @@ rt {
 
 [data-theme="dark"] .theme-toggle-btn:hover {
   background: #2b2b38;
+}
+
+[data-theme="dark"] .top-action-btn {
+  background: #22222c;
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .top-action-btn:hover {
+  background: #2b2b38;
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .top-action-btn.active {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: rgba(99, 102, 241, 0.5);
+  color: #c7d2fe;
 }
 
 [data-theme="dark"] .story-card {
