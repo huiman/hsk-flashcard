@@ -1,767 +1,1232 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>HSK Flashcards, Stories, Writing</title>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>HSK Flashcards, Stories, Writing</title>
+    <!-- PWA Manifest & Meta Tags -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#4f46e5" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="HSK Cards" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
+    <link rel="icon" type="image/svg+xml" href="icon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
 
-  <!-- PWA Manifest & Meta Tags -->
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#4f46e5">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="HSK Cards">
-  <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="icon" type="image/svg+xml" href="icon.svg">  
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- โหลดฟอนต์พู่กันจีนแท้ (Ma Shan Zheng และ Zhi Mang Xing) พร้อมฟอนต์ไทย Kanit -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Ma+Shan+Zheng&family=Zhi+Mang+Xing&display=swap"
+      rel="stylesheet"
+    />
+    <!-- ไลบรารีวาดลำดับขีดอักษรจีน -->
+    <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- โหลดฟอนต์พู่กันจีนแท้ (Ma Shan Zheng และ Zhi Mang Xing) พร้อมฟอนต์ไทย Kanit -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&family=Ma+Shan+Zheng&family=Zhi+Mang+Xing&display=swap"
-    rel="stylesheet">
-  <!-- ไลบรารีวาดลำดับขีดอักษรจีน -->
-  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
-
-  <!-- โหลดสไตล์แยกโมดูล -->
-  <link rel="stylesheet" href="css/style.css?v=13.17.1">
-  <link rel="stylesheet" href="css/stories.css?v=13.17.1">
-  <link rel="stylesheet" href="css/practice.css?v=13.17.1">
-</head>
-<body>
-
-  <div class="game-container">
-    <!-- แถบแจ้งเตือนติดตั้ง PWA สำหรับมือถือและเดสก์ท็อป -->
-    <div class="pwa-install-banner" id="pwa-install-banner">
-      <div class="pwa-install-info">
-        <span class="pwa-install-icon">📲</span>
-        <span>ติดตั้งแอปบนอุปกรณ์ เพื่อเปิดใช้งานแบบออฟไลน์</span>
+    <!-- โหลดสไตล์แยกโมดูล -->
+    <link rel="stylesheet" href="css/style.css?v=13.17.1" />
+    <link rel="stylesheet" href="css/stories.css?v=13.17.1" />
+    <link rel="stylesheet" href="css/practice.css?v=13.17.1" />
+  </head>
+  <body>
+    <div class="game-container">
+      <!-- แถบแจ้งเตือนติดตั้ง PWA สำหรับมือถือและเดสก์ท็อป -->
+      <div class="pwa-install-banner" id="pwa-install-banner">
+        <div class="pwa-install-info">
+          <span class="pwa-install-icon">📲</span>
+          <span>ติดตั้งแอปบนอุปกรณ์ เพื่อเปิดใช้งานแบบออฟไลน์</span>
+        </div>
+        <div style="display: flex; align-items: center">
+          <button class="btn-install" id="btn-install-app">ติดตั้ง</button>
+          <button class="btn-install-close" id="btn-install-close" title="ปิด">
+            ✕
+          </button>
+        </div>
       </div>
-      <div style="display:flex;align-items:center;">
-        <button class="btn-install" id="btn-install-app">ติดตั้ง</button>
-        <button class="btn-install-close" id="btn-install-close" title="ปิด">✕</button>
-      </div>
-    </div>
 
-    <!-- แถบด้านบน: โลโก้/ชื่อแอป -->
-    <header class="app-top-bar">
-      <div class="app-brand">
-        <span class="brand-badge">HSK 1-9</span>
-        <h1 class="brand-title" id="app-brand-title">🀄 Flashcards</h1>
-      </div>
-    </header>
-    <script>
-      (function() {
-        var KEY = 'hsk_levels_visible';
-        function setVisibility(show) {
-          document.body.classList.toggle('hsk-levels-hidden', !show);
-          var btn = document.getElementById('btn-toggle-levels');
-          if (btn) {
-            btn.classList.toggle('active', show);
-            btn.title = show ? 'ซ่อนแถบเลือกระดับ HSK' : 'แสดงแถบเลือกระดับ HSK';
+      <!-- แถบด้านบน: โลโก้/ชื่อแอป -->
+      <header class="app-top-bar">
+        <div class="app-brand">
+          <span class="brand-badge">HSK 1-9</span>
+          <h1 class="brand-title" id="app-brand-title">🀄 Flashcards</h1>
+        </div>
+      </header>
+      <script>
+        ;(function () {
+          var KEY = 'hsk_levels_visible'
+          function setVisibility(show) {
+            document.body.classList.toggle('hsk-levels-hidden', !show)
+            var btn = document.getElementById('btn-toggle-levels')
+            if (btn) {
+              btn.classList.toggle('active', show)
+              btn.title = show
+                ? 'ซ่อนแถบเลือกระดับ HSK'
+                : 'แสดงแถบเลือกระดับ HSK'
+            }
+            ;[
+              'level-selector',
+              'stories-level-bar',
+              'practice-level-bar',
+            ].forEach(function (id) {
+              var el = document.getElementById(id)
+              if (el) el.classList.toggle('is-hidden', !show)
+            })
+            try {
+              localStorage.setItem(KEY, show ? 'true' : 'false')
+            } catch (e) {}
           }
-          ['level-selector', 'stories-level-bar', 'practice-level-bar'].forEach(function(id) {
-            var el = document.getElementById(id);
-            if (el) el.classList.toggle('is-hidden', !show);
-          });
-          try { localStorage.setItem(KEY, show ? 'true' : 'false'); } catch(e){}
-        }
 
-        window.__toggleLevelsBar = function(e) {
-          if (e && e.preventDefault) e.preventDefault();
-          var isCurrentlyHidden = document.body.classList.contains('hsk-levels-hidden') ||
-            (document.getElementById('level-selector') && document.getElementById('level-selector').classList.contains('is-hidden'));
-          setVisibility(isCurrentlyHidden);
-        };
+          window.__toggleLevelsBar = function (e) {
+            if (e && e.preventDefault) e.preventDefault()
+            var isCurrentlyHidden =
+              document.body.classList.contains('hsk-levels-hidden') ||
+              (document.getElementById('level-selector') &&
+                document
+                  .getElementById('level-selector')
+                  .classList.contains('is-hidden'))
+            setVisibility(isCurrentlyHidden)
+          }
 
-        window.__applyLevelsBarVisibility = setVisibility;
+          window.__applyLevelsBarVisibility = setVisibility
 
-        // Restore saved preference
-        var saved = null;
-        try { saved = localStorage.getItem(KEY); } catch(e){}
-        var initialShow = saved !== null ? saved === 'true' : true;
-        setVisibility(initialShow);
+          // Restore saved preference
+          var saved = null
+          try {
+            saved = localStorage.getItem(KEY)
+          } catch (e) {}
+          var initialShow = saved !== null ? saved === 'true' : true
+          setVisibility(initialShow)
 
-        // Bind click event immediately
-        var btn = document.getElementById('btn-toggle-levels');
-        if (btn) {
-          btn.addEventListener('click', window.__toggleLevelsBar);
-        }
-      })();
-    </script>
+          // Bind click event immediately
+          var btn = document.getElementById('btn-toggle-levels')
+          if (btn) {
+            btn.addEventListener('click', window.__toggleLevelsBar)
+          }
+        })()
+      </script>
 
-    <!-- หน้า Flashcards View -->
-    <div id="view-flashcard" class="app-view active">
+      <!-- หน้า Flashcards View -->
+      <div id="view-flashcard" class="app-view active">
+        <!-- ตัวเลือกระดับ HSK (รูปแบบเดียวกับแถบเลือกระดับนิทาน Story) -->
+        <section class="level-selector" id="level-selector">
+          <button class="level-chip" data-level="all">ทั้งหมด</button>
+          <button class="level-chip active" data-level="HSK 1">
+            <span class="lvl-dot lvl-1"></span>HSK 1
+          </button>
+          <button class="level-chip" data-level="HSK 2">
+            <span class="lvl-dot lvl-2"></span>HSK 2
+          </button>
+          <button class="level-chip" data-level="HSK 3">
+            <span class="lvl-dot lvl-3"></span>HSK 3
+          </button>
+          <button class="level-chip" data-level="HSK 4">
+            <span class="lvl-dot lvl-4"></span>HSK 4
+          </button>
+          <button class="level-chip" data-level="HSK 5">
+            <span class="lvl-dot lvl-5"></span>HSK 5
+          </button>
+          <button class="level-chip" data-level="HSK 6">
+            <span class="lvl-dot lvl-6"></span>HSK 6
+          </button>
+          <button class="level-chip" data-level="HSK 7">
+            <span class="lvl-dot lvl-7"></span>HSK 7
+          </button>
+          <button class="level-chip" data-level="HSK 8">
+            <span class="lvl-dot lvl-8"></span>HSK 8
+          </button>
+          <button class="level-chip" data-level="HSK 9">
+            <span class="lvl-dot lvl-9"></span>HSK 9
+          </button>
+        </section>
 
-    <!-- ตัวเลือกระดับ HSK (รูปแบบเดียวกับแถบเลือกระดับนิทาน Story) -->
-    <section class="level-selector" id="level-selector">
-      <button class="level-chip" data-level="all">ทั้งหมด</button>
-      <button class="level-chip active" data-level="HSK 1"><span class="lvl-dot lvl-1"></span>HSK 1</button>
-      <button class="level-chip" data-level="HSK 2"><span class="lvl-dot lvl-2"></span>HSK 2</button>
-      <button class="level-chip" data-level="HSK 3"><span class="lvl-dot lvl-3"></span>HSK 3</button>
-      <button class="level-chip" data-level="HSK 4"><span class="lvl-dot lvl-4"></span>HSK 4</button>
-      <button class="level-chip" data-level="HSK 5"><span class="lvl-dot lvl-5"></span>HSK 5</button>
-      <button class="level-chip" data-level="HSK 6"><span class="lvl-dot lvl-6"></span>HSK 6</button>
-      <button class="level-chip" data-level="HSK 7"><span class="lvl-dot lvl-7"></span>HSK 7</button>
-      <button class="level-chip" data-level="HSK 8"><span class="lvl-dot lvl-8"></span>HSK 8</button>
-      <button class="level-chip" data-level="HSK 9"><span class="lvl-dot lvl-9"></span>HSK 9</button>
-    </section>
-
-    <!-- สถิติคะแนน -->
-    <section class="stats-board">
-      <div class="stat-box">
-        <span class="stat-label">จำได้แล้ว</span>
-        <span class="stat-value" id="known-count">0</span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-label">เหลืออีก</span>
-        <span class="stat-value" id="remaining-count">50</span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-label">คะแนนรวม</span>
-        <span class="stat-value highlight" id="score-count">0</span>
-      </div>
-    </section>
-
-    <!-- Flashcard 3D -->
-    <main class="card-scene">
-      <div class="card" id="flashcard">
-        <!-- หน้าการ์ด (อักษรจีน) -->
-        <div class="card-face card-front">
-          <span class="level-badge" id="card-level">HSK 1</span>
-          <button class="btn-audio" id="btn-audio-front" title="ฟังเสียงอ่าน">🔊</button>
-          <button class="btn-stroke" id="btn-stroke-replay" title="ดูลำดับขีดอีกครั้ง">🖊️</button>
-
-          <div class="hanzi-writer-container" id="hanzi-writer-container"></div>
-          <button class="btn-card-practice-link" id="btn-card-practice-now" title="ฝึกเขียนอักษรตัวนี้">✍️ ฝึกคัดตัวนี้</button>
-          <span class="hint-text">💡 แตะ: พลิก · แตะ 2×: จำได้แล้ว</span>
-        </div>
-
-        <!-- หลังการ์ด (พินอิน + คำแปล) -->
-        <div class="card-face card-back">
-          <button class="btn-audio btn-audio-back" id="btn-audio-back" title="ฟังเสียงอ่าน">🔊</button>
-
-          <div class="pinyin-text" id="card-pinyin">nǐ hǎo</div>
-          <div class="meaning-content-wrapper">
-            <div class="meaning-thai" id="card-meaning">สวัสดี</div>
-            <div class="meaning-en-badge" id="card-meaning-en">hello; hi</div>
+        <!-- สถิติคะแนน -->
+        <section class="stats-board">
+          <div class="stat-box">
+            <span class="stat-label">จำได้แล้ว</span>
+            <span class="stat-value" id="known-count">0</span>
           </div>
-          <span class="hint-text">💡 แตะ: พลิกกลับ · แตะ 2×: จำได้แล้ว</span>
-        </div>
-      </div>
-    </main>
+          <div class="stat-box">
+            <span class="stat-label">เหลืออีก</span>
+            <span class="stat-value" id="remaining-count">50</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">คะแนนรวม</span>
+            <span class="stat-value highlight" id="score-count">0</span>
+          </div>
+        </section>
 
-    <!-- ปุ่มควบคุม -->
-    <footer class="controls">
-      <div class="controls-row">
-        <button id="btn-prev" class="btn btn-prev" title="ย้อนกลับไปคำก่อนหน้า (←)">
-          ⬅️ คำก่อนหน้า
-        </button>
-        <button id="btn-next" class="btn btn-secondary" title="สุ่มคำต่อไป (→)">
-          🎲 สุ่มคำต่อไป ➡️
-        </button>
-      </div>
-      <button id="btn-know" class="btn btn-primary">
-        ✅ จำได้แล้ว (+10 คะแนน)
-      </button>
-      <button id="btn-reset" class="btn btn-text">
-        🔄 รีเซ็ตข้อมูลทั้งหมด
-      </button>
-      <div id="app-version" class="app-version"></div>
-    </footer>
-    </div>
-    <!-- จบ view-flashcard -->
+        <!-- Flashcard 3D -->
+        <main class="card-scene">
+          <div class="card" id="flashcard">
+            <!-- หน้าการ์ด (อักษรจีน) -->
+            <div class="card-face card-front">
+              <span class="level-badge" id="card-level">HSK 1</span>
+              <button
+                class="btn-audio"
+                id="btn-audio-front"
+                title="ฟังเสียงอ่าน"
+              >
+                🔊
+              </button>
+              <button
+                class="btn-stroke"
+                id="btn-stroke-replay"
+                title="ดูลำดับขีดอีกครั้ง"
+              >
+                🖊️
+              </button>
 
-    <!-- 2. หน้า HSK Stories Library View -->
-    <div id="view-stories" class="app-view">
-
-      <!-- แถบเลือกระดับ HSK 1-9 -->
-      <section class="stories-level-bar" id="stories-level-bar">
-        <button class="story-level-chip active" data-level="all">ทั้งหมด</button>
-        <button class="story-level-chip" data-level="1"><span class="lvl-dot lvl-1"></span>HSK 1</button>
-        <button class="story-level-chip" data-level="2"><span class="lvl-dot lvl-2"></span>HSK 2</button>
-        <button class="story-level-chip" data-level="3"><span class="lvl-dot lvl-3"></span>HSK 3</button>
-        <button class="story-level-chip" data-level="4"><span class="lvl-dot lvl-4"></span>HSK 4</button>
-        <button class="story-level-chip" data-level="5"><span class="lvl-dot lvl-5"></span>HSK 5</button>
-        <button class="story-level-chip" data-level="6"><span class="lvl-dot lvl-6"></span>HSK 6</button>
-        <button class="story-level-chip" data-level="7"><span class="lvl-dot lvl-7"></span>HSK 7</button>
-        <button class="story-level-chip" data-level="8"><span class="lvl-dot lvl-8"></span>HSK 8</button>
-        <button class="story-level-chip" data-level="9"><span class="lvl-dot lvl-9"></span>HSK 9</button>
-      </section>
-
-      <!-- รายการการ์ดนิทาน -->
-      <section class="stories-grid" id="stories-grid">
-        <!-- Story cards dynamically generated -->
-      </section>
-    </div>
-
-    <!-- 3. หน้า Practice Stroke-Order Writing View -->
-    <div id="view-practice" class="app-view">
-
-      <!-- Practice Statistics Dashboard (Counts & Mastery) -->
-      <section class="practice-stats-board interactive" id="practice-stats-board" title="แตะเพื่อดูสถิติละเอียด">
-        <div class="practice-stat-box">
-          <span class="practice-stat-label">ฝึกซ้อมทั้งหมด</span>
-          <span class="practice-stat-val highlight-purple" id="practice-stat-total-sessions">0</span>
-        </div>
-        <div class="practice-stat-box">
-          <span class="practice-stat-label">ตัวอักษรที่ผ่าน</span>
-          <span class="practice-stat-val highlight-green" id="practice-stat-completed-chars">0</span>
-        </div>
-        <div class="practice-stat-box">
-          <span class="practice-stat-label">ความแม่นยำเฉลี่ย</span>
-          <span class="practice-stat-val" id="practice-stat-avg-accuracy">0%</span>
-        </div>
-      </section>
-
-      <!-- แถบปุ่มทางลัดสถิติ & ค้นหาคำ -->
-      <div class="practice-top-actions">
-        <button class="btn-stat-action" id="btn-open-stats-modal">
-          <span>📊 ดูสถิติละเอียด (Statistics)</span>
-        </button>
-        <button class="btn-stat-action highlight" id="btn-open-word-picker">
-          <span>🔍 เลือกคำศัพท์ (Select Word)</span>
-        </button>
-      </div>
-
-      <!-- แถบเลือกระดับ HSK 1-9 สำหรับฝึกคัด -->
-      <section class="practice-level-bar" id="practice-level-bar">
-        <button class="practice-level-chip" data-level="all">ทั้งหมด</button>
-        <button class="practice-level-chip active" data-level="HSK 1"><span class="lvl-dot lvl-1"></span>HSK 1</button>
-        <button class="practice-level-chip" data-level="HSK 2"><span class="lvl-dot lvl-2"></span>HSK 2</button>
-        <button class="practice-level-chip" data-level="HSK 3"><span class="lvl-dot lvl-3"></span>HSK 3</button>
-        <button class="practice-level-chip" data-level="HSK 4"><span class="lvl-dot lvl-4"></span>HSK 4</button>
-        <button class="practice-level-chip" data-level="HSK 5"><span class="lvl-dot lvl-5"></span>HSK 5</button>
-        <button class="practice-level-chip" data-level="HSK 6"><span class="lvl-dot lvl-6"></span>HSK 6</button>
-        <button class="practice-level-chip" data-level="HSK 7"><span class="lvl-dot lvl-7"></span>HSK 7</button>
-        <button class="practice-level-chip" data-level="HSK 8"><span class="lvl-dot lvl-8"></span>HSK 8</button>
-        <button class="practice-level-chip" data-level="HSK 9"><span class="lvl-dot lvl-9"></span>HSK 9</button>
-      </section>
-
-      <!-- Practice Interactive Card Box -->
-      <div class="practice-card-wrap">
-        <!-- Word Header Info -->
-        <div class="practice-word-header">
-          <div class="practice-badge-row">
-            <span class="practice-hsk-badge" id="practice-hsk-badge">HSK 1</span>
-            <div style="display:flex;align-items:center;gap:6px;">
-              <button class="btn-picker-shortcut" id="btn-practice-to-cards" title="เปิดคำนี้ในโหมดบัตรคำ Flashcards">🀄 การ์ด (Cards)</button>
-              <button class="btn-picker-shortcut" id="btn-header-pick-word" title="ค้นหาและเลือกคำอื่น">🔍 เลือกคำ</button>
-              <span class="practice-char-count-badge" id="practice-char-count-badge">✍️ คัดแล้ว 0 ครั้ง</span>
+              <div
+                class="hanzi-writer-container"
+                id="hanzi-writer-container"
+              ></div>
+              <button
+                class="btn-card-practice-link"
+                id="btn-card-practice-now"
+                title="ฝึกเขียนอักษรตัวนี้"
+              >
+                ✍️ ฝึกคัดตัวนี้
+              </button>
+              <span class="hint-text">💡 แตะ: พลิก · แตะ 2×: จำได้แล้ว</span>
             </div>
-          </div>
 
-          <div class="practice-pinyin-meaning">
-            <div class="practice-full-word">
-              <span id="practice-full-word-text">一</span>
-              <button class="practice-btn-audio" id="practice-btn-audio" title="ฟังเสียงอ่าน">🔊</button>
-            </div>
-            <div class="practice-pinyin" id="practice-pinyin">yī</div>
-            <div class="practice-meaning" id="practice-meaning">หนึ่ง</div>
-            <div class="practice-meaning-en" id="practice-meaning-en">one; single</div>
-          </div>
+            <!-- หลังการ์ด (พินอิน + คำแปล) -->
+            <div class="card-face card-back">
+              <button
+                class="btn-audio btn-audio-back"
+                id="btn-audio-back"
+                title="ฟังเสียงอ่าน"
+              >
+                🔊
+              </button>
 
-          <!-- Multi-character Pills for words like 你好, 学校 -->
-          <div class="practice-char-selector" id="practice-char-selector">
-            <!-- Rendered by JS -->
-          </div>
-        </div>
-
-        <!-- Traditional Chinese Tianzige / Mizige Canvas Box -->
-        <div class="canvas-outer-wrapper">
-          <div class="writing-grid-box" id="writing-grid-box">
-            <!-- Traditional SVG Mizige (米字格) Grid Background -->
-            <svg class="writing-grid-bg" viewBox="0 0 300 300" preserveAspectRatio="none">
-              <!-- Outer Square -->
-              <rect x="0" y="0" width="300" height="300" fill="none" stroke="rgba(225,29,72,0.25)" stroke-width="2"/>
-              <!-- Diagonal guide lines -->
-              <line x1="0" y1="0" x2="300" y2="300" class="grid-line-diag"/>
-              <line x1="0" y1="300" x2="300" y2="0" class="grid-line-diag"/>
-              <!-- Crosshair center lines -->
-              <line x1="150" y1="0" x2="150" y2="300" class="grid-line-main"/>
-              <line x1="0" y1="150" x2="300" y2="150" class="grid-line-main"/>
-              <!-- Inner center guide square -->
-              <rect x="50" y="50" width="200" height="200" fill="none" class="grid-inner-square"/>
-            </svg>
-
-            <!-- HanziWriter Quiz Mount Target -->
-            <div class="practice-writer-target" id="practice-writer-target"></div>
-          </div>
-
-          <!-- Real-time Stroke Status Alert & Inline Toast -->
-          <div class="stroke-feedback-bar status-neutral" id="stroke-feedback-bar">
-            <span class="feedback-msg" id="feedback-msg">ลากเส้นขีดแรกตามลำดับ</span>
-            <span class="feedback-stroke-counter" id="feedback-stroke-counter">ขีดที่ 1 / ...</span>
-          </div>
-
-          <!-- Non-intrusive Floating Inline Completion Badge -->
-          <div class="practice-inline-toast" id="practice-inline-toast">
-            <span class="toast-emoji">🎉</span>
-            <span class="toast-main" id="toast-complete-msg">ยอดเยี่ยม! ถูกต้อง 100%</span>
-            <span class="toast-sub" id="toast-complete-sub">✍️ คัดสะสม 1 ครั้ง</span>
-          </div>
-        </div>
-
-        <!-- Practice Stroke Action Buttons -->
-        <div class="practice-actions-row">
-          <button class="btn-practice-action" id="btn-practice-hint" title="ดูตัวอย่างขีดนี้">
-            💡 ดูตัวอย่างขีดนี้
-          </button>
-          <button class="btn-practice-action" id="btn-practice-restart" title="เริ่มเขียนตัวนี้ใหม่">
-            🔄 เริ่มเขียนใหม่
-          </button>
-        </div>
-
-        <!-- Navigation Controls -->
-        <div class="practice-nav-row">
-          <button class="btn-practice-nav" id="btn-practice-prev" title="คำก่อนหน้า">
-            ⬅️ คำก่อนหน้า
-          </button>
-          <button class="btn-practice-nav" id="btn-practice-random" title="สุ่มคำ">
-            🎲 สุ่มคำ
-          </button>
-          <button class="btn-practice-nav btn-practice-primary" id="btn-practice-next" title="คำต่อไป">
-            คำต่อไป ➡️
-          </button>
-        </div>
-
-        <!-- Character Completion Celebration Overlay -->
-        <div class="practice-complete-overlay" id="practice-complete-overlay">
-          <div class="practice-complete-box">
-            <div class="complete-character-large" id="complete-char-large">大</div>
-            <div class="complete-title">🎉 คัดอักษรสำเร็จ!</div>
-            <div class="complete-pinyin-meaning" id="complete-pinyin-meaning">dà • big</div>
-
-            <div class="complete-metrics-grid">
-              <div class="metric-pill">
-                <span class="metric-pill-label">จำนวนขีด</span>
-                <span class="metric-pill-val" id="metric-strokes">3 ขีด</span>
+              <div class="pinyin-text" id="card-pinyin">nǐ hǎo</div>
+              <div class="meaning-content-wrapper">
+                <div class="meaning-thai" id="card-meaning">สวัสดี</div>
+                <div class="meaning-en-badge" id="card-meaning-en">
+                  hello; hi
+                </div>
               </div>
-              <div class="metric-pill">
-                <span class="metric-pill-label">จำนวนครั้งที่ลาก</span>
-                <span class="metric-pill-val" id="metric-attempts">3 ครั้ง</span>
-              </div>
-              <div class="metric-pill">
-                <span class="metric-pill-label">ความแม่นยำ</span>
-                <span class="metric-pill-val green" id="metric-accuracy">100%</span>
-              </div>
-            </div>
-
-            <div class="complete-lifetime-badge" id="complete-lifetime-badge">
-              ✍️ คัดตัวนี้สะสมแล้ว 1 ครั้ง
-            </div>
-
-            <div class="complete-actions">
-              <button class="btn-practice-action" id="btn-complete-again">🔄 ฝึกซ้ำอีกรอบ</button>
-              <button class="btn-practice-action" id="btn-complete-to-cards" title="เปิดดูคำนี้ในโหมดบัตรคำ Flashcards">🀄 ไปที่การ์ด</button>
-              <button class="btn-practice-action btn-practice-primary" id="btn-complete-next">อักษรต่อไป ➡️</button>
+              <span class="hint-text"
+                >💡 แตะ: พลิกกลับ · แตะ 2×: จำได้แล้ว</span
+              >
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </main>
 
-    <!-- แถบเมนูด้านล่าง (Bottom Navigation Bar) -->
-    <nav class="main-tabs" id="main-tabs" aria-label="เมนูหลัก">
-      <button class="main-tab-btn active" id="tab-flashcard" data-view="flashcard" title="บัตรคำ Flashcards">
-        <span class="tab-icon">🀄</span>
-        <span class="tab-label">บัตรคำ (Cards)</span>
-      </button>
-      <button class="main-tab-btn" id="tab-stories" data-view="stories" title="นิทาน Stories">
-        <span class="tab-icon">📖</span>
-        <span class="tab-label">นิทาน (Stories)</span>
-      </button>
-      <button class="main-tab-btn" id="tab-practice" data-view="practice" title="ฝึกคัดอักษร Write">
-        <span class="tab-icon">✍️</span>
-        <span class="tab-label">ฝึกคัด (Write)</span>
-      </button>
-      <button class="main-tab-btn main-tab-settings" id="btn-open-settings" title="การตั้งค่า (Settings)" aria-label="เปิดหน้าต่างการตั้งค่า">
-        <span class="tab-icon">⚙️</span>
-        <span class="tab-label">ตั้งค่า (Settings)</span>
-      </button>
-    </nav>
-  </div>
-
-  <!-- 3. Story Reader Overlay / Modal (Placed at top body level for full-screen fixed overlay) -->
-  <div id="story-reader-modal" class="story-reader-modal">
-    <div class="reader-container">
-      <!-- Top reader navigation bar -->
-      <div class="reader-top-bar">
-        <button class="btn-reader-back" id="btn-reader-back" title="กลับไปคลังนิทาน">
-          ⬅️ กลับ
-        </button>
-        <div class="reader-title-box">
-          <span class="reader-hsk-badge" id="reader-hsk-badge">HSK 1</span>
-          <span class="reader-chapter-title" id="reader-chapter-title">Title</span>
-          <span class="reader-hint-caption" title="คลิก 1 ครั้งเพื่อแปล | ดับเบิ้ลคลิกเพื่อเริ่มอ่าน">💡 1 คลิก: แปล | 2 คลิก: อ่าน</span>
-        </div>
-        <div class="reader-settings-toggles">
-          <button class="reader-toggle-btn" id="btn-toggle-reader-theme" title="สลับธีม สว่าง / มืด">🌓</button>
-          <button class="reader-toggle-btn active" id="btn-toggle-pinyin" title="เปิด/ปิด พินอิน">拼</button>
-          <button class="reader-toggle-btn" id="btn-toggle-trans" title="เปิด/ปิด คำแปลอังกฤษ">EN</button>
-        </div>
-      </div>
-
-      <!-- Sticky Audio Player Bar -->
-      <div class="reader-audio-bar" id="reader-audio-bar">
-        <button class="audio-btn-play" id="audio-btn-play" title="เล่น/หยุด">▶️</button>
-        <div class="audio-timeline-wrap">
-          <div class="audio-time-label" id="audio-time-current">0:00</div>
-          <input type="range" class="audio-scrubber" id="audio-scrubber" min="0" max="100" value="0" step="0.5">
-          <div class="audio-time-label" id="audio-time-duration">0:00</div>
-        </div>
-        <button class="audio-speed-btn" id="audio-speed-btn" title="ความเร็วเสียง">1.0x</button>
-      </div>
-
-      <!-- Chapter Selector Pills -->
-      <div class="chapter-nav-row" id="chapter-nav-row">
-        <!-- Chapter pills dynamically rendered -->
-      </div>
-
-      <!-- Reader Story Content -->
-      <main class="reader-content-body" id="reader-content-body">
-        <!-- Sentences and paragraphs rendered here -->
-      </main>
-
-      <!-- Bottom Chapter Pagination Controls -->
-      <div class="reader-footer-nav">
-        <button class="btn btn-secondary" id="btn-reader-prev-chap">⬅️ ตอนก่อนหน้า</button>
-        <button class="btn btn-primary" id="btn-reader-next-chap">ตอนต่อไป ➡️</button>
-      </div>
-
-      <!-- HSKStory Word Translation Bottom Sheet -->
-      <div class="story-word-sheet" id="story-word-sheet">
-        <div class="sheet-drag-handle"></div>
-        <div class="sheet-header">
-          <div class="sheet-hanzi-wrap">
-            <span class="sheet-hanzi" id="sheet-hanzi">今天</span>
-            <span class="sheet-hsk-badge" id="sheet-hsk-badge">HSK 1</span>
+        <!-- ปุ่มควบคุม -->
+        <footer class="controls">
+          <div class="controls-row">
+            <button
+              id="btn-prev"
+              class="btn btn-prev"
+              title="ย้อนกลับไปคำก่อนหน้า (←)"
+            >
+              ⬅️ คำก่อนหน้า
+            </button>
+            <button
+              id="btn-next"
+              class="btn btn-secondary"
+              title="สุ่มคำต่อไป (→)"
+            >
+              🎲 สุ่มคำต่อไป ➡️
+            </button>
           </div>
-          <div class="sheet-actions">
-            <button class="sheet-btn-speak" id="sheet-btn-practice" title="ฝึกคัดอักษร">✍️</button>
-            <button class="sheet-btn-speak" id="sheet-btn-speak" title="ออกเสียง">🔊</button>
-            <button class="sheet-btn-close" id="sheet-btn-close" title="ปิด">✕</button>
-          </div>
-        </div>
-        <div class="sheet-pinyin" id="sheet-pinyin">jīn tiān</div>
-        <div class="sheet-definitions" id="sheet-definitions"></div>
-        <div class="sheet-sentence-wrap">
-          <button class="sheet-btn-trans-sent" id="sheet-btn-trans-sent">
-            <span class="sheet-trans-label">文A Translate sentence</span>
-            <span class="sheet-trans-chevron" id="sheet-trans-chevron">›</span>
+          <button id="btn-know" class="btn btn-primary">
+            ✅ จำได้แล้ว (+10 คะแนน)
           </button>
-          <div class="sheet-sentence-content" id="sheet-sentence-content"></div>
+          <button id="btn-reset" class="btn btn-text">
+            🔄 รีเซ็ตข้อมูลทั้งหมด
+          </button>
+          <div id="app-version" class="app-version"></div>
+        </footer>
+      </div>
+      <!-- จบ view-flashcard -->
+
+      <!-- 2. หน้า HSK Stories Library View -->
+      <div id="view-stories" class="app-view">
+        <!-- แถบเลือกระดับ HSK 1-9 -->
+        <section class="stories-level-bar" id="stories-level-bar">
+          <button class="story-level-chip active" data-level="all">
+            ทั้งหมด
+          </button>
+          <button class="story-level-chip" data-level="1">
+            <span class="lvl-dot lvl-1"></span>HSK 1
+          </button>
+          <button class="story-level-chip" data-level="2">
+            <span class="lvl-dot lvl-2"></span>HSK 2
+          </button>
+          <button class="story-level-chip" data-level="3">
+            <span class="lvl-dot lvl-3"></span>HSK 3
+          </button>
+          <button class="story-level-chip" data-level="4">
+            <span class="lvl-dot lvl-4"></span>HSK 4
+          </button>
+          <button class="story-level-chip" data-level="5">
+            <span class="lvl-dot lvl-5"></span>HSK 5
+          </button>
+          <button class="story-level-chip" data-level="6">
+            <span class="lvl-dot lvl-6"></span>HSK 6
+          </button>
+          <button class="story-level-chip" data-level="7">
+            <span class="lvl-dot lvl-7"></span>HSK 7
+          </button>
+          <button class="story-level-chip" data-level="8">
+            <span class="lvl-dot lvl-8"></span>HSK 8
+          </button>
+          <button class="story-level-chip" data-level="9">
+            <span class="lvl-dot lvl-9"></span>HSK 9
+          </button>
+        </section>
+
+        <!-- รายการการ์ดนิทาน -->
+        <section class="stories-grid" id="stories-grid">
+          <!-- Story cards dynamically generated -->
+        </section>
+      </div>
+
+      <!-- 3. หน้า Practice Stroke-Order Writing View -->
+      <div id="view-practice" class="app-view">
+        <!-- แถบเลือกระดับ HSK 1-9 สำหรับฝึกคัด -->
+        <section class="practice-level-bar" id="practice-level-bar">
+          <button class="practice-level-chip" data-level="all">ทั้งหมด</button>
+          <button class="practice-level-chip active" data-level="HSK 1">
+            <span class="lvl-dot lvl-1"></span>HSK 1
+          </button>
+          <button class="practice-level-chip" data-level="HSK 2">
+            <span class="lvl-dot lvl-2"></span>HSK 2
+          </button>
+          <button class="practice-level-chip" data-level="HSK 3">
+            <span class="lvl-dot lvl-3"></span>HSK 3
+          </button>
+          <button class="practice-level-chip" data-level="HSK 4">
+            <span class="lvl-dot lvl-4"></span>HSK 4
+          </button>
+          <button class="practice-level-chip" data-level="HSK 5">
+            <span class="lvl-dot lvl-5"></span>HSK 5
+          </button>
+          <button class="practice-level-chip" data-level="HSK 6">
+            <span class="lvl-dot lvl-6"></span>HSK 6
+          </button>
+          <button class="practice-level-chip" data-level="HSK 7">
+            <span class="lvl-dot lvl-7"></span>HSK 7
+          </button>
+          <button class="practice-level-chip" data-level="HSK 8">
+            <span class="lvl-dot lvl-8"></span>HSK 8
+          </button>
+          <button class="practice-level-chip" data-level="HSK 9">
+            <span class="lvl-dot lvl-9"></span>HSK 9
+          </button>
+        </section>
+
+        <!-- Practice Statistics Dashboard (Counts & Mastery) -->
+        <section
+          class="practice-stats-board interactive"
+          id="practice-stats-board"
+          title="แตะเพื่อดูสถิติละเอียด"
+        >
+          <div class="practice-stat-box">
+            <span class="practice-stat-label">ฝึกซ้อมทั้งหมด</span>
+            <span
+              class="practice-stat-val highlight-purple"
+              id="practice-stat-total-sessions"
+              >0</span
+            >
+          </div>
+          <div class="practice-stat-box">
+            <span class="practice-stat-label">ตัวอักษรที่ผ่าน</span>
+            <span
+              class="practice-stat-val highlight-green"
+              id="practice-stat-completed-chars"
+              >0</span
+            >
+          </div>
+          <div class="practice-stat-box">
+            <span class="practice-stat-label">ความแม่นยำเฉลี่ย</span>
+            <span class="practice-stat-val" id="practice-stat-avg-accuracy"
+              >0%</span
+            >
+          </div>
+        </section>
+
+        <!-- แถบปุ่มทางลัดสถิติ & ค้นหาคำ -->
+        <div class="practice-top-actions">
+          <button class="btn-stat-action" id="btn-open-stats-modal">
+            <span>📊 ดูสถิติละเอียด (Statistics)</span>
+          </button>
+          <button class="btn-stat-action highlight" id="btn-open-word-picker">
+            <span>🔍 เลือกคำศัพท์ (Select Word)</span>
+          </button>
+        </div>
+
+        <!-- Practice Interactive Card Box -->
+        <div class="practice-card-wrap">
+          <!-- Word Header Info -->
+          <div class="practice-word-header">
+            <div class="practice-badge-row">
+              <span class="practice-hsk-badge" id="practice-hsk-badge"
+                >HSK 1</span
+              >
+              <div style="display: flex; align-items: center; gap: 6px">
+                <button
+                  class="btn-picker-shortcut"
+                  id="btn-practice-to-cards"
+                  title="เปิดคำนี้ในโหมดบัตรคำ Flashcards"
+                >
+                  🀄 การ์ด (Cards)
+                </button>
+                <button
+                  class="btn-picker-shortcut"
+                  id="btn-header-pick-word"
+                  title="ค้นหาและเลือกคำอื่น"
+                >
+                  🔍 เลือกคำ
+                </button>
+                <span
+                  class="practice-char-count-badge"
+                  id="practice-char-count-badge"
+                  >✍️ คัดแล้ว 0 ครั้ง</span
+                >
+              </div>
+            </div>
+
+            <div class="practice-pinyin-meaning">
+              <div class="practice-full-word">
+                <span id="practice-full-word-text">一</span>
+                <button
+                  class="practice-btn-audio"
+                  id="practice-btn-audio"
+                  title="ฟังเสียงอ่าน"
+                >
+                  🔊
+                </button>
+              </div>
+              <div class="practice-pinyin" id="practice-pinyin">yī</div>
+              <div class="practice-meaning" id="practice-meaning">หนึ่ง</div>
+              <div class="practice-meaning-en" id="practice-meaning-en">
+                one; single
+              </div>
+            </div>
+
+            <!-- Multi-character Pills for words like 你好, 学校 -->
+            <div class="practice-char-selector" id="practice-char-selector">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+          <!-- Traditional Chinese Tianzige / Mizige Canvas Box -->
+          <div class="canvas-outer-wrapper">
+            <div class="writing-grid-box" id="writing-grid-box">
+              <!-- Traditional SVG Mizige (米字格) Grid Background -->
+              <svg
+                class="writing-grid-bg"
+                viewBox="0 0 300 300"
+                preserveAspectRatio="none"
+              >
+                <!-- Outer Square -->
+                <rect
+                  x="0"
+                  y="0"
+                  width="300"
+                  height="300"
+                  fill="none"
+                  stroke="rgba(225,29,72,0.25)"
+                  stroke-width="2"
+                />
+                <!-- Diagonal guide lines -->
+                <line x1="0" y1="0" x2="300" y2="300" class="grid-line-diag" />
+                <line x1="0" y1="300" x2="300" y2="0" class="grid-line-diag" />
+                <!-- Crosshair center lines -->
+                <line
+                  x1="150"
+                  y1="0"
+                  x2="150"
+                  y2="300"
+                  class="grid-line-main"
+                />
+                <line
+                  x1="0"
+                  y1="150"
+                  x2="300"
+                  y2="150"
+                  class="grid-line-main"
+                />
+                <!-- Inner center guide square -->
+                <rect
+                  x="50"
+                  y="50"
+                  width="200"
+                  height="200"
+                  fill="none"
+                  class="grid-inner-square"
+                />
+              </svg>
+
+              <!-- HanziWriter Quiz Mount Target -->
+              <div
+                class="practice-writer-target"
+                id="practice-writer-target"
+              ></div>
+            </div>
+
+            <!-- Real-time Stroke Status Alert & Inline Toast -->
+            <div
+              class="stroke-feedback-bar status-neutral"
+              id="stroke-feedback-bar"
+            >
+              <span class="feedback-msg" id="feedback-msg"
+                >ลากเส้นขีดแรกตามลำดับ</span
+              >
+              <span class="feedback-stroke-counter" id="feedback-stroke-counter"
+                >ขีดที่ 1 / ...</span
+              >
+            </div>
+
+            <!-- Non-intrusive Floating Inline Completion Badge -->
+            <div class="practice-inline-toast" id="practice-inline-toast">
+              <span class="toast-emoji">🎉</span>
+              <span class="toast-main" id="toast-complete-msg"
+                >ยอดเยี่ยม! ถูกต้อง 100%</span
+              >
+              <span class="toast-sub" id="toast-complete-sub"
+                >✍️ คัดสะสม 1 ครั้ง</span
+              >
+            </div>
+          </div>
+
+          <!-- Practice Stroke Action Buttons -->
+          <div class="practice-actions-row">
+            <button
+              class="btn-practice-action"
+              id="btn-practice-hint"
+              title="ดูตัวอย่างขีดนี้"
+            >
+              💡 ดูตัวอย่างขีดนี้
+            </button>
+            <button
+              class="btn-practice-action"
+              id="btn-practice-restart"
+              title="เริ่มเขียนตัวนี้ใหม่"
+            >
+              🔄 เริ่มเขียนใหม่
+            </button>
+          </div>
+
+          <!-- Navigation Controls -->
+          <div class="practice-nav-row">
+            <button
+              class="btn-practice-nav"
+              id="btn-practice-prev"
+              title="คำก่อนหน้า"
+            >
+              ⬅️ คำก่อนหน้า
+            </button>
+            <button
+              class="btn-practice-nav"
+              id="btn-practice-random"
+              title="สุ่มคำ"
+            >
+              🎲 สุ่มคำ
+            </button>
+            <button
+              class="btn-practice-nav btn-practice-primary"
+              id="btn-practice-next"
+              title="คำต่อไป"
+            >
+              คำต่อไป ➡️
+            </button>
+          </div>
+
+          <!-- Character Completion Celebration Overlay -->
+          <div class="practice-complete-overlay" id="practice-complete-overlay">
+            <div class="practice-complete-box">
+              <div class="complete-character-large" id="complete-char-large">
+                大
+              </div>
+              <div class="complete-title">🎉 คัดอักษรสำเร็จ!</div>
+              <div class="complete-pinyin-meaning" id="complete-pinyin-meaning">
+                dà • big
+              </div>
+
+              <div class="complete-metrics-grid">
+                <div class="metric-pill">
+                  <span class="metric-pill-label">จำนวนขีด</span>
+                  <span class="metric-pill-val" id="metric-strokes">3 ขีด</span>
+                </div>
+                <div class="metric-pill">
+                  <span class="metric-pill-label">จำนวนครั้งที่ลาก</span>
+                  <span class="metric-pill-val" id="metric-attempts"
+                    >3 ครั้ง</span
+                  >
+                </div>
+                <div class="metric-pill">
+                  <span class="metric-pill-label">ความแม่นยำ</span>
+                  <span class="metric-pill-val green" id="metric-accuracy"
+                    >100%</span
+                  >
+                </div>
+              </div>
+
+              <div class="complete-lifetime-badge" id="complete-lifetime-badge">
+                ✍️ คัดตัวนี้สะสมแล้ว 1 ครั้ง
+              </div>
+
+              <div class="complete-actions">
+                <button class="btn-practice-action" id="btn-complete-again">
+                  🔄 ฝึกซ้ำอีกรอบ
+                </button>
+                <button
+                  class="btn-practice-action"
+                  id="btn-complete-to-cards"
+                  title="เปิดดูคำนี้ในโหมดบัตรคำ Flashcards"
+                >
+                  🀄 ไปที่การ์ด
+                </button>
+                <button
+                  class="btn-practice-action btn-practice-primary"
+                  id="btn-complete-next"
+                >
+                  อักษรต่อไป ➡️
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- แถบเมนูด้านล่าง (Bottom Navigation Bar) -->
+      <nav class="main-tabs" id="main-tabs" aria-label="เมนูหลัก">
+        <button
+          class="main-tab-btn active"
+          id="tab-flashcard"
+          data-view="flashcard"
+          title="บัตรคำ Flashcards"
+        >
+          <span class="tab-icon">🀄</span>
+          <span class="tab-label">บัตรคำ (Cards)</span>
+        </button>
+        <button
+          class="main-tab-btn"
+          id="tab-stories"
+          data-view="stories"
+          title="นิทาน Stories"
+        >
+          <span class="tab-icon">📖</span>
+          <span class="tab-label">นิทาน (Stories)</span>
+        </button>
+        <button
+          class="main-tab-btn"
+          id="tab-practice"
+          data-view="practice"
+          title="ฝึกคัดอักษร Write"
+        >
+          <span class="tab-icon">✍️</span>
+          <span class="tab-label">ฝึกคัด (Write)</span>
+        </button>
+        <button
+          class="main-tab-btn main-tab-settings"
+          id="btn-open-settings"
+          title="การตั้งค่า (Settings)"
+          aria-label="เปิดหน้าต่างการตั้งค่า"
+        >
+          <span class="tab-icon">⚙️</span>
+          <span class="tab-label">ตั้งค่า (Settings)</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- 3. Story Reader Overlay / Modal (Placed at top body level for full-screen fixed overlay) -->
+    <div id="story-reader-modal" class="story-reader-modal">
+      <div class="reader-container">
+        <!-- Top reader navigation bar -->
+        <div class="reader-top-bar">
+          <button
+            class="btn-reader-back"
+            id="btn-reader-back"
+            title="กลับไปคลังนิทาน"
+          >
+            ⬅️ กลับ
+          </button>
+          <div class="reader-title-box">
+            <span class="reader-hsk-badge" id="reader-hsk-badge">HSK 1</span>
+            <span class="reader-chapter-title" id="reader-chapter-title"
+              >Title</span
+            >
+            <span
+              class="reader-hint-caption"
+              title="คลิก 1 ครั้งเพื่อแปล | ดับเบิ้ลคลิกเพื่อเริ่มอ่าน"
+              >💡 1 คลิก: แปล | 2 คลิก: อ่าน</span
+            >
+          </div>
+          <div class="reader-settings-toggles">
+            <button
+              class="reader-toggle-btn"
+              id="btn-toggle-reader-theme"
+              title="สลับธีม สว่าง / มืด"
+            >
+              🌓
+            </button>
+            <button
+              class="reader-toggle-btn active"
+              id="btn-toggle-pinyin"
+              title="เปิด/ปิด พินอิน"
+            >
+              拼
+            </button>
+            <button
+              class="reader-toggle-btn"
+              id="btn-toggle-trans"
+              title="เปิด/ปิด คำแปลอังกฤษ"
+            >
+              EN
+            </button>
+          </div>
+        </div>
+
+        <!-- Sticky Audio Player Bar -->
+        <div class="reader-audio-bar" id="reader-audio-bar">
+          <button class="audio-btn-play" id="audio-btn-play" title="เล่น/หยุด">
+            ▶️
+          </button>
+          <div class="audio-timeline-wrap">
+            <div class="audio-time-label" id="audio-time-current">0:00</div>
+            <input
+              type="range"
+              class="audio-scrubber"
+              id="audio-scrubber"
+              min="0"
+              max="100"
+              value="0"
+              step="0.5"
+            />
+            <div class="audio-time-label" id="audio-time-duration">0:00</div>
+          </div>
+          <button
+            class="audio-speed-btn"
+            id="audio-speed-btn"
+            title="ความเร็วเสียง"
+          >
+            1.0x
+          </button>
+        </div>
+
+        <!-- Chapter Selector Pills -->
+        <div class="chapter-nav-row" id="chapter-nav-row">
+          <!-- Chapter pills dynamically rendered -->
+        </div>
+
+        <!-- Reader Story Content -->
+        <main class="reader-content-body" id="reader-content-body">
+          <!-- Sentences and paragraphs rendered here -->
+        </main>
+
+        <!-- Bottom Chapter Pagination Controls -->
+        <div class="reader-footer-nav">
+          <button class="btn btn-secondary" id="btn-reader-prev-chap">
+            ⬅️ ตอนก่อนหน้า
+          </button>
+          <button class="btn btn-primary" id="btn-reader-next-chap">
+            ตอนต่อไป ➡️
+          </button>
+        </div>
+
+        <!-- HSKStory Word Translation Bottom Sheet -->
+        <div class="story-word-sheet" id="story-word-sheet">
+          <div class="sheet-drag-handle"></div>
+          <div class="sheet-header">
+            <div class="sheet-hanzi-wrap">
+              <span class="sheet-hanzi" id="sheet-hanzi">今天</span>
+              <span class="sheet-hsk-badge" id="sheet-hsk-badge">HSK 1</span>
+            </div>
+            <div class="sheet-actions">
+              <button
+                class="sheet-btn-speak"
+                id="sheet-btn-practice"
+                title="ฝึกคัดอักษร"
+              >
+                ✍️
+              </button>
+              <button
+                class="sheet-btn-speak"
+                id="sheet-btn-speak"
+                title="ออกเสียง"
+              >
+                🔊
+              </button>
+              <button class="sheet-btn-close" id="sheet-btn-close" title="ปิด">
+                ✕
+              </button>
+            </div>
+          </div>
+          <div class="sheet-pinyin" id="sheet-pinyin">jīn tiān</div>
+          <div class="sheet-definitions" id="sheet-definitions"></div>
+          <div class="sheet-sentence-wrap">
+            <button class="sheet-btn-trans-sent" id="sheet-btn-trans-sent">
+              <span class="sheet-trans-label">文A Translate sentence</span>
+              <span class="sheet-trans-chevron" id="sheet-trans-chevron"
+                >›</span
+              >
+            </button>
+            <div
+              class="sheet-sentence-content"
+              id="sheet-sentence-content"
+            ></div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- 4. Practice Statistics Modal (Full History & Mastery Dashboard) -->
-  <div class="app-custom-modal" id="practice-stats-modal">
-    <div class="custom-modal-backdrop" id="modal-stats-backdrop"></div>
-    <div class="custom-modal-sheet modal-stats-sheet">
-      <div class="custom-modal-header">
-        <div class="modal-header-title">
-          <span class="modal-title-icon">📊</span>
-          <h3>สถิติการฝึกคัดอักษรจีน (Statistics)</h3>
+    <!-- 4. Practice Statistics Modal (Full History & Mastery Dashboard) -->
+    <div class="app-custom-modal" id="practice-stats-modal">
+      <div class="custom-modal-backdrop" id="modal-stats-backdrop"></div>
+      <div class="custom-modal-sheet modal-stats-sheet">
+        <div class="custom-modal-header">
+          <div class="modal-header-title">
+            <span class="modal-title-icon">📊</span>
+            <h3>สถิติการฝึกคัดอักษรจีน (Statistics)</h3>
+          </div>
+          <button
+            class="btn-modal-close"
+            id="btn-close-stats-modal"
+            title="ปิด"
+          >
+            ✕
+          </button>
         </div>
-        <button class="btn-modal-close" id="btn-close-stats-modal" title="ปิด">✕</button>
+
+        <div class="custom-modal-body">
+          <!-- Overview summary grid -->
+          <div class="stats-overview-cards">
+            <div class="stat-card">
+              <span
+                class="stat-card-val highlight-purple"
+                id="modal-stat-sessions"
+                >0</span
+              >
+              <span class="stat-card-lbl">จำนวนครั้งที่ฝึกทั้งหมด</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card-val highlight-green" id="modal-stat-chars"
+                >0</span
+              >
+              <span class="stat-card-lbl">ตัวอักษรที่ผ่านแล้ว</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card-val" id="modal-stat-accuracy">0%</span>
+              <span class="stat-card-lbl">ความแม่นยำเฉลี่ย</span>
+            </div>
+            <div class="stat-card">
+              <span
+                class="stat-card-val highlight-pink"
+                id="modal-stat-top-char"
+                >-</span
+              >
+              <span class="stat-card-lbl">อักษรที่ฝึกบ่อยสุด</span>
+            </div>
+          </div>
+
+          <!-- Filter bar for practiced characters -->
+          <div class="stats-history-header">
+            <h4>ประวัติอักษรที่เคยฝึก (Practiced Characters)</h4>
+            <span class="history-count-tag" id="history-total-tag">0 ตัว</span>
+          </div>
+
+          <!-- Practiced Characters Gallery / List -->
+          <div class="stats-chars-grid" id="stats-chars-grid">
+            <!-- Rendered dynamically by JS -->
+          </div>
+        </div>
       </div>
+    </div>
 
-      <div class="custom-modal-body">
-        <!-- Overview summary grid -->
-        <div class="stats-overview-cards">
-          <div class="stat-card">
-            <span class="stat-card-val highlight-purple" id="modal-stat-sessions">0</span>
-            <span class="stat-card-lbl">จำนวนครั้งที่ฝึกทั้งหมด</span>
+    <!-- 5. Word Picker & Vocabulary Browser Modal -->
+    <div class="app-custom-modal" id="practice-word-picker-modal">
+      <div class="custom-modal-backdrop" id="modal-picker-backdrop"></div>
+      <div class="custom-modal-sheet modal-picker-sheet">
+        <div class="custom-modal-header">
+          <div class="modal-header-title">
+            <span class="modal-title-icon">🔍</span>
+            <h3>เลือกคำศัพท์สำหรับฝึกคัด (Select Word)</h3>
           </div>
-          <div class="stat-card">
-            <span class="stat-card-val highlight-green" id="modal-stat-chars">0</span>
-            <span class="stat-card-lbl">ตัวอักษรที่ผ่านแล้ว</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-card-val" id="modal-stat-accuracy">0%</span>
-            <span class="stat-card-lbl">ความแม่นยำเฉลี่ย</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-card-val highlight-pink" id="modal-stat-top-char">-</span>
-            <span class="stat-card-lbl">อักษรที่ฝึกบ่อยสุด</span>
-          </div>
+          <button
+            class="btn-modal-close"
+            id="btn-close-picker-modal"
+            title="ปิด"
+          >
+            ✕
+          </button>
         </div>
 
-        <!-- Filter bar for practiced characters -->
-        <div class="stats-history-header">
-          <h4>ประวัติอักษรที่เคยฝึก (Practiced Characters)</h4>
-          <span class="history-count-tag" id="history-total-tag">0 ตัว</span>
+        <div class="picker-search-bar">
+          <span class="picker-search-icon">🔍</span>
+          <input
+            type="text"
+            id="picker-search-input"
+            placeholder="ค้นหาคำศัพท์, พินอิน หรือคำแปล เช่น 你好, ni, สวัสดี..."
+            autocomplete="off"
+          />
+          <button
+            class="picker-search-clear"
+            id="picker-search-clear"
+            title="ล้างข้อความ"
+          >
+            ✕
+          </button>
         </div>
 
-        <!-- Practiced Characters Gallery / List -->
-        <div class="stats-chars-grid" id="stats-chars-grid">
+        <!-- Level Filter inside Picker -->
+        <div class="picker-level-filter" id="picker-level-filter">
+          <button class="picker-level-chip active" data-level="all">
+            ทั้งหมด
+          </button>
+          <button class="picker-level-chip" data-level="HSK 1">HSK 1</button>
+          <button class="picker-level-chip" data-level="HSK 2">HSK 2</button>
+          <button class="picker-level-chip" data-level="HSK 3">HSK 3</button>
+          <button class="picker-level-chip" data-level="HSK 4">HSK 4</button>
+          <button class="picker-level-chip" data-level="HSK 5">HSK 5</button>
+          <button class="picker-level-chip" data-level="HSK 6">HSK 6</button>
+          <button class="picker-level-chip" data-level="HSK 7">HSK 7</button>
+          <button class="picker-level-chip" data-level="HSK 8">HSK 8</button>
+          <button class="picker-level-chip" data-level="HSK 9">HSK 9</button>
+        </div>
+
+        <div class="picker-results-meta">
+          <span id="picker-results-count">พบ 0 คำ</span>
+          <span class="picker-hint-badge"
+            >💡 แตะที่คำเพื่อเลือกฝึกคัดทันที</span
+          >
+        </div>
+
+        <!-- Scrollable Word Grid -->
+        <div class="custom-modal-body picker-words-body" id="picker-words-grid">
           <!-- Rendered dynamically by JS -->
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- 5. Word Picker & Vocabulary Browser Modal -->
-  <div class="app-custom-modal" id="practice-word-picker-modal">
-    <div class="custom-modal-backdrop" id="modal-picker-backdrop"></div>
-    <div class="custom-modal-sheet modal-picker-sheet">
-      <div class="custom-modal-header">
-        <div class="modal-header-title">
-          <span class="modal-title-icon">🔍</span>
-          <h3>เลือกคำศัพท์สำหรับฝึกคัด (Select Word)</h3>
+    <!-- 6. App Settings Modal (Centralized Preferences Panel) -->
+    <div
+      class="app-custom-modal"
+      id="app-settings-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="settings-modal-title"
+    >
+      <div class="custom-modal-backdrop" id="modal-settings-backdrop"></div>
+      <div class="custom-modal-sheet modal-settings-sheet">
+        <div class="custom-modal-header">
+          <div class="modal-header-title">
+            <span class="modal-title-icon">⚙️</span>
+            <h3 id="settings-modal-title">การตั้งค่า (Settings)</h3>
+          </div>
+          <button
+            class="btn-modal-close"
+            id="btn-close-settings-modal"
+            title="ปิดหน้าต่างการตั้งค่า"
+            aria-label="ปิด"
+          >
+            ✕
+          </button>
         </div>
-        <button class="btn-modal-close" id="btn-close-picker-modal" title="ปิด">✕</button>
-      </div>
 
-      <div class="picker-search-bar">
-        <span class="picker-search-icon">🔍</span>
-        <input type="text" id="picker-search-input" placeholder="ค้นหาคำศัพท์, พินอิน หรือคำแปล เช่น 你好, ni, สวัสดี..." autocomplete="off">
-        <button class="picker-search-clear" id="picker-search-clear" title="ล้างข้อความ">✕</button>
-      </div>
-
-      <!-- Level Filter inside Picker -->
-      <div class="picker-level-filter" id="picker-level-filter">
-        <button class="picker-level-chip active" data-level="all">ทั้งหมด</button>
-        <button class="picker-level-chip" data-level="HSK 1">HSK 1</button>
-        <button class="picker-level-chip" data-level="HSK 2">HSK 2</button>
-        <button class="picker-level-chip" data-level="HSK 3">HSK 3</button>
-        <button class="picker-level-chip" data-level="HSK 4">HSK 4</button>
-        <button class="picker-level-chip" data-level="HSK 5">HSK 5</button>
-        <button class="picker-level-chip" data-level="HSK 6">HSK 6</button>
-        <button class="picker-level-chip" data-level="HSK 7">HSK 7</button>
-        <button class="picker-level-chip" data-level="HSK 8">HSK 8</button>
-        <button class="picker-level-chip" data-level="HSK 9">HSK 9</button>
-      </div>
-
-      <div class="picker-results-meta">
-        <span id="picker-results-count">พบ 0 คำ</span>
-        <span class="picker-hint-badge">💡 แตะที่คำเพื่อเลือกฝึกคัดทันที</span>
-      </div>
-
-      <!-- Scrollable Word Grid -->
-      <div class="custom-modal-body picker-words-body" id="picker-words-grid">
-        <!-- Rendered dynamically by JS -->
-      </div>
-    </div>
-  </div>
-
-  <!-- 6. App Settings Modal (Centralized Preferences Panel) -->
-  <div class="app-custom-modal" id="app-settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
-    <div class="custom-modal-backdrop" id="modal-settings-backdrop"></div>
-    <div class="custom-modal-sheet modal-settings-sheet">
-      <div class="custom-modal-header">
-        <div class="modal-header-title">
-          <span class="modal-title-icon">⚙️</span>
-          <h3 id="settings-modal-title">การตั้งค่า (Settings)</h3>
-        </div>
-        <button class="btn-modal-close" id="btn-close-settings-modal" title="ปิดหน้าต่างการตั้งค่า" aria-label="ปิด">✕</button>
-      </div>
-
-      <div class="custom-modal-body settings-sheet-body">
-        <!-- กลุ่ม: ทั่วไป (General) -->
-        <section class="settings-group">
-          <div class="settings-group-header">
-            <span class="settings-group-icon">⚙️</span>
-            <span>ทั่วไป (General)</span>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-text-col" onclick="document.getElementById('setting-levels-bar').click()">
-              <label class="setting-title" for="setting-levels-bar">
-                🎯 แถบเลือกระดับ HSK
-              </label>
-              <div class="setting-desc">แสดงแถบปุ่มลัดเลือกระดับ HSK 1-9 ด้านบนของแต่ละหน้าจอ</div>
+        <div class="custom-modal-body settings-sheet-body">
+          <!-- กลุ่ม: ทั่วไป (General) -->
+          <section class="settings-group">
+            <div class="settings-group-header">
+              <span class="settings-group-icon">⚙️</span>
+              <span>ทั่วไป (General)</span>
             </div>
-            <div class="setting-ctrl-col">
-              <label class="toggle-switch-unified">
-                <input type="checkbox" id="setting-levels-bar" checked>
-                <span class="unified-slider"></span>
-              </label>
-            </div>
-          </div>
 
-          <div class="setting-row">
-            <div class="setting-text-col" onclick="document.getElementById('setting-dark-theme').click()">
-              <label class="setting-title" for="setting-dark-theme">
-                🌓 โหมดมืด (Dark Mode)
-              </label>
-              <div class="setting-desc">ปรับชุดสีโทนมืดสบายตา เหมาะสำหรับการใช้งานในที่แสงน้อย</div>
-            </div>
-            <div class="setting-ctrl-col">
-              <label class="toggle-switch-unified">
-                <input type="checkbox" id="setting-dark-theme">
-                <span class="unified-slider"></span>
-              </label>
-            </div>
-          </div>
-        </section>
-
-        <!-- กลุ่ม: บัตรคำ Flashcards -->
-        <section class="settings-group">
-          <div class="settings-group-header">
-            <span class="settings-group-icon">🀄</span>
-            <span>บัตรคำ (Flashcards)</span>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-text-col" onclick="document.getElementById('setting-toggle-autoplay').click()">
-              <label class="setting-title" for="setting-toggle-autoplay">
-                🔊 อ่านออกเสียงอัตโนมัติ (Autoplay)
-              </label>
-              <div class="setting-desc">เล่นเสียงอ่านภาษาจีนทันทีเมื่อเปิดดูบัตรคำศัพท์ใบใหม่</div>
-            </div>
-            <div class="setting-ctrl-col">
-              <label class="toggle-switch-unified">
-                <input type="checkbox" id="setting-toggle-autoplay">
-                <span class="unified-slider"></span>
-              </label>
-            </div>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-text-col" onclick="document.getElementById('setting-toggle-loop').click()">
-              <label class="setting-title" for="setting-toggle-loop">
-                🔁 เล่นเสียงวนซ้ำ (Loop)
-              </label>
-              <div class="setting-desc">เล่นเสียงอ่านวนซ้ำอย่างต่อเนื่องเมื่อเปิดดูหน้าหรือหลังบัตรคำ</div>
-            </div>
-            <div class="setting-ctrl-col">
-              <label class="toggle-switch-unified">
-                <input type="checkbox" id="setting-toggle-loop" checked>
-                <span class="unified-slider"></span>
-              </label>
-            </div>
-          </div>
-        </section>
-
-        <!-- กลุ่ม: ฝึกคัดอักษรจีน (Practice Writing) -->
-        <section class="settings-group">
-          <div class="settings-group-header">
-            <span class="settings-group-icon">✍️</span>
-            <span>ฝึกคัดอักษรจีน (Practice)</span>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-text-col" onclick="document.getElementById('setting-practice-guide').click()">
-              <label class="setting-title" for="setting-practice-guide">
-                ✏️ แสดงเส้นร่างนำทาง (Guide Lines)
-              </label>
-              <div class="setting-desc">แสดงโครงร่างเส้นจางๆ เพื่อช่วยจำทิศทางและลำดับการลากเส้น</div>
-            </div>
-            <div class="setting-ctrl-col">
-              <label class="toggle-switch-unified">
-                <input type="checkbox" id="setting-practice-guide" checked>
-                <span class="unified-slider"></span>
-              </label>
-            </div>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-text-col" onclick="document.getElementById('setting-practice-repeat').click()">
-              <label class="setting-title" for="setting-practice-repeat">
-                🔁 คัดซ้ำตัวเดิม (Repeat Mode)
-              </label>
-              <div class="setting-desc">เมื่อลากเส้นสำเร็จ ให้ฝึกคัดอักษรตัวเดิมซ้ำเพื่อความแม่นยำ</div>
-            </div>
-            <div class="setting-ctrl-col">
-              <label class="toggle-switch-unified">
-                <input type="checkbox" id="setting-practice-repeat">
-                <span class="unified-slider"></span>
-              </label>
-            </div>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-text-col" onclick="document.getElementById('setting-practice-dialog').click()">
-              <label class="setting-title" for="setting-practice-dialog">
-                📊 แสดงกล่องสรุปผล (Summary Dialog)
-              </label>
-              <div class="setting-desc">แสดงป๊อปอัปสรุปคะแนนและสถิติอย่างละเอียดเมื่อเขียนจบตัวอักษร</div>
-            </div>
-            <div class="setting-ctrl-col">
-              <label class="toggle-switch-unified">
-                <input type="checkbox" id="setting-practice-dialog">
-                <span class="unified-slider"></span>
-              </label>
-            </div>
-          </div>
-        </section>
-
-        <!-- กลุ่ม: นิทานและเครื่องเล่นเสียง (Story Reader) -->
-        <section class="settings-group">
-          <div class="settings-group-header">
-            <span class="settings-group-icon">📖</span>
-            <span>นิทานและเสียงอ่าน (Story Reader)</span>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-text-col" onclick="document.getElementById('setting-story-pinyin').click()">
-              <label class="setting-title" for="setting-story-pinyin">
-                拼 แสดงตัวพินอิน (Pinyin)
-              </label>
-              <div class="setting-desc">แสดงสัทอักษรพินอินกำกับการออกเสียงเหนือตัวอักษรจีน</div>
-            </div>
-            <div class="setting-ctrl-col">
-              <label class="toggle-switch-unified">
-                <input type="checkbox" id="setting-story-pinyin" checked>
-                <span class="unified-slider"></span>
-              </label>
-            </div>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-text-col" onclick="document.getElementById('setting-story-trans').click()">
-              <label class="setting-title" for="setting-story-trans">
-                EN แสดงคำแปลภาษาอังกฤษ (Translation)
-              </label>
-              <div class="setting-desc">แสดงคำแปลภาษาอังกฤษกำกับใต้ประโยคของนิทาน</div>
-            </div>
-            <div class="setting-ctrl-col">
-              <label class="toggle-switch-unified">
-                <input type="checkbox" id="setting-story-trans">
-                <span class="unified-slider"></span>
-              </label>
-            </div>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-text-col">
-              <div class="setting-title">
-                ⚡ ความเร็วเสียงอ่านนิทาน (Playback Speed)
+            <div class="setting-row">
+              <div
+                class="setting-text-col"
+                onclick="document.getElementById('setting-levels-bar').click()"
+              >
+                <label class="setting-title" for="setting-levels-bar">
+                  🎯 แถบเลือกระดับ HSK
+                </label>
+                <div class="setting-desc">
+                  แสดงแถบปุ่มลัดเลือกระดับ HSK 1-9 ด้านบนของแต่ละหน้าจอ
+                </div>
               </div>
-              <div class="setting-desc">ความเร็วเริ่มต้นสำหรับเสียงบรรยายและอ่านออกเสียงบทเรียน</div>
-            </div>
-            <div class="setting-ctrl-col">
-              <div class="speed-pills-row" id="settings-speed-pills" role="radiogroup" aria-label="ความเร็วเสียงอ่าน">
-                <button class="btn-speed-pill" data-speed="0.75" role="radio" aria-checked="false">0.75x</button>
-                <button class="btn-speed-pill active" data-speed="1.0" role="radio" aria-checked="true">1.0x</button>
-                <button class="btn-speed-pill" data-speed="1.25" role="radio" aria-checked="false">1.25x</button>
-                <button class="btn-speed-pill" data-speed="1.5" role="radio" aria-checked="false">1.5x</button>
+              <div class="setting-ctrl-col">
+                <label class="toggle-switch-unified">
+                  <input type="checkbox" id="setting-levels-bar" checked />
+                  <span class="unified-slider"></span>
+                </label>
               </div>
             </div>
-          </div>
-        </section>
 
-        <div class="settings-modal-footer">
-          <span>✨ บันทึกการตั้งค่าอัตโนมัติ</span>
-          <span>เวอร์ชัน 13.17.1</span>
+            <div class="setting-row">
+              <div
+                class="setting-text-col"
+                onclick="document.getElementById('setting-dark-theme').click()"
+              >
+                <label class="setting-title" for="setting-dark-theme">
+                  🌓 โหมดมืด (Dark Mode)
+                </label>
+                <div class="setting-desc">
+                  ปรับชุดสีโทนมืดสบายตา เหมาะสำหรับการใช้งานในที่แสงน้อย
+                </div>
+              </div>
+              <div class="setting-ctrl-col">
+                <label class="toggle-switch-unified">
+                  <input type="checkbox" id="setting-dark-theme" />
+                  <span class="unified-slider"></span>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <!-- กลุ่ม: บัตรคำ Flashcards -->
+          <section class="settings-group">
+            <div class="settings-group-header">
+              <span class="settings-group-icon">🀄</span>
+              <span>บัตรคำ (Flashcards)</span>
+            </div>
+
+            <div class="setting-row">
+              <div
+                class="setting-text-col"
+                onclick="
+                  document.getElementById('setting-toggle-autoplay').click()
+                "
+              >
+                <label class="setting-title" for="setting-toggle-autoplay">
+                  🔊 อ่านออกเสียงอัตโนมัติ (Autoplay)
+                </label>
+                <div class="setting-desc">
+                  เล่นเสียงอ่านภาษาจีนทันทีเมื่อเปิดดูบัตรคำศัพท์ใบใหม่
+                </div>
+              </div>
+              <div class="setting-ctrl-col">
+                <label class="toggle-switch-unified">
+                  <input type="checkbox" id="setting-toggle-autoplay" />
+                  <span class="unified-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="setting-row">
+              <div
+                class="setting-text-col"
+                onclick="document.getElementById('setting-toggle-loop').click()"
+              >
+                <label class="setting-title" for="setting-toggle-loop">
+                  🔁 เล่นเสียงวนซ้ำ (Loop)
+                </label>
+                <div class="setting-desc">
+                  เล่นเสียงอ่านวนซ้ำอย่างต่อเนื่องเมื่อเปิดดูหน้าหรือหลังบัตรคำ
+                </div>
+              </div>
+              <div class="setting-ctrl-col">
+                <label class="toggle-switch-unified">
+                  <input type="checkbox" id="setting-toggle-loop" checked />
+                  <span class="unified-slider"></span>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <!-- กลุ่ม: ฝึกคัดอักษรจีน (Practice Writing) -->
+          <section class="settings-group">
+            <div class="settings-group-header">
+              <span class="settings-group-icon">✍️</span>
+              <span>ฝึกคัดอักษรจีน (Practice)</span>
+            </div>
+
+            <div class="setting-row">
+              <div
+                class="setting-text-col"
+                onclick="
+                  document.getElementById('setting-practice-guide').click()
+                "
+              >
+                <label class="setting-title" for="setting-practice-guide">
+                  ✏️ แสดงเส้นร่างนำทาง (Guide Lines)
+                </label>
+                <div class="setting-desc">
+                  แสดงโครงร่างเส้นจางๆ เพื่อช่วยจำทิศทางและลำดับการลากเส้น
+                </div>
+              </div>
+              <div class="setting-ctrl-col">
+                <label class="toggle-switch-unified">
+                  <input type="checkbox" id="setting-practice-guide" checked />
+                  <span class="unified-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="setting-row">
+              <div
+                class="setting-text-col"
+                onclick="
+                  document.getElementById('setting-practice-repeat').click()
+                "
+              >
+                <label class="setting-title" for="setting-practice-repeat">
+                  🔁 คัดซ้ำตัวเดิม (Repeat Mode)
+                </label>
+                <div class="setting-desc">
+                  เมื่อลากเส้นสำเร็จ ให้ฝึกคัดอักษรตัวเดิมซ้ำเพื่อความแม่นยำ
+                </div>
+              </div>
+              <div class="setting-ctrl-col">
+                <label class="toggle-switch-unified">
+                  <input type="checkbox" id="setting-practice-repeat" />
+                  <span class="unified-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="setting-row">
+              <div
+                class="setting-text-col"
+                onclick="
+                  document.getElementById('setting-practice-dialog').click()
+                "
+              >
+                <label class="setting-title" for="setting-practice-dialog">
+                  📊 แสดงกล่องสรุปผล (Summary Dialog)
+                </label>
+                <div class="setting-desc">
+                  แสดงป๊อปอัปสรุปคะแนนและสถิติอย่างละเอียดเมื่อเขียนจบตัวอักษร
+                </div>
+              </div>
+              <div class="setting-ctrl-col">
+                <label class="toggle-switch-unified">
+                  <input type="checkbox" id="setting-practice-dialog" />
+                  <span class="unified-slider"></span>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <!-- กลุ่ม: นิทานและเครื่องเล่นเสียง (Story Reader) -->
+          <section class="settings-group">
+            <div class="settings-group-header">
+              <span class="settings-group-icon">📖</span>
+              <span>นิทานและเสียงอ่าน (Story Reader)</span>
+            </div>
+
+            <div class="setting-row">
+              <div
+                class="setting-text-col"
+                onclick="
+                  document.getElementById('setting-story-pinyin').click()
+                "
+              >
+                <label class="setting-title" for="setting-story-pinyin">
+                  拼 แสดงตัวพินอิน (Pinyin)
+                </label>
+                <div class="setting-desc">
+                  แสดงสัทอักษรพินอินกำกับการออกเสียงเหนือตัวอักษรจีน
+                </div>
+              </div>
+              <div class="setting-ctrl-col">
+                <label class="toggle-switch-unified">
+                  <input type="checkbox" id="setting-story-pinyin" checked />
+                  <span class="unified-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="setting-row">
+              <div
+                class="setting-text-col"
+                onclick="document.getElementById('setting-story-trans').click()"
+              >
+                <label class="setting-title" for="setting-story-trans">
+                  EN แสดงคำแปลภาษาอังกฤษ (Translation)
+                </label>
+                <div class="setting-desc">
+                  แสดงคำแปลภาษาอังกฤษกำกับใต้ประโยคของนิทาน
+                </div>
+              </div>
+              <div class="setting-ctrl-col">
+                <label class="toggle-switch-unified">
+                  <input type="checkbox" id="setting-story-trans" />
+                  <span class="unified-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="setting-row">
+              <div class="setting-text-col">
+                <div class="setting-title">
+                  ⚡ ความเร็วเสียงอ่านนิทาน (Playback Speed)
+                </div>
+                <div class="setting-desc">
+                  ความเร็วเริ่มต้นสำหรับเสียงบรรยายและอ่านออกเสียงบทเรียน
+                </div>
+              </div>
+              <div class="setting-ctrl-col">
+                <div
+                  class="speed-pills-row"
+                  id="settings-speed-pills"
+                  role="radiogroup"
+                  aria-label="ความเร็วเสียงอ่าน"
+                >
+                  <button
+                    class="btn-speed-pill"
+                    data-speed="0.75"
+                    role="radio"
+                    aria-checked="false"
+                  >
+                    0.75x
+                  </button>
+                  <button
+                    class="btn-speed-pill active"
+                    data-speed="1.0"
+                    role="radio"
+                    aria-checked="true"
+                  >
+                    1.0x
+                  </button>
+                  <button
+                    class="btn-speed-pill"
+                    data-speed="1.25"
+                    role="radio"
+                    aria-checked="false"
+                  >
+                    1.25x
+                  </button>
+                  <button
+                    class="btn-speed-pill"
+                    data-speed="1.5"
+                    role="radio"
+                    aria-checked="false"
+                  >
+                    1.5x
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="settings-modal-footer">
+            <span>✨ บันทึกการตั้งค่าอัตโนมัติ</span>
+            <span>เวอร์ชัน 13.17.1</span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- โหลดฐานข้อมูลคำศัพท์และ Logic ของแอปพลิเคชันแบบโมดูลาร์ -->
-  <script src="js/data.js?v=13.16.0"></script>
-  <script src="js/stories-data.js?v=13.16.0"></script>
-  <script src="js/story-player.js?v=13.16.0"></script>
-  <script src="js/stories.js?v=13.16.0"></script>
-  <script src="js/practice.js?v=13.16.0"></script>
-  <script src="js/app.js?v=13.16.0"></script>
-</body>
-
+    <!-- โหลดฐานข้อมูลคำศัพท์และ Logic ของแอปพลิเคชันแบบโมดูลาร์ -->
+    <script src="js/data.js?v=13.16.0"></script>
+    <script src="js/stories-data.js?v=13.16.0"></script>
+    <script src="js/story-player.js?v=13.16.0"></script>
+    <script src="js/stories.js?v=13.16.0"></script>
+    <script src="js/practice.js?v=13.16.0"></script>
+    <script src="js/app.js?v=13.16.0"></script>
+  </body>
 </html>
