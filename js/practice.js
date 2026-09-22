@@ -139,6 +139,13 @@
   }
 
   function getSettings() {
+    if (window.AppSettings) {
+      return {
+        showGuide: window.AppSettings.get('practice_guide', true),
+        repeatCharacter: window.AppSettings.get('practice_repeat', false),
+        showDialog: window.AppSettings.get('practice_dialog', false)
+      };
+    }
     try {
       const raw = localStorage.getItem(STORAGE_KEYS.PRACTICE_SETTINGS);
       return raw ? JSON.parse(raw) : { showGuide: true, repeatCharacter: false, showDialog: false };
@@ -148,6 +155,11 @@
   }
 
   function saveSettings(settings) {
+    if (window.AppSettings) {
+      if (settings.showGuide !== undefined) window.AppSettings.set('practice_guide', settings.showGuide);
+      if (settings.repeatCharacter !== undefined) window.AppSettings.set('practice_repeat', settings.repeatCharacter);
+      if (settings.showDialog !== undefined) window.AppSettings.set('practice_dialog', settings.showDialog);
+    }
     try {
       const current = getSettings();
       localStorage.setItem(STORAGE_KEYS.PRACTICE_SETTINGS, JSON.stringify({ ...current, ...settings }));
@@ -647,6 +659,27 @@
         saveSettings({ showDialog });
       });
     }
+
+    // Listen to unified AppSettings change events (e.g. from Settings Modal)
+    window.addEventListener('app:setting-changed', (e) => {
+      const { key, value } = e.detail || {};
+      if (key === 'practice_guide') {
+        showGuide = value;
+        setupCharacterWriter();
+      } else if (key === 'practice_repeat') {
+        repeatCharacter = value;
+        if (dom.completeLifetimeBadge) {
+          const history = getPracticeHistory();
+          const chars = Array.from(currentWord ? currentWord.hanzi : '');
+          const c = chars[currentCharIndex] || chars[0] || '';
+          const rec = history[c];
+          const cnt = rec ? rec.count : 0;
+          dom.completeLifetimeBadge.textContent = `✍️ คัดตัวนี้สะสมแล้ว ${cnt} ครั้ง${repeatCharacter ? ' (เปิดโหมดคัดซ้ำ 🔁)' : ''}`;
+        }
+      } else if (key === 'practice_dialog') {
+        showDialog = value;
+      }
+    });
 
     // Controls
     if (dom.btnPronounce) {

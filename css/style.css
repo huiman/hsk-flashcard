@@ -223,84 +223,61 @@
     .lvl-9 { background: #7c3aed; }
 
 
-    /* Settings Toggle Switch */
-    .settings-container {
-      display: flex;
-      flex-wrap: nowrap;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-    }
-
-    .settings-bar {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--surface-2);
-      padding: 5px 12px;
-      border-radius: 9999px;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-      white-space: nowrap;
-    }
-
-    .settings-label {
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: #334155;
-      user-select: none;
-      display: inline-flex;
-      align-items: center;
-    }
-
-    .settings-label .label-short {
-      display: none;
-    }
-
-    .toggle-switch {
+    /* Unified Toggle Switch Component (Standard iOS/Material style, perfectly centered knob) */
+    .toggle-switch-unified {
       position: relative;
       display: inline-block;
-      width: 38px;
-      height: 22px;
+      width: 48px;
+      height: 28px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      flex-shrink: 0;
     }
 
-    .toggle-switch input {
+    .toggle-switch-unified input {
       opacity: 0;
       width: 0;
       height: 0;
+      position: absolute;
     }
 
-    .slider {
+    .unified-slider {
       position: absolute;
-      cursor: pointer;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
       background-color: #cbd5e1;
-      transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      border-radius: 22px;
+      transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease;
+      border-radius: 28px;
     }
 
-    .slider:before {
+    .unified-slider:before {
       position: absolute;
       content: "";
-      height: 16px;
-      width: 16px;
+      height: 22px;
+      width: 22px;
       left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      top: 3px;
+      background-color: #ffffff;
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
       border-radius: 50%;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
     }
 
-    input:checked+.slider {
-      background: #4f46e5;
+    .toggle-switch-unified input:checked + .unified-slider {
+      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
     }
 
-    input:checked+.slider:before {
-      transform: translateX(16px);
+    .toggle-switch-unified input:checked + .unified-slider:before {
+      transform: translateX(20px);
+    }
+
+    .toggle-switch-unified input:focus-visible + .unified-slider {
+      outline: 2px solid #4f46e5;
+      outline-offset: 2px;
     }
 
     /* Stats Board */
@@ -910,6 +887,208 @@
       color: #a5b4fc;
     }
 
+    /* =========================================================
+       Settings Modal Sheet & Reusable Row Component
+       ========================================================= */
+    .modal-settings-sheet {
+      max-width: 540px;
+      max-height: 88vh;
+      max-height: 88dvh;
+    }
+
+    .settings-sheet-body {
+      padding: 16px 20px 24px 20px;
+      gap: 16px;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .settings-group {
+      background: var(--surface-2);
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+
+    .settings-group-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px 8px 16px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .settings-group-icon {
+      font-size: 1rem;
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 16px 14px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      transition: background-color 0.15s ease;
+      min-height: 62px;
+      overflow: visible;
+    }
+
+    .setting-row:last-child {
+      border-bottom: none;
+    }
+
+    .setting-row:hover {
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .setting-text-col {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1 1 auto;
+      min-width: 0;
+      cursor: pointer;
+      overflow: visible;
+    }
+
+    .setting-title {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+      line-height: 1.4;
+    }
+
+    .setting-desc {
+      font-size: 0.78rem;
+      color: #64748b;
+      line-height: 1.45;
+      font-weight: 400;
+      word-break: break-word;
+      overflow-wrap: break-word;
+      white-space: normal;
+      display: block;
+      padding-bottom: 2px;
+    }
+
+    .setting-ctrl-col {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-shrink: 0;
+    }
+
+    /* Speed Picker Pills in Settings */
+    .speed-pills-row {
+      display: inline-flex;
+      gap: 4px;
+      background: #e2e8f0;
+      padding: 3px;
+      border-radius: 9999px;
+    }
+
+    .btn-speed-pill {
+      border: none;
+      background: transparent;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-family: inherit;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 44px;
+      min-height: 32px;
+    }
+
+    .btn-speed-pill.active {
+      background: #ffffff;
+      color: #4f46e5;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .settings-modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px 4px 12px;
+      font-size: 0.76rem;
+      color: #94a3b8;
+    }
+
+    /* Dark Mode Overrides for Settings Modal */
+    [data-theme="dark"] .settings-group {
+      background: #181822;
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    [data-theme="dark"] .settings-group-header {
+      background: #1c1c28;
+      border-bottom-color: rgba(255, 255, 255, 0.06);
+      color: #94a3b8;
+    }
+
+    [data-theme="dark"] .setting-row {
+      border-bottom-color: rgba(255, 255, 255, 0.05);
+    }
+
+    [data-theme="dark"] .setting-row:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    [data-theme="dark"] .setting-title {
+      color: #f1f5f9;
+    }
+
+    [data-theme="dark"] .setting-desc {
+      color: #94a3b8;
+    }
+
+    [data-theme="dark"] .unified-slider {
+      background-color: #334155;
+    }
+
+    [data-theme="dark"] .unified-slider:before {
+      background-color: #f8fafc;
+    }
+
+    [data-theme="dark"] .speed-pills-row {
+      background: #252533;
+    }
+
+    [data-theme="dark"] .btn-speed-pill {
+      color: #94a3b8;
+    }
+
+    [data-theme="dark"] .btn-speed-pill.active {
+      background: #4f46e5;
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    [data-theme="dark"] .settings-modal-footer {
+      color: #64748b;
+    }
+
     /* Global HSK Level Bars Hide Rule */
     body.hsk-levels-hidden #level-selector,
     body.hsk-levels-hidden #stories-level-bar,
@@ -919,3 +1098,4 @@
     .practice-level-bar.is-hidden {
       display: none !important;
     }
+

@@ -578,76 +578,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 7px;
+  gap: 10px;
   width: 100%;
+  margin: 2px 0;
 }
 
 .btn-practice-action {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 7px 13px;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  min-height: 44px;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
   background: #f8fafc;
   color: #334155;
   font-family: inherit;
-  font-size: 0.82rem;
+  font-size: 0.86rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-}
-
-.btn-practice-action:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-  transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(0,0,0,0.06);
-}
-
-.btn-practice-action:active {
-  transform: translateY(0);
-}
-
-.btn-practice-primary {
-  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
-  color: #ffffff;
-  border-color: #4f46e5;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
-}
-
-.btn-practice-primary:hover {
-  background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
-  border-color: #4338ca;
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4);
-}
-
-/* Guide Toggle Checkbox Pill */
-.guide-toggle-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: #f8fafc;
-  padding: 5px 11px;
-  border-radius: 9999px;
-  border: 1px solid #e2e8f0;
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: #475569;
-  cursor: pointer;
-  user-select: none;
-  transition: border-color 0.2s ease;
-}
-
-.guide-toggle-pill:hover {
-  border-color: #c7d2fe;
-  color: #4338ca;
-}
-
-.guide-toggle-pill input {
-  cursor: pointer;
-  accent-color: #4f46e5;
+  flex: 1;
+  max-width: 180px;
 }
 
 /* Navigation Controls (Prev / Random / Next) */

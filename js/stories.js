@@ -48,10 +48,11 @@
   let currentLevelFilter = 'all';
   let activeStory = null;
   let activeChapterIndex = 0;
-  let showPinyin = true;
-  let showTranslation = false;
-  let currentSpeedIndex = 1;
   const speeds = [0.75, 1.0, 1.25, 1.5];
+  let showPinyin = window.AppSettings ? window.AppSettings.get('story_pinyin', true) : true;
+  let showTranslation = window.AppSettings ? window.AppSettings.get('story_trans', false) : false;
+  const initialSpeed = window.AppSettings ? window.AppSettings.get('story_playback_speed', 1.0) : 1.0;
+  let currentSpeedIndex = speeds.indexOf(initialSpeed) >= 0 ? speeds.indexOf(initialSpeed) : 1;
 
   // DOM Elements
   const tabFlashcard = document.getElementById('tab-flashcard');
@@ -992,11 +993,21 @@
       window.storyPlayer.toggle();
     });
 
+    // Set initial speed
+    const initialPlaybackRate = speeds[currentSpeedIndex];
+    window.storyPlayer.setSpeed(initialPlaybackRate);
+    if (audioSpeedBtn) {
+      audioSpeedBtn.textContent = `${initialPlaybackRate}x`;
+    }
+
     audioSpeedBtn?.addEventListener('click', () => {
       currentSpeedIndex = (currentSpeedIndex + 1) % speeds.length;
       const speed = speeds[currentSpeedIndex];
       window.storyPlayer.setSpeed(speed);
       audioSpeedBtn.textContent = `${speed}x`;
+      if (window.AppSettings) {
+        window.AppSettings.set('story_playback_speed', speed);
+      }
     });
 
     audioScrubber?.addEventListener('input', (e) => {
@@ -1048,16 +1059,26 @@
   function initReaderControls() {
     btnReaderBack?.addEventListener('click', closeStoryReader);
 
+    // Sync button states with initial settings
+    if (btnTogglePinyin) btnTogglePinyin.classList.toggle('active', showPinyin);
+    if (btnToggleTrans) btnToggleTrans.classList.toggle('active', showTranslation);
+
     btnTogglePinyin?.addEventListener('click', () => {
       showPinyin = !showPinyin;
       btnTogglePinyin.classList.toggle('active', showPinyin);
       readerContentBody?.classList.toggle('hide-pinyin', !showPinyin);
+      if (window.AppSettings) {
+        window.AppSettings.set('story_pinyin', showPinyin);
+      }
     });
 
     btnToggleTrans?.addEventListener('click', () => {
       showTranslation = !showTranslation;
       btnToggleTrans.classList.toggle('active', showTranslation);
       readerContentBody?.classList.toggle('hide-trans', !showTranslation);
+      if (window.AppSettings) {
+        window.AppSettings.set('story_trans', showTranslation);
+      }
     });
 
     btnPrevChap?.addEventListener('click', () => {
@@ -1071,6 +1092,27 @@
       if (activeStory && activeChapterIndex < activeStory.chapters.length - 1) {
         activeChapterIndex++;
         renderCurrentChapter();
+      }
+    });
+
+    // Listen to unified AppSettings events (e.g. changed via Settings modal)
+    window.addEventListener('app:setting-changed', (e) => {
+      const { key, value } = e.detail || {};
+      if (key === 'story_pinyin') {
+        showPinyin = value;
+        btnTogglePinyin?.classList.toggle('active', showPinyin);
+        readerContentBody?.classList.toggle('hide-pinyin', !showPinyin);
+      } else if (key === 'story_trans') {
+        showTranslation = value;
+        btnToggleTrans?.classList.toggle('active', showTranslation);
+        readerContentBody?.classList.toggle('hide-trans', !showTranslation);
+      } else if (key === 'story_playback_speed') {
+        const speed = parseFloat(value);
+        if (!isNaN(speed)) {
+          currentSpeedIndex = speeds.indexOf(speed) >= 0 ? speeds.indexOf(speed) : 1;
+          window.storyPlayer?.setSpeed(speed);
+          if (audioSpeedBtn) audioSpeedBtn.textContent = `${speed}x`;
+        }
       }
     });
   }

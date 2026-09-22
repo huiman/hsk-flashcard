@@ -83,6 +83,12 @@
   line-height: 1;
 }
 
+.top-action-btn.btn-settings-trigger {
+  width: 42px;
+  padding: 0;
+  font-size: 1.15rem;
+}
+
 /* =========================================================
    Main Navigation Tabs (Bottom Dock)
    ========================================================= */
@@ -151,6 +157,19 @@
 
 .main-tab-btn.active .tab-icon {
   transform: scale(1.15);
+}
+
+.main-tab-btn.main-tab-settings {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.main-tab-btn.main-tab-settings:active {
+  transform: scale(0.92);
+}
+
+.main-tab-btn.main-tab-settings:active .tab-icon {
+  transform: rotate(45deg);
 }
 
 /* App View Switcher */

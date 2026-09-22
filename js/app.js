@@ -1,72 +1,145 @@
 /**
-     * 2. การจัดการ State และ LocalStorage
-     */
-    const STORAGE_KEYS = {
-      KNOWN_IDS: "hsk_known_ids",
-      SCORE: "hsk_score",
-      AUTOPLAY: "hsk_autoplay",
-      LOOP: "hsk_loop",
-      LEVELS: "hsk_selected_levels"
-    };
+ * 1. ระบบจัดการการตั้งค่าแบบรวมศูนย์ (Unified AppSettings Manager)
+ */
+window.AppSettings = {
+  PREFIX: 'hsk_setting_',
+  DEFAULTS: {
+    'autoplay': false,
+    'loop': true,
+    'levels_visible': true,
+    'theme': 'auto',
+    'practice_guide': true,
+    'practice_repeat': false,
+    'practice_dialog': false,
+    'story_pinyin': true,
+    'story_trans': false,
+    'story_playback_speed': 1.0
+  },
 
-    const ALL_LEVELS = ["HSK 1", "HSK 2", "HSK 3", "HSK 4", "HSK 5", "HSK 6", "HSK 7", "HSK 8", "HSK 9"];
+  get(key, defaultValue) {
+    try {
+      const def = defaultValue !== undefined ? defaultValue : this.DEFAULTS[key];
+      // Backwards compatibility with legacy localStorage keys
+      if (key === 'autoplay') {
+        const legacy = localStorage.getItem('hsk_autoplay');
+        if (legacy !== null) return legacy === 'true';
+      }
+      if (key === 'loop') {
+        const legacy = localStorage.getItem('hsk_loop');
+        if (legacy !== null) return legacy === 'true';
+      }
+      if (key === 'levels_visible') {
+        const legacy = localStorage.getItem('hsk_levels_visible');
+        if (legacy !== null) return legacy === 'true';
+      }
+      if (key === 'theme') {
+        const legacy = localStorage.getItem('hsk_theme_preference');
+        if (legacy !== null) return legacy;
+      }
+      if (key.startsWith('practice_')) {
+        const raw = localStorage.getItem('hsk_practice_settings');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const sub = key.replace('practice_', '');
+          if (sub === 'guide' && parsed.showGuide !== undefined) return parsed.showGuide;
+          if (sub === 'repeat' && parsed.repeatCharacter !== undefined) return parsed.repeatCharacter;
+          if (sub === 'dialog' && parsed.showDialog !== undefined) return parsed.showDialog;
+        }
+      }
 
-    let knownIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.KNOWN_IDS)) || [];
-    let score = parseInt(localStorage.getItem(STORAGE_KEYS.SCORE), 10) || 0;
-    let isAutoplay = localStorage.getItem(STORAGE_KEYS.AUTOPLAY) === "true";
-    let isAudioLoop = localStorage.getItem(STORAGE_KEYS.LOOP) !== null 
-      ? localStorage.getItem(STORAGE_KEYS.LOOP) === "true" 
-      : true;
-    let storedLevels = JSON.parse(localStorage.getItem(STORAGE_KEYS.LEVELS));
-    let selectedLevels = Array.isArray(storedLevels) && storedLevels.length > 0 
-      ? storedLevels 
-      : ["HSK 1"];
-    
-    let currentCard = null;
-    let historyCards = [];
-    let historyIndex = -1;
-    let loopTimeout = null;
-    let strokeLoopTimeout = null;
-
-    const cardEl = document.getElementById("flashcard");
-    const hanziWriterContainer = document.getElementById("hanzi-writer-container");
-    const pinyinEl = document.getElementById("card-pinyin");
-    const meaningEl = document.getElementById("card-meaning");
-    const meaningEnEl = document.getElementById("card-meaning-en");
-    const levelEl = document.getElementById("card-level");
-
-    const knownCountEl = document.getElementById("known-count");
-    const remainingCountEl = document.getElementById("remaining-count");
-    const scoreCountEl = document.getElementById("score-count");
-
-    const btnPrev = document.getElementById("btn-prev");
-    const btnNext = document.getElementById("btn-next");
-    const btnKnow = document.getElementById("btn-know");
-    const btnReset = document.getElementById("btn-reset");
-    const btnAudioFront = document.getElementById("btn-audio-front");
-    const btnAudioBack = document.getElementById("btn-audio-back");
-    const btnStrokeReplay = document.getElementById("btn-stroke-replay");
-    const toggleAutoplay = document.getElementById("toggle-autoplay");
-    const toggleLoop = document.getElementById("toggle-loop");
-    const levelChips = document.querySelectorAll(".level-chip");
-
-    // สร้าง Toast แจ้งเตือนเมื่อจำได้แล้ว
-    const toastEl = document.createElement("div");
-    toastEl.className = "known-toast";
-    toastEl.innerHTML = "<span>✅</span><span>จำได้แล้ว +10</span>";
-    document.querySelector(".card-scene").appendChild(toastEl);
-
-    function showKnownToast() {
-      toastEl.classList.add("show");
-      setTimeout(() => {
-        toastEl.classList.remove("show");
-      }, 750);
+      const val = localStorage.getItem(this.PREFIX + key);
+      if (val === null) return def;
+      return JSON.parse(val);
+    } catch (e) {
+      return defaultValue !== undefined ? defaultValue : this.DEFAULTS[key];
     }
+  },
 
-    let currentWriters = [];
+  set(key, value) {
+    try {
+      localStorage.setItem(this.PREFIX + key, JSON.stringify(value));
+      // Keep legacy keys updated for zero breaking changes
+      if (key === 'autoplay') localStorage.setItem('hsk_autoplay', String(value));
+      if (key === 'loop') localStorage.setItem('hsk_loop', String(value));
+      if (key === 'levels_visible') localStorage.setItem('hsk_levels_visible', String(value));
+      if (key === 'theme') localStorage.setItem('hsk_theme_preference', String(value));
+      if (key.startsWith('practice_')) {
+        const current = JSON.parse(localStorage.getItem('hsk_practice_settings') || '{}');
+        const sub = key.replace('practice_', '');
+        if (sub === 'guide') current.showGuide = value;
+        if (sub === 'repeat') current.repeatCharacter = value;
+        if (sub === 'dialog') current.showDialog = value;
+        localStorage.setItem('hsk_practice_settings', JSON.stringify(current));
+      }
+      window.dispatchEvent(new CustomEvent('app:setting-changed', { detail: { key, value } }));
+    } catch (e) {
+      console.warn('[AppSettings] Failed to save setting:', key, e);
+    }
+  }
+};
 
-    toggleAutoplay.checked = isAutoplay;
-    if (toggleLoop) toggleLoop.checked = isAudioLoop;
+/**
+ * 2. การจัดการ State และ LocalStorage
+ */
+const STORAGE_KEYS = {
+  KNOWN_IDS: "hsk_known_ids",
+  SCORE: "hsk_score",
+  AUTOPLAY: "hsk_autoplay",
+  LOOP: "hsk_loop",
+  LEVELS: "hsk_selected_levels"
+};
+
+const ALL_LEVELS = ["HSK 1", "HSK 2", "HSK 3", "HSK 4", "HSK 5", "HSK 6", "HSK 7", "HSK 8", "HSK 9"];
+
+let knownIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.KNOWN_IDS)) || [];
+let score = parseInt(localStorage.getItem(STORAGE_KEYS.SCORE), 10) || 0;
+let isAutoplay = window.AppSettings.get('autoplay', false);
+let isAudioLoop = window.AppSettings.get('loop', true);
+let storedLevels = JSON.parse(localStorage.getItem(STORAGE_KEYS.LEVELS));
+let selectedLevels = Array.isArray(storedLevels) && storedLevels.length > 0 
+  ? storedLevels 
+  : ["HSK 1"];
+
+let currentCard = null;
+let historyCards = [];
+let historyIndex = -1;
+let loopTimeout = null;
+let strokeLoopTimeout = null;
+
+const cardEl = document.getElementById("flashcard");
+const hanziWriterContainer = document.getElementById("hanzi-writer-container");
+const pinyinEl = document.getElementById("card-pinyin");
+const meaningEl = document.getElementById("card-meaning");
+const meaningEnEl = document.getElementById("card-meaning-en");
+const levelEl = document.getElementById("card-level");
+
+const knownCountEl = document.getElementById("known-count");
+const remainingCountEl = document.getElementById("remaining-count");
+const scoreCountEl = document.getElementById("score-count");
+
+const btnPrev = document.getElementById("btn-prev");
+const btnNext = document.getElementById("btn-next");
+const btnKnow = document.getElementById("btn-know");
+const btnReset = document.getElementById("btn-reset");
+const btnAudioFront = document.getElementById("btn-audio-front");
+const btnAudioBack = document.getElementById("btn-audio-back");
+const btnStrokeReplay = document.getElementById("btn-stroke-replay");
+const levelChips = document.querySelectorAll(".level-chip");
+
+// สร้าง Toast แจ้งเตือนเมื่อจำได้แล้ว
+const toastEl = document.createElement("div");
+toastEl.className = "known-toast";
+toastEl.innerHTML = "<span>✅</span><span>จำได้แล้ว +10</span>";
+document.querySelector(".card-scene").appendChild(toastEl);
+
+function showKnownToast() {
+  toastEl.classList.add("show");
+  setTimeout(() => {
+    toastEl.classList.remove("show");
+  }, 750);
+}
+
+let currentWriters = [];
 
     function updateLevelChipsUI() {
       const isAll = ALL_LEVELS.every(lvl => selectedLevels.includes(lvl)) || selectedLevels.includes("all");
@@ -501,7 +574,6 @@
     // ปลดล็อค Web Speech API เมื่อผู้ใช้แตะหรือคลิกหน้าเว็บครั้งแรก (แก้ปัญหา Autoplay Policy ของบราวเซอร์)
     function unlockAudioOnFirstInteraction() {
       if ('speechSynthesis' in window) {
-        // ทดลอง resume หรือ speak utterance ว่างๆ เบาๆ เพื่อปลดล็อคข้อห้าม Autoplay
         if (window.speechSynthesis.paused) {
           window.speechSynthesis.resume();
         }
@@ -515,26 +587,172 @@
     document.addEventListener("touchstart", unlockAudioOnFirstInteraction, { once: true });
     document.addEventListener("click", unlockAudioOnFirstInteraction, { once: true });
 
-    toggleAutoplay.addEventListener("change", (e) => {
+    // =========================================================
+    // Settings Modal Integration & Event Listeners
+    // =========================================================
+    const btnOpenSettings = document.getElementById("btn-open-settings");
+    const appSettingsModal = document.getElementById("app-settings-modal");
+    const modalSettingsBackdrop = document.getElementById("modal-settings-backdrop");
+    const btnCloseSettingsModal = document.getElementById("btn-close-settings-modal");
+
+    // Setting Form Controls
+    const settingLevelsBar = document.getElementById("setting-levels-bar");
+    const settingDarkTheme = document.getElementById("setting-dark-theme");
+    const settingToggleAutoplay = document.getElementById("setting-toggle-autoplay");
+    const settingToggleLoop = document.getElementById("setting-toggle-loop");
+    const settingPracticeGuide = document.getElementById("setting-practice-guide");
+    const settingPracticeRepeat = document.getElementById("setting-practice-repeat");
+    const settingPracticeDialog = document.getElementById("setting-practice-dialog");
+    const settingStoryPinyin = document.getElementById("setting-story-pinyin");
+    const settingStoryTrans = document.getElementById("setting-story-trans");
+    const settingsSpeedPills = document.getElementById("settings-speed-pills");
+
+    function syncSettingsModalInputs() {
+      if (settingLevelsBar) {
+        settingLevelsBar.checked = window.AppSettings.get('levels_visible', true);
+      }
+      if (settingDarkTheme) {
+        const theme = document.documentElement.getAttribute('data-theme') || window.AppSettings.get('theme', 'light');
+        settingDarkTheme.checked = (theme === 'dark');
+      }
+      if (settingToggleAutoplay) {
+        settingToggleAutoplay.checked = isAutoplay;
+      }
+      if (settingToggleLoop) {
+        settingToggleLoop.checked = isAudioLoop;
+      }
+      if (settingPracticeGuide) {
+        settingPracticeGuide.checked = window.AppSettings.get('practice_guide', true);
+      }
+      if (settingPracticeRepeat) {
+        settingPracticeRepeat.checked = window.AppSettings.get('practice_repeat', false);
+      }
+      if (settingPracticeDialog) {
+        settingPracticeDialog.checked = window.AppSettings.get('practice_dialog', false);
+      }
+      if (settingStoryPinyin) {
+        settingStoryPinyin.checked = window.AppSettings.get('story_pinyin', true);
+      }
+      if (settingStoryTrans) {
+        settingStoryTrans.checked = window.AppSettings.get('story_trans', false);
+      }
+      if (settingsSpeedPills) {
+        const currentSpeed = window.AppSettings.get('story_playback_speed', 1.0);
+        settingsSpeedPills.querySelectorAll('.btn-speed-pill').forEach(btn => {
+          const speed = parseFloat(btn.dataset.speed);
+          const active = Math.abs(speed - currentSpeed) < 0.01;
+          btn.classList.toggle('active', active);
+          btn.setAttribute('aria-checked', active ? 'true' : 'false');
+        });
+      }
+    }
+
+    function openSettingsModal() {
+      syncSettingsModalInputs();
+      if (appSettingsModal) {
+        appSettingsModal.classList.add("show");
+        document.body.style.overflow = "hidden";
+      }
+    }
+
+    function closeSettingsModal() {
+      if (appSettingsModal) {
+        appSettingsModal.classList.remove("show");
+        document.body.style.overflow = "";
+      }
+    }
+
+    btnOpenSettings?.addEventListener("click", openSettingsModal);
+    btnCloseSettingsModal?.addEventListener("click", closeSettingsModal);
+    modalSettingsBackdrop?.addEventListener("click", closeSettingsModal);
+
+    // Escape key closes settings modal
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && appSettingsModal && appSettingsModal.classList.contains("show")) {
+        closeSettingsModal();
+      }
+    });
+
+    // Wire up inputs inside Settings Modal
+    settingLevelsBar?.addEventListener("change", (e) => {
+      window.AppSettings.set('levels_visible', e.target.checked);
+      if (typeof window.__applyLevelsBarVisibility === 'function') {
+        window.__applyLevelsBarVisibility(e.target.checked);
+      }
+    });
+
+    settingDarkTheme?.addEventListener("change", (e) => {
+      const nextTheme = e.target.checked ? 'dark' : 'light';
+      if (typeof window.__applyAppTheme === 'function') {
+        window.__applyAppTheme(nextTheme);
+      }
+    });
+
+    settingToggleAutoplay?.addEventListener("change", (e) => {
       isAutoplay = e.target.checked;
+      window.AppSettings.set('autoplay', isAutoplay);
       saveState();
       if (isAutoplay && currentCard) {
         playAudio(currentCard.hanzi, isAudioLoop);
+      }
+    });
+
+    settingToggleLoop?.addEventListener("change", (e) => {
+      isAudioLoop = e.target.checked;
+      window.AppSettings.set('loop', isAudioLoop);
+      saveState();
+      if (isAudioLoop && currentCard) {
+        playAudio(currentCard.hanzi, true);
+      } else {
         stopAudio();
       }
     });
 
-    if (toggleLoop) {
-      toggleLoop.addEventListener("change", (e) => {
-        isAudioLoop = e.target.checked;
-        saveState();
-        if (isAudioLoop && currentCard) {
-          playAudio(currentCard.hanzi, true);
-        } else {
-          stopAudio();
-        }
-      });
-    }
+    settingPracticeGuide?.addEventListener("change", (e) => {
+      window.AppSettings.set('practice_guide', e.target.checked);
+    });
+
+    settingPracticeRepeat?.addEventListener("change", (e) => {
+      window.AppSettings.set('practice_repeat', e.target.checked);
+    });
+
+    settingPracticeDialog?.addEventListener("change", (e) => {
+      window.AppSettings.set('practice_dialog', e.target.checked);
+    });
+
+    settingStoryPinyin?.addEventListener("change", (e) => {
+      window.AppSettings.set('story_pinyin', e.target.checked);
+    });
+
+    settingStoryTrans?.addEventListener("change", (e) => {
+      window.AppSettings.set('story_trans', e.target.checked);
+    });
+
+    settingsSpeedPills?.addEventListener("click", (e) => {
+      const btn = e.target.closest('.btn-speed-pill');
+      if (!btn) return;
+      const speed = parseFloat(btn.dataset.speed);
+      if (!isNaN(speed)) {
+        window.AppSettings.set('story_playback_speed', speed);
+        syncSettingsModalInputs();
+      }
+    });
+
+    // Listen to setting changes across modules
+    window.addEventListener('app:setting-changed', (e) => {
+      const { key, value } = e.detail || {};
+      if (key === 'autoplay') {
+        isAutoplay = value;
+        if (settingToggleAutoplay) settingToggleAutoplay.checked = value;
+      } else if (key === 'loop') {
+        isAudioLoop = value;
+        if (settingToggleLoop) settingToggleLoop.checked = value;
+      } else if (key === 'levels_visible') {
+        if (settingLevelsBar) settingLevelsBar.checked = value;
+      } else if (key === 'theme') {
+        if (settingDarkTheme) settingDarkTheme.checked = (value === 'dark');
+      }
+    });
 
     levelChips.forEach(chip => {
       chip.addEventListener("click", () => {
@@ -671,7 +889,7 @@
         case "KeyL":
           e.preventDefault();
           isAudioLoop = !isAudioLoop;
-          if (toggleLoop) toggleLoop.checked = isAudioLoop;
+          window.AppSettings.set('loop', isAudioLoop);
           saveState();
           if (isAudioLoop && currentCard) {
             playAudio(currentCard.hanzi, true);

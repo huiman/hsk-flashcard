@@ -27,9 +27,9 @@
   <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
 
   <!-- โหลดสไตล์แยกโมดูล -->
-  <link rel="stylesheet" href="css/style.css?v=13.13.0">
-  <link rel="stylesheet" href="css/stories.css?v=13.13.0">
-  <link rel="stylesheet" href="css/practice.css?v=13.13.0">
+  <link rel="stylesheet" href="css/style.css?v=13.17.1">
+  <link rel="stylesheet" href="css/stories.css?v=13.17.1">
+  <link rel="stylesheet" href="css/practice.css?v=13.17.1">
 </head>
 <body>
 
@@ -46,18 +46,11 @@
       </div>
     </div>
 
-    <!-- แถบด้านบน: โลโก้/ชื่อแอป, ปุ่มแสดง/ซ่อนระดับ HSK และ ปุ่มสลับธีม -->
+    <!-- แถบด้านบน: โลโก้/ชื่อแอป -->
     <header class="app-top-bar">
       <div class="app-brand">
         <span class="brand-badge">HSK 1-9</span>
         <h1 class="brand-title" id="app-brand-title">🀄 Flashcards</h1>
-      </div>
-      <div class="top-bar-actions">
-        <button class="top-action-btn active" id="btn-toggle-levels" title="แสดง/ซ่อน แถบเลือกระดับ HSK" aria-label="แสดงหรือซ่อนแถบเลือกระดับ HSK">
-          <span class="top-action-icon">🎯</span>
-          <span class="top-action-label">ระดับ HSK</span>
-        </button>
-        <button class="theme-toggle-btn" id="btn-global-theme" title="สลับธีม สว่าง / มืด">🌓</button>
       </div>
     </header>
     <script>
@@ -115,25 +108,6 @@
       <button class="level-chip" data-level="HSK 7"><span class="lvl-dot lvl-7"></span>HSK 7</button>
       <button class="level-chip" data-level="HSK 8"><span class="lvl-dot lvl-8"></span>HSK 8</button>
       <button class="level-chip" data-level="HSK 9"><span class="lvl-dot lvl-9"></span>HSK 9</button>
-    </section>
-
-    <!-- แถบตั้งค่า: อ่านอัตโนมัติ + อ่านวนซ้ำ Loop -->
-    <section class="settings-container">
-      <div class="settings-bar">
-        <label class="toggle-switch">
-          <input type="checkbox" id="toggle-autoplay">
-          <span class="slider"></span>
-        </label>
-        <span class="settings-label"><span class="label-full">🔊 อ่านอัตโนมัติ</span><span class="label-short">🔊</span></span>
-      </div>
-
-      <div class="settings-bar">
-        <label class="toggle-switch">
-          <input type="checkbox" id="toggle-loop" checked>
-          <span class="slider"></span>
-        </label>
-        <span class="settings-label"><span class="label-full">🔁 วนซ้ำ (Loop)</span><span class="label-short">🔁</span></span>
-      </div>
     </section>
 
     <!-- สถิติคะแนน -->
@@ -331,20 +305,8 @@
           </div>
         </div>
 
-        <!-- Practice Options & Stroke Action Buttons -->
+        <!-- Practice Stroke Action Buttons -->
         <div class="practice-actions-row">
-          <label class="guide-toggle-pill" title="เปิด/ปิด เส้นร่างไกด์">
-            <input type="checkbox" id="toggle-practice-guide" checked>
-            <span>แสดงเส้นร่าง (Guide)</span>
-          </label>
-          <label class="guide-toggle-pill" title="เมื่อคัดเสร็จให้ฝึกตัวเดิมซ้ำ">
-            <input type="checkbox" id="toggle-practice-repeat">
-            <span>🔁 คัดซ้ำตัวเดิม (Repeat)</span>
-          </label>
-          <label class="guide-toggle-pill" title="เปิด/ปิด กล่องสรุปผลเมื่อคัดเสร็จ">
-            <input type="checkbox" id="toggle-practice-dialog">
-            <span>📊 แสดงกล่องสรุป (Dialog)</span>
-          </label>
           <button class="btn-practice-action" id="btn-practice-hint" title="ดูตัวอย่างขีดนี้">
             💡 ดูตัวอย่างขีดนี้
           </button>
@@ -415,6 +377,10 @@
       <button class="main-tab-btn" id="tab-practice" data-view="practice" title="ฝึกคัดอักษร Write">
         <span class="tab-icon">✍️</span>
         <span class="tab-label">ฝึกคัด (Write)</span>
+      </button>
+      <button class="main-tab-btn main-tab-settings" id="btn-open-settings" title="การตั้งค่า (Settings)" aria-label="เปิดหน้าต่างการตั้งค่า">
+        <span class="tab-icon">⚙️</span>
+        <span class="tab-label">ตั้งค่า (Settings)</span>
       </button>
     </nav>
   </div>
@@ -584,13 +550,218 @@
     </div>
   </div>
 
+  <!-- 6. App Settings Modal (Centralized Preferences Panel) -->
+  <div class="app-custom-modal" id="app-settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+    <div class="custom-modal-backdrop" id="modal-settings-backdrop"></div>
+    <div class="custom-modal-sheet modal-settings-sheet">
+      <div class="custom-modal-header">
+        <div class="modal-header-title">
+          <span class="modal-title-icon">⚙️</span>
+          <h3 id="settings-modal-title">การตั้งค่า (Settings)</h3>
+        </div>
+        <button class="btn-modal-close" id="btn-close-settings-modal" title="ปิดหน้าต่างการตั้งค่า" aria-label="ปิด">✕</button>
+      </div>
+
+      <div class="custom-modal-body settings-sheet-body">
+        <!-- กลุ่ม: ทั่วไป (General) -->
+        <section class="settings-group">
+          <div class="settings-group-header">
+            <span class="settings-group-icon">⚙️</span>
+            <span>ทั่วไป (General)</span>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-text-col" onclick="document.getElementById('setting-levels-bar').click()">
+              <label class="setting-title" for="setting-levels-bar">
+                🎯 แถบเลือกระดับ HSK
+              </label>
+              <div class="setting-desc">แสดงแถบปุ่มลัดเลือกระดับ HSK 1-9 ด้านบนของแต่ละหน้าจอ</div>
+            </div>
+            <div class="setting-ctrl-col">
+              <label class="toggle-switch-unified">
+                <input type="checkbox" id="setting-levels-bar" checked>
+                <span class="unified-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-text-col" onclick="document.getElementById('setting-dark-theme').click()">
+              <label class="setting-title" for="setting-dark-theme">
+                🌓 โหมดมืด (Dark Mode)
+              </label>
+              <div class="setting-desc">ปรับชุดสีโทนมืดสบายตา เหมาะสำหรับการใช้งานในที่แสงน้อย</div>
+            </div>
+            <div class="setting-ctrl-col">
+              <label class="toggle-switch-unified">
+                <input type="checkbox" id="setting-dark-theme">
+                <span class="unified-slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- กลุ่ม: บัตรคำ Flashcards -->
+        <section class="settings-group">
+          <div class="settings-group-header">
+            <span class="settings-group-icon">🀄</span>
+            <span>บัตรคำ (Flashcards)</span>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-text-col" onclick="document.getElementById('setting-toggle-autoplay').click()">
+              <label class="setting-title" for="setting-toggle-autoplay">
+                🔊 อ่านออกเสียงอัตโนมัติ (Autoplay)
+              </label>
+              <div class="setting-desc">เล่นเสียงอ่านภาษาจีนทันทีเมื่อเปิดดูบัตรคำศัพท์ใบใหม่</div>
+            </div>
+            <div class="setting-ctrl-col">
+              <label class="toggle-switch-unified">
+                <input type="checkbox" id="setting-toggle-autoplay">
+                <span class="unified-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-text-col" onclick="document.getElementById('setting-toggle-loop').click()">
+              <label class="setting-title" for="setting-toggle-loop">
+                🔁 เล่นเสียงวนซ้ำ (Loop)
+              </label>
+              <div class="setting-desc">เล่นเสียงอ่านวนซ้ำอย่างต่อเนื่องเมื่อเปิดดูหน้าหรือหลังบัตรคำ</div>
+            </div>
+            <div class="setting-ctrl-col">
+              <label class="toggle-switch-unified">
+                <input type="checkbox" id="setting-toggle-loop" checked>
+                <span class="unified-slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- กลุ่ม: ฝึกคัดอักษรจีน (Practice Writing) -->
+        <section class="settings-group">
+          <div class="settings-group-header">
+            <span class="settings-group-icon">✍️</span>
+            <span>ฝึกคัดอักษรจีน (Practice)</span>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-text-col" onclick="document.getElementById('setting-practice-guide').click()">
+              <label class="setting-title" for="setting-practice-guide">
+                ✏️ แสดงเส้นร่างนำทาง (Guide Lines)
+              </label>
+              <div class="setting-desc">แสดงโครงร่างเส้นจางๆ เพื่อช่วยจำทิศทางและลำดับการลากเส้น</div>
+            </div>
+            <div class="setting-ctrl-col">
+              <label class="toggle-switch-unified">
+                <input type="checkbox" id="setting-practice-guide" checked>
+                <span class="unified-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-text-col" onclick="document.getElementById('setting-practice-repeat').click()">
+              <label class="setting-title" for="setting-practice-repeat">
+                🔁 คัดซ้ำตัวเดิม (Repeat Mode)
+              </label>
+              <div class="setting-desc">เมื่อลากเส้นสำเร็จ ให้ฝึกคัดอักษรตัวเดิมซ้ำเพื่อความแม่นยำ</div>
+            </div>
+            <div class="setting-ctrl-col">
+              <label class="toggle-switch-unified">
+                <input type="checkbox" id="setting-practice-repeat">
+                <span class="unified-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-text-col" onclick="document.getElementById('setting-practice-dialog').click()">
+              <label class="setting-title" for="setting-practice-dialog">
+                📊 แสดงกล่องสรุปผล (Summary Dialog)
+              </label>
+              <div class="setting-desc">แสดงป๊อปอัปสรุปคะแนนและสถิติอย่างละเอียดเมื่อเขียนจบตัวอักษร</div>
+            </div>
+            <div class="setting-ctrl-col">
+              <label class="toggle-switch-unified">
+                <input type="checkbox" id="setting-practice-dialog">
+                <span class="unified-slider"></span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- กลุ่ม: นิทานและเครื่องเล่นเสียง (Story Reader) -->
+        <section class="settings-group">
+          <div class="settings-group-header">
+            <span class="settings-group-icon">📖</span>
+            <span>นิทานและเสียงอ่าน (Story Reader)</span>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-text-col" onclick="document.getElementById('setting-story-pinyin').click()">
+              <label class="setting-title" for="setting-story-pinyin">
+                拼 แสดงตัวพินอิน (Pinyin)
+              </label>
+              <div class="setting-desc">แสดงสัทอักษรพินอินกำกับการออกเสียงเหนือตัวอักษรจีน</div>
+            </div>
+            <div class="setting-ctrl-col">
+              <label class="toggle-switch-unified">
+                <input type="checkbox" id="setting-story-pinyin" checked>
+                <span class="unified-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-text-col" onclick="document.getElementById('setting-story-trans').click()">
+              <label class="setting-title" for="setting-story-trans">
+                EN แสดงคำแปลภาษาอังกฤษ (Translation)
+              </label>
+              <div class="setting-desc">แสดงคำแปลภาษาอังกฤษกำกับใต้ประโยคของนิทาน</div>
+            </div>
+            <div class="setting-ctrl-col">
+              <label class="toggle-switch-unified">
+                <input type="checkbox" id="setting-story-trans">
+                <span class="unified-slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-text-col">
+              <div class="setting-title">
+                ⚡ ความเร็วเสียงอ่านนิทาน (Playback Speed)
+              </div>
+              <div class="setting-desc">ความเร็วเริ่มต้นสำหรับเสียงบรรยายและอ่านออกเสียงบทเรียน</div>
+            </div>
+            <div class="setting-ctrl-col">
+              <div class="speed-pills-row" id="settings-speed-pills" role="radiogroup" aria-label="ความเร็วเสียงอ่าน">
+                <button class="btn-speed-pill" data-speed="0.75" role="radio" aria-checked="false">0.75x</button>
+                <button class="btn-speed-pill active" data-speed="1.0" role="radio" aria-checked="true">1.0x</button>
+                <button class="btn-speed-pill" data-speed="1.25" role="radio" aria-checked="false">1.25x</button>
+                <button class="btn-speed-pill" data-speed="1.5" role="radio" aria-checked="false">1.5x</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div class="settings-modal-footer">
+          <span>✨ บันทึกการตั้งค่าอัตโนมัติ</span>
+          <span>เวอร์ชัน 13.17.1</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- โหลดฐานข้อมูลคำศัพท์และ Logic ของแอปพลิเคชันแบบโมดูลาร์ -->
-  <script src="js/data.js?v=13.12.0"></script>
-  <script src="js/stories-data.js?v=13.12.0"></script>
-  <script src="js/story-player.js?v=13.12.0"></script>
-  <script src="js/stories.js?v=13.12.0"></script>
-  <script src="js/practice.js?v=13.12.0"></script>
-  <script src="js/app.js?v=13.12.0"></script>
+  <script src="js/data.js?v=13.16.0"></script>
+  <script src="js/stories-data.js?v=13.16.0"></script>
+  <script src="js/story-player.js?v=13.16.0"></script>
+  <script src="js/stories.js?v=13.16.0"></script>
+  <script src="js/practice.js?v=13.16.0"></script>
+  <script src="js/app.js?v=13.16.0"></script>
 </body>
 
 </html>
