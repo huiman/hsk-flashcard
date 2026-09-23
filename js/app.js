@@ -1081,6 +1081,8 @@ let currentWriters = [];
     // Export for external callers if needed
     window.__toggleAppTheme = toggleAppTheme;
     window.__applyAppTheme = applyAppTheme;
+    window.stopFlashcardAudio = stopAudio;
+    window.stopFlashcardStroke = stopStrokeOrderLoop;
 
     // Jump to specific word/card in Flashcards view
     window.jumpToFlashcard = function(hanziOrWordObj) {

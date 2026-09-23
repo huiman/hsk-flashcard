@@ -98,6 +98,30 @@
   };
 
   function switchView(viewName) {
+    // 1. If leaving flashcards, halt any ongoing reading (audio/TTS/loop) and stroke animations
+    if (viewName !== 'flashcard') {
+      if (typeof window.stopFlashcardAudio === 'function') {
+        window.stopFlashcardAudio();
+      }
+      if (typeof window.stopFlashcardStroke === 'function') {
+        window.stopFlashcardStroke();
+      }
+    }
+
+    // 2. If leaving stories, stop any story narration or TTS
+    if (viewName !== 'stories') {
+      if (window.storyPlayer && typeof window.storyPlayer.stopAll === 'function') {
+        window.storyPlayer.stopAll();
+      }
+    }
+
+    // 3. If leaving practice, stop speech synthesis if running
+    if (viewName !== 'practice' && viewName !== 'stories' && viewName !== 'flashcard') {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    }
+
     if (tabFlashcard) tabFlashcard.classList.toggle('active', viewName === 'flashcard');
     if (tabStories) tabStories.classList.toggle('active', viewName === 'stories');
     if (tabPractice) tabPractice.classList.toggle('active', viewName === 'practice');
