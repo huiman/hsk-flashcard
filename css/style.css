@@ -51,6 +51,7 @@
       max-width: 680px;
       min-width: 0;
       box-sizing: border-box;
+      overflow-x: hidden;
       min-height: 100vh;
       min-height: 100dvh;
       background: rgba(255, 255, 255, 0.94);
