@@ -143,7 +143,7 @@ let currentWriters = [];
 
     function updateLevelChipsUI() {
       const isAll = ALL_LEVELS.every(lvl => selectedLevels.includes(lvl)) || selectedLevels.includes("all");
-      levelChips.forEach(chip => {
+      document.querySelectorAll(".level-chip, .settings-level-chip, .tutor-level-chip").forEach(chip => {
         const lvl = chip.dataset.level;
         if (lvl === "all") {
           chip.classList.toggle("active", isAll);
@@ -164,7 +164,10 @@ let currentWriters = [];
       localStorage.setItem(STORAGE_KEYS.AUTOPLAY, isAutoplay.toString());
       localStorage.setItem(STORAGE_KEYS.LOOP, isAudioLoop.toString());
       localStorage.setItem(STORAGE_KEYS.LEVELS, JSON.stringify(selectedLevels));
+      window.dispatchEvent(new CustomEvent('app:levels-changed', { detail: { selectedLevels } }));
     }
+
+    window.getSelectedLevels = () => selectedLevels;
 
     function getFilteredData() {
       if (selectedLevels.includes("all") || selectedLevels.length === ALL_LEVELS.length) {
@@ -608,6 +611,7 @@ let currentWriters = [];
     const settingsSpeedPills = document.getElementById("settings-speed-pills");
 
     function syncSettingsModalInputs() {
+      updateLevelChipsUI();
       if (settingLevelsBar) {
         settingLevelsBar.checked = window.AppSettings.get('levels_visible', true);
       }
@@ -754,7 +758,18 @@ let currentWriters = [];
       }
     });
 
-    levelChips.forEach(chip => {
+    window.addEventListener('app:levels-changed', (e) => {
+      const { selectedLevels: newLevels } = e.detail || {};
+      if (Array.isArray(newLevels) && newLevels.length > 0) {
+        selectedLevels = [...newLevels];
+        updateLevelChipsUI();
+        historyCards = [];
+        historyIndex = -1;
+        renderCard();
+      }
+    });
+
+    document.querySelectorAll(".level-chip, .settings-level-chip").forEach(chip => {
       chip.addEventListener("click", () => {
         const level = chip.dataset.level;
 

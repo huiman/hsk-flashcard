@@ -33,9 +33,10 @@
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
 
     <!-- โหลดสไตล์แยกโมดูล -->
-    <link rel="stylesheet" href="css/style.css?v=13.17.1" />
-    <link rel="stylesheet" href="css/stories.css?v=13.17.1" />
-    <link rel="stylesheet" href="css/practice.css?v=13.17.1" />
+    <link rel="stylesheet" href="css/style.css?v=13.18.0" />
+    <link rel="stylesheet" href="css/stories.css?v=13.18.0" />
+    <link rel="stylesheet" href="css/practice.css?v=13.18.0" />
+    <link rel="stylesheet" href="css/tutor.css?v=13.18.0" />
   </head>
   <body>
     <div class="game-container">
@@ -76,6 +77,7 @@
               'level-selector',
               'stories-level-bar',
               'practice-level-bar',
+              'tutor-level-bar',
             ].forEach(function (id) {
               var el = document.getElementById(id)
               if (el) el.classList.toggle('is-hidden', !show)
@@ -603,6 +605,151 @@
         </div>
       </div>
 
+      <!-- 4. หน้า HSK Vocab Tutor / Study Groups View -->
+      <div id="view-tutor" class="app-view">
+        <!-- แถบเลือกระดับ HSK 1-9 สำหรับติวเตอร์คำศัพท์ (ควบคุมด้วยการตั้งค่าแสดง/ซ่อนแถบระดับ) -->
+        <section class="tutor-level-bar" id="tutor-level-bar" aria-label="เลือกระดับ HSK สำหรับติวเตอร์">
+          <button class="tutor-level-chip" data-level="all">ทั้งหมด</button>
+          <button class="tutor-level-chip active" data-level="HSK 1">
+            <span class="lvl-dot lvl-1"></span>HSK 1
+          </button>
+          <button class="tutor-level-chip" data-level="HSK 2">
+            <span class="lvl-dot lvl-2"></span>HSK 2
+          </button>
+          <button class="tutor-level-chip" data-level="HSK 3">
+            <span class="lvl-dot lvl-3"></span>HSK 3
+          </button>
+          <button class="tutor-level-chip" data-level="HSK 4">
+            <span class="lvl-dot lvl-4"></span>HSK 4
+          </button>
+          <button class="tutor-level-chip" data-level="HSK 5">
+            <span class="lvl-dot lvl-5"></span>HSK 5
+          </button>
+          <button class="tutor-level-chip" data-level="HSK 6">
+            <span class="lvl-dot lvl-6"></span>HSK 6
+          </button>
+          <button class="tutor-level-chip" data-level="HSK 7">
+            <span class="lvl-dot lvl-7"></span>HSK 7
+          </button>
+          <button class="tutor-level-chip" data-level="HSK 8">
+            <span class="lvl-dot lvl-8"></span>HSK 8
+          </button>
+          <button class="tutor-level-chip" data-level="HSK 9">
+            <span class="lvl-dot lvl-9"></span>HSK 9
+          </button>
+        </section>
+
+        <!-- Tutor Hero Banner -->
+        <header class="tutor-hero">
+          <div class="tutor-hero-top">
+            <div class="tutor-hero-title-box">
+              <div class="tutor-hero-icon">📚</div>
+              <div class="tutor-hero-text">
+                <h2>ติวเตอร์ศัพท์ HSK 3.0 (Study Groups)</h2>
+                <p>จัดกลุ่มคำศัพท์ตามรากอักษรและหมวดหมู่ความหมาย พร้อมสรุปเชื่อมโยงและแบบทดสอบ</p>
+              </div>
+            </div>
+            <div class="tutor-hero-actions">
+              <button class="btn-tutor-prompt" id="btn-tutor-prompt" title="คัดลอก Prompt สำหรับ AI">
+                <span>✨ คัดลอก Prompt AI</span>
+              </button>
+              <button class="btn-tutor-quiz-jump" id="btn-tutor-quiz-jump" title="ไปที่แบบทดสอบ 5 ข้อ">
+                <span>🎯 ทำ Quiz</span>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <!-- Tutor Configuration Panel -->
+        <section class="tutor-config-card" aria-label="ตัวกรองและเงื่อนไขการจัดกลุ่ม">
+          <!-- Group-By Selector -->
+          <div class="config-group">
+            <div class="config-section-title">
+              <span>🧩 จัดกลุ่มคำตาม (Group By)</span>
+            </div>
+            <div class="groupby-options">
+              <button class="btn-groupby-pill active" data-groupby="radical">
+                <span>部首 รากอักษร</span>
+                <span class="sub-label">Radical</span>
+              </button>
+              <button class="btn-groupby-pill" data-groupby="category">
+                <span>หมวดความหมาย</span>
+                <span class="sub-label">Category</span>
+              </button>
+              <button class="btn-groupby-pill" data-groupby="both">
+                <span>ทั้งสองอย่าง</span>
+                <span class="sub-label">Both</span>
+              </button>
+              <button class="btn-groupby-pill" data-groupby="phonetic">
+                <span>ส่วนประกอบเสียง</span>
+                <span class="sub-label">Phonetic</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Focus Selector -->
+          <div class="config-group">
+            <div class="config-section-title">
+              <span>🔍 เลือกเจาะจง (Focus Filter)</span>
+            </div>
+            <div class="focus-chips-bar" id="focus-chips-bar">
+              <!-- Dynamically populated chips -->
+            </div>
+          </div>
+
+          <!-- Row: Max Words & Skip Known -->
+          <div class="tutor-control-row">
+            <div class="control-item">
+              <label for="tutor-max-slider">คำสูงสุดต่อกลุ่ม:</label>
+              <div class="max-slider-box">
+                <input type="range" id="tutor-max-slider" min="5" max="30" value="12" step="1" />
+                <span class="max-val-badge" id="tutor-max-val">12</span>
+              </div>
+            </div>
+
+            <div class="control-item">
+              <label class="skip-known-box" for="toggle-skip-known">
+                <span>ข้ามคำที่รู้แล้ว:</span>
+                <div class="toggle-switch">
+                  <input type="checkbox" id="toggle-skip-known" />
+                  <span class="slider-round"></span>
+                </div>
+                <span class="skip-count-badge" id="skip-count-badge">0 คำ</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <button class="btn-generate-groups" id="btn-generate-groups">
+            <span>🔍 จัดกลุ่มคำศัพท์ (Generate Groups)</span>
+          </button>
+        </section>
+
+        <!-- Results Summary Bar -->
+        <div class="tutor-summary-bar" id="tutor-summary-bar">
+          <span id="tutor-summary-text">กำลังโหลดกลุ่มคำศัพท์...</span>
+          <span class="tutor-summary-pill" id="tutor-summary-pill">HSK 1-3</span>
+        </div>
+
+        <!-- Groups List Cards -->
+        <main class="tutor-groups-list" id="tutor-groups-list">
+          <!-- Dynamically populated group cards -->
+        </main>
+
+        <!-- Interactive 5-Question Quiz Section -->
+        <section class="tutor-quiz-container" id="tutor-quiz-container">
+          <div class="quiz-top-bar">
+            <div class="quiz-badge-title" id="quiz-badge-title">
+              <span>🎯 แบบทดสอบท้ายบท 5 ข้อ</span>
+            </div>
+            <span class="quiz-score-pill" id="quiz-score-pill">ข้อ 1/5 · คะแนน: 0</span>
+          </div>
+          <div id="quiz-content">
+            <!-- Dynamically populated question card -->
+          </div>
+        </section>
+      </div>
+
       <!-- แถบเมนูด้านล่าง (Bottom Navigation Bar) -->
       <nav class="main-tabs" id="main-tabs" aria-label="เมนูหลัก">
         <button
@@ -631,6 +778,15 @@
         >
           <span class="tab-icon">✍️</span>
           <span class="tab-label">ฝึกคัด (Write)</span>
+        </button>
+        <button
+          class="main-tab-btn"
+          id="tab-tutor"
+          data-view="tutor"
+          title="ติวเตอร์ศัพท์ Vocab Tutor"
+        >
+          <span class="tab-icon">📚</span>
+          <span class="tab-label">ติวเตอร์ (Tutor)</span>
         </button>
         <button
           class="main-tab-btn main-tab-settings"
@@ -939,11 +1095,47 @@
         </div>
 
         <div class="custom-modal-body settings-sheet-body">
-          <!-- กลุ่ม: ทั่วไป (General) -->
+          <!-- กลุ่ม: เลือกระดับคำศัพท์ HSK 1-9 (HSK Level Selection) -->
           <section class="settings-group">
             <div class="settings-group-header">
-              <span class="settings-group-icon">⚙️</span>
-              <span>ทั่วไป (General)</span>
+              <span class="settings-group-icon">🎯</span>
+              <span>เลือกระดับคำศัพท์ HSK 1-9 (HSK Level Selection)</span>
+            </div>
+
+            <div class="setting-row-vertical">
+              <div class="setting-desc">
+                เลือกระดับ HSK ที่ต้องการใช้งานร่วมกันทั่วทั้งแอป (บัตรคำ, นิทาน, ฝึกคัด, ติวเตอร์)
+              </div>
+              <div class="settings-level-bar" id="settings-level-bar" aria-label="เลือกระดับ HSK ในการตั้งค่า">
+                <button class="settings-level-chip" data-level="all">ทั้งหมด</button>
+                <button class="settings-level-chip active" data-level="HSK 1">
+                  <span class="lvl-dot lvl-1"></span>HSK 1
+                </button>
+                <button class="settings-level-chip" data-level="HSK 2">
+                  <span class="lvl-dot lvl-2"></span>HSK 2
+                </button>
+                <button class="settings-level-chip" data-level="HSK 3">
+                  <span class="lvl-dot lvl-3"></span>HSK 3
+                </button>
+                <button class="settings-level-chip" data-level="HSK 4">
+                  <span class="lvl-dot lvl-4"></span>HSK 4
+                </button>
+                <button class="settings-level-chip" data-level="HSK 5">
+                  <span class="lvl-dot lvl-5"></span>HSK 5
+                </button>
+                <button class="settings-level-chip" data-level="HSK 6">
+                  <span class="lvl-dot lvl-6"></span>HSK 6
+                </button>
+                <button class="settings-level-chip" data-level="HSK 7">
+                  <span class="lvl-dot lvl-7"></span>HSK 7
+                </button>
+                <button class="settings-level-chip" data-level="HSK 8">
+                  <span class="lvl-dot lvl-8"></span>HSK 8
+                </button>
+                <button class="settings-level-chip" data-level="HSK 9">
+                  <span class="lvl-dot lvl-9"></span>HSK 9
+                </button>
+              </div>
             </div>
 
             <div class="setting-row">
@@ -952,10 +1144,10 @@
                 onclick="document.getElementById('setting-levels-bar').click()"
               >
                 <label class="setting-title" for="setting-levels-bar">
-                  🎯 แถบเลือกระดับ HSK
+                  🎯 แสดงแถบเลือกระดับ HSK บนหน้าจอ
                 </label>
                 <div class="setting-desc">
-                  แสดงแถบปุ่มลัดเลือกระดับ HSK 1-9 ด้านบนของแต่ละหน้าจอ
+                  แสดงแถบปุ่มลัดเลือกระดับ HSK 1-9 ด้านบนของแต่ละหน้าจอ (Cards, Stories, Write, Tutor)
                 </div>
               </div>
               <div class="setting-ctrl-col">
@@ -964,6 +1156,14 @@
                   <span class="unified-slider"></span>
                 </label>
               </div>
+            </div>
+          </section>
+
+          <!-- กลุ่ม: ทั่วไป (General) -->
+          <section class="settings-group">
+            <div class="settings-group-header">
+              <span class="settings-group-icon">⚙️</span>
+              <span>ทั่วไป (General)</span>
             </div>
 
             <div class="setting-row">
@@ -1215,18 +1415,48 @@
 
           <div class="settings-modal-footer">
             <span>✨ บันทึกการตั้งค่าอัตโนมัติ</span>
-            <span>เวอร์ชัน 13.17.2</span>
+            <span>เวอร์ชัน 13.18.0</span>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Tutor AI Prompt Modal -->
+    <div id="tutor-prompt-modal" class="prompt-modal-backdrop">
+      <div class="prompt-modal-content">
+        <div class="prompt-modal-header">
+          <h3>✨ Prompt สำหรับนำไปใช้กับ AI Tutor</h3>
+          <button class="btn-close-modal" id="btn-close-prompt-modal" title="ปิด">✕</button>
+        </div>
+        <div class="prompt-modal-body">
+          <p class="prompt-instructions">
+            คัดลอกข้อความด้านล่างแล้วนำไปวางใน ChatGPT, Claude หรือ Gemini เพื่อให้ AI สร้างกลุ่มคำศัพท์ วิเคราะห์รากอักษร และตั้งโจทย์ทบทวนเพิ่มเติมได้ทันที:
+          </p>
+          <div class="prompt-code-wrap">
+            <pre class="prompt-code-text" id="prompt-code-text"></pre>
+          </div>
+        </div>
+        <div class="prompt-modal-footer">
+          <button class="btn-copy-prompt-action" id="btn-copy-modal-prompt">
+            <span>📋 คัดลอก Prompt ทันที</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tutor Floating Toast -->
+    <div id="tutor-toast" class="tutor-toast">
+      <span id="tutor-toast-text">คัดลอกเรียบร้อยแล้ว!</span>
+    </div>
+
     <!-- โหลดฐานข้อมูลคำศัพท์และ Logic ของแอปพลิเคชันแบบโมดูลาร์ -->
-    <script src="js/data.js?v=13.17.2"></script>
-    <script src="js/stories-data.js?v=13.17.2"></script>
-    <script src="js/story-player.js?v=13.17.2"></script>
-    <script src="js/stories.js?v=13.17.2"></script>
-    <script src="js/practice.js?v=13.17.2"></script>
-    <script src="js/app.js?v=13.17.2"></script>
+    <script src="js/data.js?v=13.18.0"></script>
+    <script src="js/stories-data.js?v=13.18.0"></script>
+    <script src="js/story-player.js?v=13.18.0"></script>
+    <script src="js/stories.js?v=13.18.0"></script>
+    <script src="js/practice.js?v=13.18.0"></script>
+    <script src="js/tutor-data.js?v=13.18.0"></script>
+    <script src="js/tutor.js?v=13.18.0"></script>
+    <script src="js/app.js?v=13.18.0"></script>
   </body>
 </html>

@@ -58,9 +58,11 @@
   const tabFlashcard = document.getElementById('tab-flashcard');
   const tabStories = document.getElementById('tab-stories');
   const tabPractice = document.getElementById('tab-practice');
+  const tabTutor = document.getElementById('tab-tutor');
   const viewFlashcard = document.getElementById('view-flashcard');
   const viewStories = document.getElementById('view-stories');
   const viewPractice = document.getElementById('view-practice');
+  const viewTutor = document.getElementById('view-tutor');
 
   const storiesLevelBar = document.getElementById('stories-level-bar');
   const storiesGrid = document.getElementById('stories-grid');
@@ -89,12 +91,14 @@
     tabFlashcard?.addEventListener('click', () => switchView('flashcard'));
     tabStories?.addEventListener('click', () => switchView('stories'));
     tabPractice?.addEventListener('click', () => switchView('practice'));
+    tabTutor?.addEventListener('click', () => switchView('tutor'));
   }
 
   const VIEW_TITLES = {
     flashcard: '🀄 Flashcards',
     stories: '📖 HSK Stories',
-    practice: '✍️ ฝึกคัดอักษรจีน'
+    practice: '✍️ ฝึกคัดอักษรจีน',
+    tutor: '📚 ติวเตอร์คำศัพท์'
   };
 
   function switchView(viewName) {
@@ -115,20 +119,20 @@
       }
     }
 
-    // 3. If leaving practice, stop speech synthesis if running
-    if (viewName !== 'practice' && viewName !== 'stories' && viewName !== 'flashcard') {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
+    // 3. Stop speech synthesis if switching between views
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
     }
 
     if (tabFlashcard) tabFlashcard.classList.toggle('active', viewName === 'flashcard');
     if (tabStories) tabStories.classList.toggle('active', viewName === 'stories');
     if (tabPractice) tabPractice.classList.toggle('active', viewName === 'practice');
+    if (tabTutor) tabTutor.classList.toggle('active', viewName === 'tutor');
 
     if (viewFlashcard) viewFlashcard.classList.toggle('active', viewName === 'flashcard');
     if (viewStories) viewStories.classList.toggle('active', viewName === 'stories');
     if (viewPractice) viewPractice.classList.toggle('active', viewName === 'practice');
+    if (viewTutor) viewTutor.classList.toggle('active', viewName === 'tutor');
 
     // Update top header title dynamically
     const brandTitleEl = document.getElementById('app-brand-title');
@@ -138,6 +142,10 @@
 
     if (viewName === 'stories') {
       renderStoriesList();
+    } else if (viewName === 'tutor') {
+      if (window.HSK_TUTOR && typeof window.HSK_TUTOR.generateGroups === 'function') {
+        window.HSK_TUTOR.generateGroups();
+      }
     }
   }
 

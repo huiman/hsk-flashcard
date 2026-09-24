@@ -10906,5 +10906,9 @@ const HSK_DATA = [
       { id: 10898, hanzi: "龟", pinyin: "guī", meaning: "เต่า", meaning_en: "tortoise; turtle; (coll.) cuckold", level: "HSK 7" }
     ];
 
+if (typeof window !== 'undefined') {
+  window.HSK_DATA = HSK_DATA;
+}
+
 
 
